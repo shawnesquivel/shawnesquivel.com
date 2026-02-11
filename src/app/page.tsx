@@ -1,3 +1,6 @@
+import ImageCarousel from "@/components/ImageCarousel";
+import CopyCode from "@/components/CopyCode";
+
 const COURSE_URL =
   "https://shawnesquivel.thinkific.com/order?ct=71864c85-dca1-4514-9b50-1a48865a5ef5";
 
@@ -159,7 +162,7 @@ export default function Home() {
       <nav className="fixed top-0 z-50 w-full border-b-3 border-foreground bg-yellow">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
           <span className="text-lg font-black uppercase tracking-tight">
-            Shawn Esquivel
+            Build with Cursor
           </span>
           <div className="flex items-center gap-5 text-sm font-bold uppercase">
             <a href="#problems" className="hidden hover:underline decoration-3 underline-offset-4 sm:inline">
@@ -531,6 +534,9 @@ export default function Home() {
               </ul>
             </div>
           </div>
+          {/* ── About Image Carousel ── */}
+          <ImageCarousel />
+
           <div className="mt-10 text-center">
             <CTAButton />
           </div>
@@ -598,7 +604,7 @@ export default function Home() {
           <img
             src="https://img-c.udemycdn.com/course/750x422/6609805_3dcb_3.jpg"
             alt="Tech stack: Cursor, OpenAI, Supabase, and NextJS"
-            className="mx-auto mb-10 w-full neo-shadow-lg"
+            className="mx-auto mb-10 w-full max-w-md neo-shadow-lg"
           />
           <div className="grid gap-6 text-left sm:grid-cols-2">
             <div className="neo-shadow bg-yellow p-5">
@@ -644,10 +650,10 @@ export default function Home() {
           </p>
           <p className="mb-8 text-base font-medium">
             Use code{" "}
-            <span className="neo-shadow-sm inline-block bg-accent px-3 py-1 text-white font-black">
-              SAVE30
-            </span>
-            {" "}at checkout. Price goes up as new modules drop.
+            <CopyCode code="SAVE30" />
+            {" "}at checkout.
+            <br />
+            Price goes up as new modules drop.
           </p>
           <CTAButton />
           <p className="mt-8 text-sm font-bold">
@@ -782,77 +788,60 @@ export default function Home() {
 
             <FAQItem question="👋🏽 How can I contact you?">
               <p>
+                Reach out at{" "}
                 <a
                   href="mailto:shawnesquivel24@gmail.com"
                   className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white"
                 >
                   shawnesquivel24@gmail.com
                 </a>
+                {" "}or find me on social media (links in the footer).
               </p>
-              <div className="mt-3 flex gap-4">
-                <a
-                  href="https://www.instagram.com/shawn.builds"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white"
-                >
-                  Instagram
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/shawnesquivel/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white"
-                >
-                  LinkedIn
-                </a>
-                <a
-                  href="https://www.youtube.com/@shawn.builds"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white"
-                >
-                  YouTube
-                </a>
-              </div>
             </FAQItem>
           </div>
         </div>
       </section>
 
       {/* ───── Footer ───── */}
-      <footer className="mt-20 border-t-3 border-foreground bg-foreground py-10 text-center text-sm text-surface">
-        <p className="font-black uppercase">&copy; {new Date().getFullYear()} Shawn Esquivel. All rights reserved.</p>
-        <p className="mt-2">
-          <a href="mailto:shawnesquivel24@gmail.com" className="underline decoration-2 underline-offset-2 hover:text-yellow">
-            shawnesquivel24@gmail.com
-          </a>
-        </p>
-        <div className="mt-4 flex items-center justify-center gap-6">
-          <a
-            href="https://www.instagram.com/shawn.builds"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-bold uppercase underline decoration-2 underline-offset-2 hover:text-yellow"
-          >
-            Instagram
-          </a>
-          <a
-            href="https://www.linkedin.com/in/shawnesquivel/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-bold uppercase underline decoration-2 underline-offset-2 hover:text-yellow"
-          >
-            LinkedIn
-          </a>
-          <a
-            href="https://www.youtube.com/@shawn.builds"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-bold uppercase underline decoration-2 underline-offset-2 hover:text-yellow"
-          >
-            YouTube
-          </a>
+      <footer className="mt-20 border-t-3 border-foreground bg-foreground py-10 text-sm text-surface">
+        <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 px-6 sm:flex-row sm:justify-between">
+          <div className="text-center sm:text-left">
+            <p className="font-black uppercase">&copy; {new Date().getFullYear()} Amihan Ventures Inc.</p>
+            <p className="mt-1">
+              <a href="mailto:shawnesquivel24@gmail.com" className="underline decoration-2 underline-offset-2 hover:text-yellow">
+                shawnesquivel24@gmail.com
+              </a>
+            </p>
+          </div>
+          <div className="flex items-center gap-5">
+            <a
+              href="https://www.instagram.com/shawn.builds"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-yellow"
+              aria-label="Instagram"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            </a>
+            <a
+              href="https://www.linkedin.com/in/shawnesquivel/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-yellow"
+              aria-label="LinkedIn"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            </a>
+            <a
+              href="https://www.youtube.com/@shawn.builds"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-yellow"
+              aria-label="YouTube"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>
+            </a>
+          </div>
         </div>
       </footer>
     </div>
