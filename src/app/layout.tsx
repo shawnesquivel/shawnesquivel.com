@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   title: "Build Apps with Cursor | Shawn Esquivel",
   description:
     "Learn to build production-ready apps with Cursor AI. 3+ hours of hands-on training, templates, prompt libraries, and more.",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
