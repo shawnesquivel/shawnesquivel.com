@@ -1,0 +1,255 @@
+# The Problems With Vibe Coding
+
+I’ve spoken to 300+ vibe coders and Cursor users. Their complaints usually fit into one of the following categories:
+
+### 🐞 Endless Bugs
+
+- 😩 “Vibe coding worked well at first. But now I’m spending hours troubleshooting. It fixes one thing, then breaks another. I’m going crazy.”
+- 😭 ”I tried it and I was so confused. There’s too many features, and I’m so overwhelmed.”
+- 😡 “It was all fun and games until I spent $300 on Cursor in a day. Now I’m scared to use it.”
+
+![*AI “breaks the code” and “goes in circles”*](attachment:685bd1f1-f049-4c9f-bce7-0ab9f0ff1022:image.png)
+
+*AI “breaks the code” and “goes in circles”*
+
+### ⚠️ Security Risks
+
+AI generated code is filled with security loopholes. This results in:
+
+1. Hackers spending your money 
+2. Hackers exposing your user data, leading to lawsuits
+
+![Vibe coders are getting hacked](attachment:dfd4a449-669e-4014-9fdd-cc5da37cf14d:image.png)
+
+Vibe coders are getting hacked
+
+### 🤮 Ugly Designs
+
+All AI designs look generic (see right).
+
+😑 Now add to the fact that AI is BAD at following design instructions
+
+And you’ll spend hours trying to get AI to implement good design.
+
+![AI designs are generic and easy to spot](attachment:0e60b6a0-9229-4376-94fa-28167416d4a9:image.png)
+
+AI designs are generic and easy to spot
+
+# The Solution: A Team of AI Agents
+
+![*You’ll learn this Cursor workflow to build faster, automate bug fixes – all without writing a line of code.*](attachment:aff58788-ac86-4bd4-bfac-88575c98532c:my_ai_stack.png)
+
+*You’ll learn this Cursor workflow to build faster, automate bug fixes – all without writing a line of code.*
+
+AI is like a wild horse.  
+
+Used poorly, you’ll go in endless circles. 
+
+With the right system, you can go way faster.
+
+This course teaches the fundamentals of Cursor, like: 
+
+- ✅ Agents that write 100% of the code
+- ✅ Agents that scan your code for bugs and security vulnerabilities
+- ✅ Agents that clone beautiful designs
+
+# What We Cover in the Course
+
+### How the Course is Structured?
+
+This is not an 8 hour tutorial where you passively watch.
+
+You’ll learn hands-on by building production-ready web apps.
+
+We’ll cover the latest tools in Cursor, like Agent Mode and Parallel Agents.
+
+We’ll build a full Agentic Coding Workflow in Cursor, with the latest cutting edge frameworks that I’ve learned from my time with Cursor.
+
+And by the end, you’ll have ready-to-deploy apps and tools, so you can 
+
+- 🤖 Learn how to prompt Cursor like a pro
+- 💰 Launch your project to thousands of users
+
+# Testimonials
+
+![Peter said “I was able to get the web app running in a weekend”](attachment:ea2ab729-6ac4-41b6-a4f0-a79e6dead216:image.png)
+
+Peter said “I was able to get the web app running in a weekend”
+
+![Patrick said “well worth the money and time”](attachment:246f7de6-7cc3-4454-83d4-8e4d16c4a520:image.png)
+
+Patrick said “well worth the money and time”
+
+![Jean said “I’ve seen other ppl charge $100 for the boilerplate alone”](attachment:2912ca05-8b31-4fd8-81e0-ae8a8404e2fa:Screenshot_2025-08-19_at_1.35.27_PM.png)
+
+Jean said “I’ve seen other ppl charge $100 for the boilerplate alone”
+
+![*“i’ve never finished other courses cause it felt like 7 hrs of watching someone code”*](attachment:5d65655c-9f86-4f28-badf-6ea09f0860d4:Screenshot_2025-08-19_at_1.37.49_PM.png)
+
+*“i’ve never finished other courses cause it felt like 7 hrs of watching someone code”*
+
+# About Me
+
+### 1. I’m a Full Stack SaaS Founder
+
+![I was a Founding Engineer at a $79M series A company.](attachment:0cc6df67-1a7e-456a-8184-49f0ffad30d9:image.png)
+
+I was a Founding Engineer at a $79M series A company.
+
+![I’ve built 10+ apps with Cursor. This one has 5-stars in the App Store!](attachment:bf45a17f-f1be-42e5-b827-fac73a769b3e:0ccfbd13-83b3-483b-a5ab-1ebb948fd1d9.png)
+
+I’ve built 10+ apps with Cursor. This one has 5-stars in the App Store!
+
+![I’m a top 1% Cursor user](attachment:60fbc2b7-b6eb-41f3-8294-5f267e1a4eaa:Screenshot_2026-02-02_at_12.39.26_PM.png)
+
+I’m a top 1% Cursor user
+
+### 2. I’ve taught 300+ students how to use Cursor IRL
+
+![Hosting a 200+ member Cursor event in Vancouver](attachment:c8d8f382-7206-40d8-bd64-0d24818b85da:image.png)
+
+Hosting a 200+ member Cursor event in Vancouver
+
+![100+ attendee Cursor event in Thailand](attachment:680285c5-7f3c-46da-a1ce-8858582e26f6:image.png)
+
+100+ attendee Cursor event in Thailand
+
+# What is included in the course?
+
+### ✅ Lifetime access to the course
+
+- 3+ hours of video content
+- Includes 2 years of updates
+
+### ✅ Web App Template
+
+A ready to use web application that you can deploy today. This pays off the value of the course. 
+
+### ✅ Cursor Prompt Library
+
+Get 20+ Cursor Rules covering every possible workflow in Cursor.
+
+### ✅ BONUS: Coaching Call
+
+A complimentary 30min call to where you can ask for advice on anything – from startups to marketing. I typically charge $200 for these calls.
+
+### ✅ BONUS: Community Discord
+
+Build and share projects with fellow A builders.
+
+# ✨ Get the course (Discount Code: SAVE30) ⬇️
+
+[shawnesquivel.thinkific.com](https://shawnesquivel.thinkific.com/order?ct=71864c85-dca1-4514-9b50-1a48865a5ef5)
+
+*Backed by my [🔓 100% Satisfaction Guarantee](https://www.notion.so/100-Satisfaction-Guarantee-25423536d7d580a3b70aca60a94b7b17?pvs=21)* 
+
+- Full Curriculum
+    
+    ### Cursor 101: Fundamentals of Cursor
+    
+    1. You’ll use `Cursor Agent` to plan features and generate to do lists for your project. 
+    2. You’ll learn `Cursor Tab` to autocomplete large sections of code.
+    3. You’ll use `Cursor Rules` to ensure it gets the feature as CLOSE to perfect in 1 message.
+    4. You’ll use `Cursor Plan Mode` to create PRDs.
+    5. You’ll learn `Parallel Agentic Workflows`
+    
+    ### Cursor 201: Cursor Tools
+    
+    Most people hate debugging code. We’ll learn how to give
+    
+    1. You’ll use `Debug Mode` to debug issues faster.
+    2. You’ll use `MCP` to give your agent access to tools like GitHub and your browser.
+    3. You’ll use `BugBot` to fix your security issues with 1 click.
+    
+    ### Cursor 301: Cursor for Frontend
+    
+    1. Use Cursor’s `Visual Browser` to edit designs instantly.
+    2. Use Cursor’s `Figma` plugins to edit frontend design faster.
+    
+    ### Cursor 401: Parallel Agentic Workflows in Cursor
+    
+    These are like the nitro boosts. If you learn these features you’ll be the top 0.1% of Cursor users.
+    
+    1. You’ll use `Agent Review` to find security vulnerabilities
+    2. You’ll use `Background Agents` to code while you sleep.
+
+Watch the first video: 
+
+# FAQ
+
+### 🤖 What level of coding experience do I need?
+
+Most of my students have very limited exposure to code.
+
+The system you’ll build allows Cursor to both code and troubleshoot.
+
+At most, we will cover basic topics like “why do we need a database?” AI will implement everything.
+
+### 🔓 100% Satisfaction Guarantee
+
+I’ve already helped [hundreds of students](https://www.notion.so/Build-Apps-with-Cursor-101-25423536d7d58062bafcd14619f1cedb?pvs=21) build their first AI app with Cursor.
+
+I’m so confident this course [w](https://www.notion.so/Build-Apps-with-Cursor-101-25423536d7d58062bafcd14619f1cedb?pvs=21)ill help you, that if you feel this course wasn’t worth the money, I have a **100% Money Back Guarantee.** 
+
+Email [shawnesquivel24@gmail.com](mailto:shawnesquivel24@gmail.com) within 30 days of purchase for a full refund.
+
+### ❌  Who is this course not for?
+
+This course probably is NOT for you if…
+
+- You want to learn how to code
+- You want to “watch” instead of “apply”
+- You expect AI to do ALL the work
+
+This course is for you if…
+
+- ✅ You’re interested in launching projects, not writing Python.
+- ✅ You’re excited to build things, not drown in boring theory videos.
+- ✅ You know that AI is not perfect.
+
+### **👨‍💻 I know how to code. Should I take this course?**
+
+Yes! I’ve taught engineers with 30+ years of experience how to use Cursor.
+
+### 📲 Will I learn how to build Mobile Apps?
+
+No. The frameworks applied can be used for any output – mobile apps, web apps, or data analysis. Mobile apps can be hard to setup, even with AI.
+
+More on our tech stack here: [🤖 What is our Tech Stack?](https://www.notion.so/What-is-our-Tech-Stack-25423536d7d580b2ba0bc50ac31bd9ed?pvs=21) 
+
+### 🤖 What is our Tech Stack?
+
+I’ve curated for tech stack for speed while minimizing costs.
+
+**Cursor** is our AI powered code editor used by over 1M+ users worldwide.
+
+**NextJS, TypeScript, and TailwindCSS:** [OpenAI recommends](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide#frontend-app-development) these tools because AI models excel at writing code in these languages.
+
+**LLMs:** 
+
+- **Max Intelligience:** Claude 4.5 / GPT-5.2 / Gemini
+- **Fast + Cheap**: Auto Mode, Composer-1
+
+![We’ll build with Cursor, OpenAI, Supabase, and NextJS. The best tech stack for AI apps.](https://img-c.udemycdn.com/course/750x422/6609805_3dcb_3.jpg)
+
+We’ll build with Cursor, OpenAI, Supabase, and NextJS. The best tech stack for AI apps.
+
+### 🧑‍🎓 I’m a student. How can I afford your course?
+
+Email us at [support@matchya.app](mailto:support@matchya.app) from your verified student email (.edu or .alumni) to get **50% off** student pricing.
+
+I have plenty of free resources on https://www.youtube.com/@shawn.builds. Purchasing the course allows me to make more free Cursor content for everyone. 
+
+### 💰 Does Cursor cost money to use?
+
+Yes. Each call to Cursor will spend a bit of your monthly usage. More information in their [Pricing](https://cursor.com/pricing) and [Billing](https://cursor.com/docs/account/billing) docs.
+
+✅ In this course, we’ll learn how to reduce your monthly spending, and avoid expensive Cursor bills
+
+P.S. Eligible students can also 1 year free of Cursor Pro.  https://cursor.com/students
+
+### 👋🏽 How can I contact you?
+
+[support@matchya.app](mailto:support@matchya.app) 
+
+shawnesquivel24@gmail.com

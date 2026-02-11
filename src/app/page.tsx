@@ -1,63 +1,815 @@
+const COURSE_URL =
+  "https://shawnesquivel.thinkific.com/order?ct=71864c85-dca1-4514-9b50-1a48865a5ef5";
+
+function SectionDivider() {
+  return <div className="mx-auto my-16 h-1 w-full max-w-5xl bg-foreground md:my-20" />;
+}
+
+function CTAButton({ className = "" }: { className?: string }) {
+  return (
+    <a
+      href={COURSE_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`neo-btn inline-block bg-accent px-8 py-4 text-base text-white ${className}`}
+    >
+      Get the Course — Use Code SAVE30
+    </a>
+  );
+}
+
+/* ───────────────────────────── Pain Point Card ───────────────────────────── */
+
+function PainCard({
+  emoji,
+  title,
+  items,
+  imageSrc,
+  imageCaptionAlt,
+  color,
+}: {
+  emoji: string;
+  title: string;
+  items: string[];
+  imageSrc?: string;
+  imageCaptionAlt: string;
+  color: string;
+}) {
+  return (
+    <div className={`neo-shadow neo-hover p-6 ${color}`}>
+      <h3 className="mb-4 text-xl font-black uppercase tracking-tight">
+        {emoji} {title}
+      </h3>
+      <ul className="space-y-3">
+        {items.map((item, i) => (
+          <li key={i} className="text-sm leading-relaxed font-medium">
+            {item}
+          </li>
+        ))}
+      </ul>
+      {imageSrc && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imageSrc}
+          alt={imageCaptionAlt}
+          className="mt-4 w-full border-2 border-foreground"
+        />
+      )}
+      <p className="mt-3 border-t-2 border-foreground pt-3 text-xs font-bold uppercase tracking-wider">
+        {imageCaptionAlt}
+      </p>
+    </div>
+  );
+}
+
+/* ──────────────────────────── Testimonial Card ──────────────────────────── */
+
+function TestimonialCard({
+  quote,
+  name,
+  imageSrc,
+  color,
+}: {
+  quote: string;
+  name?: string;
+  imageSrc?: string;
+  color: string;
+}) {
+  return (
+    <div className={`neo-shadow neo-hover ${color}`}>
+      {imageSrc && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imageSrc}
+          alt={name ? `${name}'s review` : "Student review"}
+          className="w-full border-b-2 border-foreground"
+        />
+      )}
+      <div className="p-6">
+        <p className="text-base leading-relaxed font-bold">
+          &ldquo;{quote}&rdquo;
+        </p>
+        {name && (
+          <p className="mt-4 text-sm font-black uppercase tracking-wider">&mdash; {name}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ──────────────────────────── Included Card ──────────────────────────── */
+
+function IncludedCard({
+  emoji,
+  title,
+  description,
+  bonus,
+  color,
+}: {
+  emoji: string;
+  title: string;
+  description: string;
+  bonus?: boolean;
+  color: string;
+}) {
+  return (
+    <div className={`neo-shadow neo-hover p-6 relative ${color}`}>
+      {bonus && (
+        <span className="neo-shadow-sm absolute -top-4 -right-2 bg-accent px-3 py-1 text-xs font-black text-white uppercase">
+          Bonus
+        </span>
+      )}
+      <p className="mb-2 text-3xl">{emoji}</p>
+      <h4 className="mb-2 text-lg font-black uppercase">{title}</h4>
+      <p className="text-sm leading-relaxed font-medium">{description}</p>
+    </div>
+  );
+}
+
+/* ──────────────────────────────── FAQ Item ──────────────────────────────── */
+
+function FAQItem({
+  question,
+  children,
+}: {
+  question: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <details className="group neo-shadow bg-surface">
+      <summary className="cursor-pointer px-6 py-5 text-base font-black uppercase tracking-tight list-none flex items-center justify-between">
+        {question}
+        <span className="ml-4 text-xl font-black transition-transform group-open:rotate-45">
+          +
+        </span>
+      </summary>
+      <div className="border-t-3 border-foreground px-6 pb-5 pt-4 text-sm leading-relaxed font-medium">
+        {children}
+      </div>
+    </details>
+  );
+}
+
+/* ═══════════════════════════════ PAGE ═══════════════════════════════ */
+
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Nav */}
-      <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">
+      {/* ───── Nav ───── */}
+      <nav className="fixed top-0 z-50 w-full border-b-3 border-foreground bg-yellow">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-          <span className="text-lg font-semibold tracking-tight">
+          <span className="text-lg font-black uppercase tracking-tight">
             Shawn Esquivel
           </span>
-          <div className="flex items-center gap-6 text-sm text-muted">
-            <a href="#about" className="transition-colors hover:text-foreground">
+          <div className="flex items-center gap-5 text-sm font-bold uppercase">
+            <a href="#problems" className="hidden hover:underline decoration-3 underline-offset-4 sm:inline">
+              Problems
+            </a>
+            <a href="#curriculum" className="hidden hover:underline decoration-3 underline-offset-4 sm:inline">
+              Curriculum
+            </a>
+            <a href="#about" className="hidden hover:underline decoration-3 underline-offset-4 sm:inline">
               About
             </a>
-            <a
-              href="#projects"
-              className="transition-colors hover:text-foreground"
-            >
-              Projects
+            <a href="#faq" className="hidden hover:underline decoration-3 underline-offset-4 sm:inline">
+              FAQ
             </a>
             <a
-              href="#contact"
-              className="transition-colors hover:text-foreground"
+              href={COURSE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="neo-btn bg-accent px-4 py-2 text-xs text-white"
             >
-              Contact
+              Enroll Now
             </a>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="flex flex-1 items-center justify-center px-6 pt-16">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="mb-4 text-sm font-medium tracking-widest text-accent uppercase">
-            Software Engineer
+      {/* ───── Hero ───── */}
+      <section className="flex min-h-screen items-center justify-center px-6 pt-24">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="neo-shadow-sm mb-8 inline-block bg-pink px-4 py-2 text-sm font-black uppercase tracking-widest">
+            Build Apps With Cursor
           </p>
-          <h1 className="text-5xl font-bold leading-tight tracking-tight sm:text-6xl">
-            Building products
+          <h1 className="text-4xl font-black leading-tight uppercase tracking-tight sm:text-5xl md:text-7xl">
+            Stop Going
             <br />
-            <span className="text-muted">that matter.</span>
+            in Circles.
+            <br />
+            <span className="inline-block bg-accent px-3 text-white">Ship Real Apps.</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-md text-lg leading-relaxed text-muted">
-            I design and build full-stack applications with a focus on clean
-            code, great UX, and meaningful impact.
+          <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed font-medium">
+            The hands-on course that teaches you how to build, debug, and deploy production-ready
+            apps using Cursor&apos;s AI agents — without writing a single line of code.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-4">
+          <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row sm:justify-center">
+            <CTAButton />
             <a
-              href="#projects"
-              className="rounded-full bg-accent px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+              href="#curriculum"
+              className="neo-btn bg-yellow px-6 py-4 text-base text-foreground"
             >
-              View Projects
+              See the Curriculum
             </a>
-            <a
-              href="#contact"
-              className="rounded-full border border-white/20 px-6 py-3 text-sm font-medium text-foreground transition-colors hover:border-white/40"
-            >
-              Get in Touch
-            </a>
+          </div>
+          <p className="mt-8 neo-shadow-sm inline-block bg-green px-4 py-2 text-xs font-black uppercase">
+            🔓 100% Satisfaction Guarantee · 30-day refund policy
+          </p>
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ───── Problems ───── */}
+      <section id="problems" className="px-6">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
+            The Problems With Vibe Coding
+          </h2>
+          <p className="mx-auto mb-12 max-w-2xl text-center font-medium text-muted">
+            I&apos;ve spoken to 300+ vibe coders and Cursor users. Their complaints usually fit into
+            one of these categories:
+          </p>
+          <div className="grid gap-8 md:grid-cols-3">
+            <PainCard
+              emoji="🐞"
+              title="Endless Bugs"
+              color="bg-pink"
+              items={[
+                '😩 "Vibe coding worked well at first. But now I\'m spending hours troubleshooting. It fixes one thing, then breaks another."',
+                '😭 "I tried it and I was so confused. There\'s too many features, and I\'m so overwhelmed."',
+                '😡 "It was all fun and games until I spent $300 on Cursor in a day."',
+              ]}
+              imageSrc="/cursor-reddit.png"
+              imageCaptionAlt='AI "breaks the code" and "goes in circles"'
+            />
+            <PainCard
+              emoji="⚠️"
+              title="Security Risks"
+              color="bg-orange"
+              items={[
+                "AI generated code is filled with security loopholes.",
+                "Hackers spending your money.",
+                "Hackers exposing your user data, leading to lawsuits.",
+              ]}
+              imageSrc="/vibe-coders-getting-hacked-tweet.png"
+              imageCaptionAlt="Vibe coders are getting hacked"
+            />
+            <PainCard
+              emoji="🤮"
+              title="Ugly Designs"
+              color="bg-purple"
+              items={[
+                "All AI designs look generic.",
+                "AI is BAD at following design instructions.",
+                "You'll spend hours trying to get AI to implement good design.",
+              ]}
+              imageSrc="/ugly-ai-designs.png"
+              imageCaptionAlt="AI designs are generic and easy to spot"
+            />
           </div>
         </div>
       </section>
+
+      <SectionDivider />
+
+      {/* ───── Solution ───── */}
+      <section className="px-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="mb-4 text-3xl font-black uppercase sm:text-5xl">
+            The Solution: A Team of AI Agents
+          </h2>
+          <p className="mx-auto mb-10 max-w-xl font-medium leading-relaxed">
+            AI is like a wild horse. Used poorly, you&apos;ll go in endless circles. With the right
+            system, you can go way faster.
+          </p>
+
+          {/* AI Stack visual */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/a%20team%20of%20ai%20agents.png"
+            alt="My AI Stack for Web Apps — Task Master, MCP, Background Agents, BugBot, and more"
+            className="mx-auto neo-shadow-lg bg-surface"
+          />
+
+          <p className="mt-8 text-sm font-bold">
+            You&apos;ll learn this Cursor workflow to build faster, automate bug fixes — all without
+            writing a line of code.
+          </p>
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ───── Curriculum ───── */}
+      <section id="curriculum" className="px-6">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
+            What You&apos;ll Learn
+          </h2>
+          <p className="mx-auto mb-4 max-w-xl text-center font-medium">
+            This is not an 8 hour tutorial where you passively watch. You&apos;ll learn hands-on by
+            building production-ready web apps.
+          </p>
+          <p className="mx-auto mb-12 max-w-xl text-center text-sm font-medium text-muted">
+            We cover the latest tools in Cursor — Agent Mode, Parallel Agents, and cutting-edge
+            frameworks.
+          </p>
+
+          <div className="space-y-6">
+            {/* Module 1 */}
+            <div className="neo-shadow bg-blue p-6">
+              <h3 className="mb-3 text-lg font-black uppercase">
+                <span className="inline-block bg-foreground text-surface px-2 py-0.5 mr-2 text-sm">
+                  101
+                </span>
+                Fundamentals of Cursor
+              </h3>
+              <ul className="space-y-2 text-sm font-medium">
+                <li>
+                  1. Use <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">Cursor Agent</code> to plan features and generate to-do lists
+                </li>
+                <li>
+                  2. Learn <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">Cursor Tab</code> to autocomplete large sections of code
+                </li>
+                <li>
+                  3. Use <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">Cursor Rules</code> to get features close to perfect in 1 message
+                </li>
+                <li>
+                  4. Use <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">Cursor Plan Mode</code> to create PRDs
+                </li>
+                <li>
+                  5. Learn <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">Parallel Agentic Workflows</code>
+                </li>
+              </ul>
+            </div>
+
+            {/* Module 2 */}
+            <div className="neo-shadow bg-green p-6">
+              <h3 className="mb-1 text-lg font-black uppercase">
+                <span className="inline-block bg-foreground text-surface px-2 py-0.5 mr-2 text-sm">
+                  201
+                </span>
+                Cursor Tools
+              </h3>
+              <p className="text-sm font-medium mb-3">
+                Most people hate debugging code. We&apos;ll learn how to make AI do it for you.
+              </p>
+              <ul className="space-y-2 text-sm font-medium">
+                <li>
+                  1. Use <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">Debug Mode</code> to debug issues faster
+                </li>
+                <li>
+                  2. Use <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">MCP</code> to give your agent access to GitHub and your browser
+                </li>
+                <li>
+                  3. Use <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">BugBot</code> to fix security issues with 1 click
+                </li>
+              </ul>
+            </div>
+
+            {/* Module 3 */}
+            <div className="neo-shadow bg-pink p-6">
+              <h3 className="mb-3 text-lg font-black uppercase">
+                <span className="inline-block bg-foreground text-surface px-2 py-0.5 mr-2 text-sm">
+                  301
+                </span>
+                Cursor for Frontend
+              </h3>
+              <ul className="space-y-2 text-sm font-medium">
+                <li>
+                  1. Use Cursor&apos;s <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">Visual Browser</code> to edit designs instantly
+                </li>
+                <li>
+                  2. Use Cursor&apos;s <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">Figma</code> plugins to edit frontend design faster
+                </li>
+              </ul>
+            </div>
+
+            {/* Module 4 */}
+            <div className="neo-shadow bg-purple p-6">
+              <h3 className="mb-1 text-lg font-black uppercase">
+                <span className="inline-block bg-foreground text-surface px-2 py-0.5 mr-2 text-sm">
+                  401
+                </span>
+                Parallel Agentic Workflows
+              </h3>
+              <p className="text-sm font-medium mb-3">
+                The nitro boosts. Learn these and you&apos;ll be in the top 0.1% of Cursor users.
+              </p>
+              <ul className="space-y-2 text-sm font-medium">
+                <li>
+                  1. Use <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">Agent Review</code> to find security vulnerabilities
+                </li>
+                <li>
+                  2. Use <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">Background Agents</code> to code while you sleep
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-10 text-center">
+            <p className="neo-shadow-sm inline-block bg-yellow px-6 py-3 text-sm font-black uppercase">
+              🤖 Prompt like a pro · 💰 Launch to thousands of users
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ───── Testimonials ───── */}
+      <section className="px-6">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">
+            What Students Are Saying
+          </h2>
+          <div className="grid gap-8 sm:grid-cols-2">
+            <TestimonialCard
+              quote="I was able to get the web app running in a weekend"
+              name="Peter"
+              imageSrc="/testimonial-peter.png"
+              color="bg-blue"
+            />
+            <TestimonialCard
+              quote="Well worth the money and time"
+              name="Patrick M."
+              imageSrc="/testimonial-patrick.png"
+              color="bg-green"
+            />
+            <TestimonialCard
+              quote="I've seen other ppl charge $100 for the boilerplate alone"
+              name="Princess Jean S."
+              imageSrc="/testimonial-princess.png"
+              color="bg-yellow"
+            />
+            <TestimonialCard
+              quote="I've never finished other courses cause it felt like 7 hrs of watching someone code"
+              name="Regine C."
+              imageSrc="/testimonial-regine.png"
+              color="bg-pink"
+            />
+          </div>
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ───── About ───── */}
+      <section id="about" className="px-6">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">
+            About Me
+          </h2>
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="neo-shadow bg-blue p-6">
+              <h3 className="mb-4 text-xl font-black uppercase">Full Stack SaaS Founder</h3>
+              <ul className="space-y-4 text-sm font-medium leading-relaxed">
+                <li className="flex items-start gap-3">
+                  <span className="inline-block bg-foreground text-surface px-1.5 py-0.5 text-xs font-black">▸</span>
+                  Founding Engineer at a $79M series A company
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="inline-block bg-foreground text-surface px-1.5 py-0.5 text-xs font-black">▸</span>
+                  Built 10+ apps with Cursor — one has 5 stars in the App Store
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="inline-block bg-foreground text-surface px-1.5 py-0.5 text-xs font-black">▸</span>
+                  Top 1% Cursor user
+                </li>
+              </ul>
+            </div>
+
+            <div className="neo-shadow bg-orange p-6">
+              <h3 className="mb-4 text-xl font-black uppercase">Taught 300+ Students IRL</h3>
+              <ul className="space-y-4 text-sm font-medium leading-relaxed">
+                <li className="flex items-start gap-3">
+                  <span className="inline-block bg-foreground text-surface px-1.5 py-0.5 text-xs font-black">▸</span>
+                  Hosted a 200+ member Cursor event in Vancouver
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="inline-block bg-foreground text-surface px-1.5 py-0.5 text-xs font-black">▸</span>
+                  100+ attendee Cursor event in Thailand
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ───── What's Included ───── */}
+      <section className="px-6">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">
+            What&apos;s Included
+          </h2>
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <IncludedCard
+              emoji="🎓"
+              title="Lifetime Access"
+              description="3+ hours of video content. Includes 2 years of updates."
+              color="bg-yellow"
+            />
+            <IncludedCard
+              emoji="🚀"
+              title="Web App Template"
+              description="A ready-to-use web application you can deploy today. This alone pays off the course."
+              color="bg-blue"
+            />
+            <IncludedCard
+              emoji="📝"
+              title="Cursor Prompt Library"
+              description="Get 20+ Cursor Rules covering every possible workflow in Cursor."
+              color="bg-green"
+            />
+            <IncludedCard
+              emoji="📞"
+              title="Coaching Call"
+              description="A complimentary 30 min call for advice on startups, marketing, anything. I typically charge $200 for these."
+              bonus
+              color="bg-pink"
+            />
+            <IncludedCard
+              emoji="💬"
+              title="Community Discord"
+              description="Build and share projects with fellow AI builders."
+              bonus
+              color="bg-purple"
+            />
+          </div>
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ───── Tech Stack ───── */}
+      <section className="px-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="mb-8 text-3xl font-black uppercase sm:text-5xl">Our Tech Stack</h2>
+          <p className="mb-8 font-medium">
+            Curated for speed while minimizing costs.
+          </p>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://img-c.udemycdn.com/course/750x422/6609805_3dcb_3.jpg"
+            alt="Tech stack: Cursor, OpenAI, Supabase, and NextJS"
+            className="mx-auto mb-10 neo-shadow-lg"
+            width={750}
+            height={422}
+          />
+          <div className="grid gap-6 text-left sm:grid-cols-2">
+            <div className="neo-shadow bg-yellow p-5">
+              <p className="text-sm font-black uppercase">Cursor</p>
+              <p className="mt-1 text-xs font-medium">AI powered code editor, 1M+ users worldwide</p>
+            </div>
+            <div className="neo-shadow bg-blue p-5">
+              <p className="text-sm font-black uppercase">Next.js + TypeScript + Tailwind</p>
+              <p className="mt-1 text-xs font-medium">
+                <a
+                  href="https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide#frontend-app-development"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-2 underline-offset-2 hover:bg-accent hover:text-white"
+                >
+                  OpenAI recommends
+                </a>{" "}
+                these — AI excels at writing in these languages
+              </p>
+            </div>
+            <div className="neo-shadow bg-green p-5">
+              <p className="text-sm font-black uppercase">Max Intelligence LLMs</p>
+              <p className="mt-1 text-xs font-medium">Claude 4.6 Opus / GPT Codex 5.3 / Gemini 3</p>
+            </div>
+            <div className="neo-shadow bg-pink p-5">
+              <p className="text-sm font-black uppercase">Fast + Cheap LLMs</p>
+              <p className="mt-1 text-xs font-medium">Auto Mode, Composer-1.5</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ───── CTA ───── */}
+      <section className="px-6">
+        <div className="mx-auto max-w-2xl neo-shadow-lg bg-yellow p-10 text-center">
+          <h2 className="mb-2 text-3xl font-black uppercase sm:text-5xl">
+            Get the Course
+          </h2>
+          <p className="mb-8 text-lg font-bold">
+            Discount Code:{" "}
+            <span className="neo-shadow-sm inline-block bg-accent px-3 py-1 text-white font-black">
+              SAVE30
+            </span>
+          </p>
+          <CTAButton />
+          <p className="mt-8 text-sm font-bold">
+            🔓 Backed by my{" "}
+            <a href="#guarantee" className="underline decoration-3 underline-offset-2 hover:bg-foreground hover:text-surface">
+              100% Satisfaction Guarantee
+            </a>
+          </p>
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ───── FAQ ───── */}
+      <section id="faq" className="px-6">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">FAQ</h2>
+          <div className="space-y-5">
+            <FAQItem question="🤖 What level of coding experience do I need?">
+              <p>
+                Most of my students have very limited exposure to code. The system you&apos;ll build
+                allows Cursor to both code and troubleshoot. At most, we cover basic topics like
+                &ldquo;why do we need a database?&rdquo; AI will implement everything.
+              </p>
+            </FAQItem>
+
+            <FAQItem question="🔓 100% Satisfaction Guarantee">
+              <p id="guarantee">
+                I&apos;ve already helped hundreds of students build their first AI app with Cursor.
+                I&apos;m so confident this course will help you, that if you feel it wasn&apos;t
+                worth the money, I offer a <strong>100% Money Back Guarantee</strong>.
+              </p>
+              <p className="mt-2">
+                Email{" "}
+                <a href="mailto:shawnesquivel24@gmail.com" className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white">
+                  shawnesquivel24@gmail.com
+                </a>{" "}
+                within 30 days of purchase for a full refund.
+              </p>
+            </FAQItem>
+
+            <FAQItem question="❌ Who is this course NOT for?">
+              <p className="mb-2">This course probably is NOT for you if:</p>
+              <ul className="mb-4 list-inside list-disc space-y-1">
+                <li>You want to learn how to code</li>
+                <li>You want to &ldquo;watch&rdquo; instead of &ldquo;apply&rdquo;</li>
+                <li>You expect AI to do ALL the work</li>
+              </ul>
+              <p className="mb-2">This course IS for you if:</p>
+              <ul className="list-inside list-disc space-y-1">
+                <li>✅ You&apos;re interested in launching projects, not writing Python</li>
+                <li>✅ You&apos;re excited to build things, not drown in boring theory videos</li>
+                <li>✅ You know that AI is not perfect</li>
+              </ul>
+            </FAQItem>
+
+            <FAQItem question="👨‍💻 I know how to code. Should I take this course?">
+              <p>
+                Yes! I&apos;ve taught engineers with 30+ years of experience how to use Cursor.
+              </p>
+            </FAQItem>
+
+            <FAQItem question="📲 Will I learn how to build Mobile Apps?">
+              <p>
+                No. The frameworks applied can be used for any output — mobile apps, web apps, or
+                data analysis. Mobile apps can be hard to set up, even with AI.
+              </p>
+            </FAQItem>
+
+            <FAQItem question="💰 Does Cursor cost money to use?">
+              <p>
+                Yes. Each call to Cursor will spend a bit of your monthly usage. More information in
+                their{" "}
+                <a
+                  href="https://cursor.com/pricing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white"
+                >
+                  Pricing
+                </a>{" "}
+                and{" "}
+                <a
+                  href="https://cursor.com/docs/account/billing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white"
+                >
+                  Billing
+                </a>{" "}
+                docs.
+              </p>
+              <p className="mt-2">
+                ✅ In this course, we&apos;ll learn how to reduce your monthly spending and avoid
+                expensive Cursor bills.
+              </p>
+              <p className="mt-2">
+                P.S. Eligible students can get 1 year free of Cursor Pro.{" "}
+                <a
+                  href="https://cursor.com/students"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white"
+                >
+                  cursor.com/students
+                </a>
+              </p>
+            </FAQItem>
+
+            <FAQItem question="🧑‍🎓 I'm a student. How can I afford your course?">
+              <p>
+                Email us at{" "}
+                <a href="mailto:shawnesquivel24@gmail.com" className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white">
+                  shawnesquivel24@gmail.com
+                </a>{" "}
+                from your verified student email (.edu or .alumni) to get <strong>50% off</strong>{" "}
+                student pricing.
+              </p>
+              <p className="mt-2">
+                I also have free resources on{" "}
+                <a
+                  href="https://www.youtube.com/@shawn.builds"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white"
+                >
+                  YouTube
+                </a>
+                . Purchasing the course allows me to make more free Cursor content for everyone.
+              </p>
+            </FAQItem>
+
+            <FAQItem question="👋🏽 How can I contact you?">
+              <p>
+                <a
+                  href="mailto:shawnesquivel24@gmail.com"
+                  className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white"
+                >
+                  shawnesquivel24@gmail.com
+                </a>
+              </p>
+              <div className="mt-3 flex gap-4">
+                <a
+                  href="https://www.instagram.com/shawn.builds"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white"
+                >
+                  Instagram
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/shawnesquivel/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white"
+                >
+                  LinkedIn
+                </a>
+                <a
+                  href="https://www.youtube.com/@shawn.builds"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-2 underline-offset-2 font-bold hover:bg-accent hover:text-white"
+                >
+                  YouTube
+                </a>
+              </div>
+            </FAQItem>
+          </div>
+        </div>
+      </section>
+
+      {/* ───── Footer ───── */}
+      <footer className="mt-20 border-t-3 border-foreground bg-foreground py-10 text-center text-sm text-surface">
+        <p className="font-black uppercase">&copy; {new Date().getFullYear()} Shawn Esquivel. All rights reserved.</p>
+        <p className="mt-2">
+          <a href="mailto:shawnesquivel24@gmail.com" className="underline decoration-2 underline-offset-2 hover:text-yellow">
+            shawnesquivel24@gmail.com
+          </a>
+        </p>
+        <div className="mt-4 flex items-center justify-center gap-6">
+          <a
+            href="https://www.instagram.com/shawn.builds"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold uppercase underline decoration-2 underline-offset-2 hover:text-yellow"
+          >
+            Instagram
+          </a>
+          <a
+            href="https://www.linkedin.com/in/shawnesquivel/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold uppercase underline decoration-2 underline-offset-2 hover:text-yellow"
+          >
+            LinkedIn
+          </a>
+          <a
+            href="https://www.youtube.com/@shawn.builds"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold uppercase underline decoration-2 underline-offset-2 hover:text-yellow"
+          >
+            YouTube
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }

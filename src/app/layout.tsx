@@ -8,8 +8,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Shawn Esquivel",
-  description: "Software Engineer",
+  title: "Build Apps with Cursor | Shawn Esquivel",
+  description:
+    "Learn to build production-ready apps with Cursor AI. 3+ hours of hands-on training, templates, prompt libraries, and more.",
 };
 
 export default function RootLayout({
@@ -18,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body className={`${inter.variable} font-sans antialiased`}>
         {children}
       </body>
