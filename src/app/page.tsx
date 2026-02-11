@@ -13,7 +13,7 @@ function CTAButton({ className = "" }: { className?: string }) {
       rel="noopener noreferrer"
       className={`neo-btn inline-block bg-accent px-8 py-4 text-base text-white ${className}`}
     >
-      Get the Course — Use Code SAVE30
+      Enroll Now — Use Code SAVE30 for 30% Off
     </a>
   );
 }
@@ -52,7 +52,7 @@ function PainCard({
         <img
           src={imageSrc}
           alt={imageCaptionAlt}
-          className="mt-4 w-full border-2 border-foreground"
+          className="mt-4 w-full border-3 border-foreground"
         />
       )}
       <p className="mt-3 border-t-2 border-foreground pt-3 text-xs font-bold uppercase tracking-wider">
@@ -193,16 +193,24 @@ export default function Home() {
             Build Apps With Cursor
           </p>
           <h1 className="text-4xl font-black leading-tight uppercase tracking-tight sm:text-5xl md:text-7xl">
-            Stop Going
+            Go From Idea
             <br />
-            in Circles.
+            to Deployed App
             <br />
-            <span className="inline-block bg-accent px-3 text-white">Ship Real Apps.</span>
+            <span className="inline-block bg-accent px-3 text-white">In One Weekend.</span>
           </h1>
           <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed font-medium">
-            The hands-on course that teaches you how to build, debug, and deploy production-ready
-            apps using Cursor&apos;s AI agents — without writing a single line of code.
+            The hands-on Cursor course that 300+ students have used to build and ship
+            production-ready apps — without writing a single line of code.
           </p>
+
+          {/* YES-YES-YES questions */}
+          <div className="mx-auto mt-8 max-w-md text-left space-y-2">
+            <p className="text-base font-bold">✅ Tired of AI that fixes one bug and creates three more?</p>
+            <p className="text-base font-bold">✅ Want to actually ship something — not just watch tutorials?</p>
+            <p className="text-base font-bold">✅ Ready to build real apps, even if you can&apos;t code?</p>
+          </div>
+
           <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row sm:justify-center">
             <CTAButton />
             <a
@@ -224,11 +232,10 @@ export default function Home() {
       <section id="problems" className="px-6">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
-            The Problems With Vibe Coding
+            Sound Familiar?
           </h2>
           <p className="mx-auto mb-12 max-w-2xl text-center font-medium text-muted">
-            I&apos;ve spoken to 300+ vibe coders and Cursor users. Their complaints usually fit into
-            one of these categories:
+            After talking to 300+ vibe coders, the same 3 problems keep coming up:
           </p>
           <div className="grid gap-8 md:grid-cols-3">
             <PainCard
@@ -275,26 +282,50 @@ export default function Home() {
 
       {/* ───── Solution ───── */}
       <section className="px-6">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto max-w-4xl text-center">
           <h2 className="mb-4 text-3xl font-black uppercase sm:text-5xl">
-            The Solution: A Team of AI Agents
+            Imagine This Instead
           </h2>
-          <p className="mx-auto mb-10 max-w-xl font-medium leading-relaxed">
-            AI is like a wild horse. Used poorly, you&apos;ll go in endless circles. With the right
-            system, you can go way faster.
+          <p className="mx-auto mb-10 max-w-xl text-lg font-medium leading-relaxed">
+            What if you had a system where AI agents handled the code, the bugs, and the design —
+            and you just focused on <span className="font-black">what to build?</span>
           </p>
+
+          {/* Benefit Cards */}
+          <div className="grid gap-6 text-left sm:grid-cols-3 mb-10">
+            <div className="neo-shadow neo-hover bg-blue p-6">
+              <p className="mb-2 text-3xl">🚀</p>
+              <h4 className="mb-2 text-lg font-black uppercase">Ship in Days, Not Months</h4>
+              <p className="text-sm font-medium leading-relaxed">
+                Your agents write 100% of the code. You go from idea to deployed app in a weekend.
+              </p>
+            </div>
+            <div className="neo-shadow neo-hover bg-green p-6">
+              <p className="mb-2 text-3xl">🛡️</p>
+              <h4 className="mb-2 text-lg font-black uppercase">No More Mystery Bugs</h4>
+              <p className="text-sm font-medium leading-relaxed">
+                Agents scan your code for bugs and security issues automatically. You sleep easy.
+              </p>
+            </div>
+            <div className="neo-shadow neo-hover bg-pink p-6">
+              <p className="mb-2 text-3xl">🎨</p>
+              <h4 className="mb-2 text-lg font-black uppercase">Designs That Don&apos;t Look AI</h4>
+              <p className="text-sm font-medium leading-relaxed">
+                Clone any design you like. Your app looks custom — not like every other AI build.
+              </p>
+            </div>
+          </div>
 
           {/* AI Stack visual */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/a%20team%20of%20ai%20agents.png"
             alt="My AI Stack for Web Apps — Task Master, MCP, Background Agents, BugBot, and more"
-            className="mx-auto neo-shadow-lg bg-surface"
+            className="mx-auto w-full max-w-3xl neo-shadow-lg bg-surface"
           />
 
           <p className="mt-8 text-sm font-bold">
-            You&apos;ll learn this Cursor workflow to build faster, automate bug fixes — all without
-            writing a line of code.
+            This is the exact Cursor workflow you&apos;ll build in the course.
           </p>
         </div>
       </section>
@@ -308,12 +339,10 @@ export default function Home() {
             What You&apos;ll Learn
           </h2>
           <p className="mx-auto mb-4 max-w-xl text-center font-medium">
-            This is not an 8 hour tutorial where you passively watch. You&apos;ll learn hands-on by
-            building production-ready web apps.
+            No 8-hour passive tutorials. You&apos;ll build and deploy real web apps across 4 modules.
           </p>
           <p className="mx-auto mb-12 max-w-xl text-center text-sm font-medium text-muted">
-            We cover the latest tools in Cursor — Agent Mode, Parallel Agents, and cutting-edge
-            frameworks.
+            Covering Agent Mode, Parallel Agents, Background Agents, and every cutting-edge Cursor feature.
           </p>
 
           <div className="space-y-6">
@@ -408,10 +437,12 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mt-10 text-center">
+          <div className="mt-10 text-center space-y-4">
             <p className="neo-shadow-sm inline-block bg-yellow px-6 py-3 text-sm font-black uppercase">
               🤖 Prompt like a pro · 💰 Launch to thousands of users
             </p>
+            <br />
+            <CTAButton className="mt-4" />
           </div>
         </div>
       </section>
@@ -422,7 +453,7 @@ export default function Home() {
       <section className="px-6">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">
-            What Students Are Saying
+            300+ Students. Real Results.
           </h2>
           <div className="grid gap-8 sm:grid-cols-2">
             <TestimonialCard
@@ -450,6 +481,9 @@ export default function Home() {
               color="bg-pink"
             />
           </div>
+          <div className="mt-10 text-center">
+            <CTAButton />
+          </div>
         </div>
       </section>
 
@@ -458,9 +492,12 @@ export default function Home() {
       {/* ───── About ───── */}
       <section id="about" className="px-6">
         <div className="mx-auto max-w-4xl">
-          <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">
-            About Me
+          <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
+            Your Instructor
           </h2>
+          <p className="mx-auto mb-12 max-w-xl text-center font-medium text-muted">
+            Not just a teacher — a builder who uses Cursor every day to ship real products.
+          </p>
           <div className="grid gap-8 md:grid-cols-2">
             <div className="neo-shadow bg-blue p-6">
               <h3 className="mb-4 text-xl font-black uppercase">Full Stack SaaS Founder</h3>
@@ -494,6 +531,9 @@ export default function Home() {
               </ul>
             </div>
           </div>
+          <div className="mt-10 text-center">
+            <CTAButton />
+          </div>
         </div>
       </section>
 
@@ -502,9 +542,12 @@ export default function Home() {
       {/* ───── What's Included ───── */}
       <section className="px-6">
         <div className="mx-auto max-w-5xl">
-          <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">
-            What&apos;s Included
+          <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
+            Everything You Get
           </h2>
+          <p className="mx-auto mb-12 max-w-xl text-center font-medium text-muted">
+            Not just videos — you get templates, prompts, and direct access to help you ship faster.
+          </p>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             <IncludedCard
               emoji="🎓"
@@ -555,9 +598,7 @@ export default function Home() {
           <img
             src="https://img-c.udemycdn.com/course/750x422/6609805_3dcb_3.jpg"
             alt="Tech stack: Cursor, OpenAI, Supabase, and NextJS"
-            className="mx-auto mb-10 neo-shadow-lg"
-            width={750}
-            height={422}
+            className="mx-auto mb-10 w-full neo-shadow-lg"
           />
           <div className="grid gap-6 text-left sm:grid-cols-2">
             <div className="neo-shadow bg-yellow p-5">
@@ -596,13 +637,17 @@ export default function Home() {
       <section className="px-6">
         <div className="mx-auto max-w-2xl neo-shadow-lg bg-yellow p-10 text-center">
           <h2 className="mb-2 text-3xl font-black uppercase sm:text-5xl">
-            Get the Course
+            Start Building Today
           </h2>
-          <p className="mb-8 text-lg font-bold">
-            Discount Code:{" "}
+          <p className="mb-4 text-lg font-bold">
+            🚀 Launch pricing — 30% off while the course is new.
+          </p>
+          <p className="mb-8 text-base font-medium">
+            Use code{" "}
             <span className="neo-shadow-sm inline-block bg-accent px-3 py-1 text-white font-black">
               SAVE30
             </span>
+            {" "}at checkout. Price goes up as we add modules.
           </p>
           <CTAButton />
           <p className="mt-8 text-sm font-bold">
