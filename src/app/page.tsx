@@ -325,7 +325,7 @@ export default function Home() {
           />
 
           <p className="mt-8 text-sm font-bold">
-            This is the exact Cursor workflow you&apos;ll build in the course.
+            This is the exact workflow you&apos;ll build — your team of AI agents, working for you.
           </p>
         </div>
       </section>
@@ -382,7 +382,7 @@ export default function Home() {
                 Cursor Tools
               </h3>
               <p className="text-sm font-medium mb-3">
-                Most people hate debugging code. We&apos;ll learn how to make AI do it for you.
+                You hate debugging. Here&apos;s how you make AI do it for you.
               </p>
               <ul className="space-y-2 text-sm font-medium">
                 <li>
@@ -496,7 +496,7 @@ export default function Home() {
             Your Instructor
           </h2>
           <p className="mx-auto mb-12 max-w-xl text-center font-medium text-muted">
-            Not just a teacher — a builder who uses Cursor every day to ship real products.
+            You&apos;re learning from a builder who uses Cursor every day to ship real products.
           </p>
           <div className="grid gap-8 md:grid-cols-2">
             <div className="neo-shadow bg-blue p-6">
@@ -552,25 +552,25 @@ export default function Home() {
             <IncludedCard
               emoji="🎓"
               title="Lifetime Access"
-              description="3+ hours of video content. Includes 2 years of updates."
+              description="You get 3+ hours of video content with 2 years of updates."
               color="bg-yellow"
             />
             <IncludedCard
               emoji="🚀"
               title="Web App Template"
-              description="A ready-to-use web application you can deploy today. This alone pays off the course."
+              description="You get a ready-to-deploy web app. This alone pays for the course."
               color="bg-blue"
             />
             <IncludedCard
               emoji="📝"
               title="Cursor Prompt Library"
-              description="Get 20+ Cursor Rules covering every possible workflow in Cursor."
+              description="You get 20+ Cursor Rules for every workflow — copy, paste, and ship."
               color="bg-green"
             />
             <IncludedCard
               emoji="📞"
               title="Coaching Call"
-              description="A complimentary 30 min call for advice on startups, marketing, anything. I typically charge $200 for these."
+              description="You get a 30-min call for advice on startups, marketing, anything. Typically a $200 value."
               bonus
               color="bg-pink"
             />
@@ -590,9 +590,9 @@ export default function Home() {
       {/* ───── Tech Stack ───── */}
       <section className="px-6">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="mb-8 text-3xl font-black uppercase sm:text-5xl">Our Tech Stack</h2>
+          <h2 className="mb-8 text-3xl font-black uppercase sm:text-5xl">Your Tech Stack</h2>
           <p className="mb-8 font-medium">
-            Curated for speed while minimizing costs.
+            Chosen so you ship fast and keep costs low.
           </p>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -647,11 +647,11 @@ export default function Home() {
             <span className="neo-shadow-sm inline-block bg-accent px-3 py-1 text-white font-black">
               SAVE30
             </span>
-            {" "}at checkout. Price goes up as we add modules.
+            {" "}at checkout. Price goes up as new modules drop.
           </p>
           <CTAButton />
           <p className="mt-8 text-sm font-bold">
-            🔓 Backed by my{" "}
+            🔓 You&apos;re covered by a{" "}
             <a href="#guarantee" className="underline decoration-3 underline-offset-2 hover:bg-foreground hover:text-surface">
               100% Satisfaction Guarantee
             </a>
@@ -668,17 +668,17 @@ export default function Home() {
           <div className="space-y-5">
             <FAQItem question="🤖 What level of coding experience do I need?">
               <p>
-                Most of my students have very limited exposure to code. The system you&apos;ll build
-                allows Cursor to both code and troubleshoot. At most, we cover basic topics like
-                &ldquo;why do we need a database?&rdquo; AI will implement everything.
+                None. Most students start with zero coding experience. The system you&apos;ll build
+                lets Cursor handle the code and the troubleshooting. At most, you&apos;ll learn basics like
+                &ldquo;why do we need a database?&rdquo; — AI implements everything.
               </p>
             </FAQItem>
 
             <FAQItem question="🔓 100% Satisfaction Guarantee">
               <p id="guarantee">
-                I&apos;ve already helped hundreds of students build their first AI app with Cursor.
-                I&apos;m so confident this course will help you, that if you feel it wasn&apos;t
-                worth the money, I offer a <strong>100% Money Back Guarantee</strong>.
+                Hundreds of students have already built their first AI app with this course.
+                If you feel it wasn&apos;t worth the money, you get a{" "}
+                <strong>100% Money Back Guarantee</strong>.
               </p>
               <p className="mt-2">
                 Email{" "}
@@ -706,7 +706,7 @@ export default function Home() {
 
             <FAQItem question="👨‍💻 I know how to code. Should I take this course?">
               <p>
-                Yes! I&apos;ve taught engineers with 30+ years of experience how to use Cursor.
+                Yes! Engineers with 30+ years of experience have taken this course and leveled up their Cursor workflow.
               </p>
             </FAQItem>
 
@@ -741,8 +741,8 @@ export default function Home() {
                 docs.
               </p>
               <p className="mt-2">
-                ✅ In this course, we&apos;ll learn how to reduce your monthly spending and avoid
-                expensive Cursor bills.
+                ✅ You&apos;ll learn how to reduce your monthly Cursor spending and avoid
+                expensive bills.
               </p>
               <p className="mt-2">
                 P.S. Eligible students can get 1 year free of Cursor Pro.{" "}
@@ -767,7 +767,7 @@ export default function Home() {
                 student pricing.
               </p>
               <p className="mt-2">
-                I also have free resources on{" "}
+                You can also find free resources on{" "}
                 <a
                   href="https://www.youtube.com/@shawn.builds"
                   target="_blank"
@@ -776,7 +776,7 @@ export default function Home() {
                 >
                   YouTube
                 </a>
-                . Purchasing the course allows me to make more free Cursor content for everyone.
+                . Your purchase helps fund more free Cursor content for everyone.
               </p>
             </FAQItem>
 
