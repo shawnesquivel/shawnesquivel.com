@@ -197,7 +197,7 @@ export default function Home() {
                 "You spend hours going in circles with the same error.",
                 "And maybe you're racking up bills but you don't even understand why.",
               ]}
-              imageSrc="/cursor-reddit.png"
+              imageSrc="/reddit-cursor-complaint.png"
               imageCaptionAlt="AI keeps breaking the code and going in circles"
             />
             <PainCard
