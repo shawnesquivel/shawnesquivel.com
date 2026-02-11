@@ -2,7 +2,7 @@ import ImageCarousel from "@/components/ImageCarousel";
 import CopyCode from "@/components/CopyCode";
 
 const COURSE_URL =
-  "https://shawnesquivel.thinkific.com/order?ct=71864c85-dca1-4514-9b50-1a48865a5ef5";
+  "https://shawnesquivel.thinkific.com/order?ct=a25f0eab-5e34-4699-b53e-2a2550eaa31b";
 
 function SectionDivider() {
   return <div className="mx-auto my-16 h-1 w-full max-w-5xl bg-foreground md:my-20" />;
@@ -14,7 +14,7 @@ function CTAButton({ className = "" }: { className?: string }) {
       href={COURSE_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className={`neo-btn inline-block rounded-full bg-accent px-10 py-5 text-lg font-black uppercase tracking-wide text-white shadow-[6px_6px_0_0_#1a1a1a] hover:shadow-[2px_2px_0_0_#1a1a1a] hover:translate-x-1 hover:translate-y-1 transition-all ${className}`}
+      className={`inline-block rounded-full border-3 border-foreground bg-accent px-8 py-4 text-base font-black uppercase tracking-wide text-white shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_0_#1a1a1a] active:translate-x-1 active:translate-y-1 active:shadow-none ${className}`}
     >
       Enroll Now — Use Code SAVE30 for 30% Off
     </a>
@@ -171,6 +171,9 @@ export default function Home() {
             <a href="#curriculum" className="hidden hover:underline decoration-3 underline-offset-4 sm:inline">
               Curriculum
             </a>
+            <a href="#testimonials" className="hidden hover:underline decoration-3 underline-offset-4 sm:inline">
+              Testimonials
+            </a>
             <a href="#about" className="hidden hover:underline decoration-3 underline-offset-4 sm:inline">
               About
             </a>
@@ -207,32 +210,26 @@ export default function Home() {
             production-ready apps — without writing a single line of code.
           </p>
 
-          {/* YES-YES-YES questions */}
-          <div className="mx-auto mt-8 max-w-md text-left space-y-2">
-            <p className="text-base font-bold">✅ Tired of AI that fixes one bug and creates three more?</p>
-            <p className="text-base font-bold">✅ Want to actually ship something — not just watch tutorials?</p>
-            <p className="text-base font-bold">✅ Ready to build real apps, even if you can&apos;t code?</p>
-          </div>
+          <p className="mt-10 neo-shadow-sm inline-block bg-green px-4 py-2 text-xs font-black uppercase">
+            🔓 100% Satisfaction Guarantee · 30-day refund policy
+          </p>
 
-          <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row sm:justify-center">
+          <div className="mt-6 flex flex-col items-center gap-5 sm:flex-row sm:justify-center">
             <CTAButton />
             <a
               href="#curriculum"
-              className="neo-btn rounded-full bg-surface px-8 py-5 text-lg font-black uppercase tracking-wide text-foreground border-3 border-foreground shadow-[4px_4px_0_0_#1a1a1a] hover:shadow-[2px_2px_0_0_#1a1a1a] hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+              className="inline-block rounded-full border-3 border-foreground bg-surface px-8 py-4 text-base font-black uppercase tracking-wide text-foreground shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_0_#1a1a1a] active:translate-x-1 active:translate-y-1 active:shadow-none"
             >
               See the Curriculum
             </a>
           </div>
-          <p className="mt-8 neo-shadow-sm inline-block bg-green px-4 py-2 text-xs font-black uppercase">
-            🔓 100% Satisfaction Guarantee · 30-day refund policy
-          </p>
         </div>
       </section>
 
       <SectionDivider />
 
       {/* ───── Problems ───── */}
-      <section id="problems" className="px-6">
+      <section id="problems" className="scroll-mt-24 px-6">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
             Sound Familiar?
@@ -336,7 +333,7 @@ export default function Home() {
       <SectionDivider />
 
       {/* ───── Curriculum ───── */}
-      <section id="curriculum" className="px-6">
+      <section id="curriculum" className="scroll-mt-24 px-6">
         <div className="mx-auto max-w-4xl">
           <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
             What You&apos;ll Learn
@@ -453,7 +450,7 @@ export default function Home() {
       <SectionDivider />
 
       {/* ───── Testimonials ───── */}
-      <section className="px-6">
+      <section id="testimonials" className="scroll-mt-24 px-6">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">
             300+ Students. Real Results.
@@ -493,7 +490,7 @@ export default function Home() {
       <SectionDivider />
 
       {/* ───── About ───── */}
-      <section id="about" className="px-6">
+      <section id="about" className="scroll-mt-24 px-6">
         <div className="mx-auto max-w-4xl">
           <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
             Your Instructor
@@ -668,7 +665,7 @@ export default function Home() {
       <SectionDivider />
 
       {/* ───── FAQ ───── */}
-      <section id="faq" className="px-6">
+      <section id="faq" className="scroll-mt-24 px-6">
         <div className="mx-auto max-w-3xl">
           <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">FAQ</h2>
           <div className="space-y-5">
