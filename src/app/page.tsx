@@ -1,7 +1,7 @@
 import ImageCarousel from "@/components/ImageCarousel";
 import CopyCode from "@/components/CopyCode";
 import PainCard from "@/components/PainCard";
-import TestimonialCard from "@/components/TestimonialCard";
+import TestimonialCarousel from "@/components/TestimonialCarousel";
 import ZoomableImage from "@/components/ZoomableImage";
 
 const COURSE_URL =
@@ -187,7 +187,7 @@ export default function Home() {
             After talking to 300+ vibe coders, the same 3 problems keep coming
             up:
           </p>
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="space-y-8">
             <PainCard
               emoji="🐞"
               title="Endless Bugs"
@@ -204,6 +204,7 @@ export default function Home() {
               emoji="⚠️"
               title="Security Risks"
               color="bg-orange"
+              reverse
               items={[
                 "AI writes code full of security holes you can't see.",
                 "Hackers drain your cloud bill overnight.",
@@ -480,32 +481,7 @@ export default function Home() {
           <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">
             300+ Students. Real Results.
           </h2>
-          <div className="grid gap-8 sm:grid-cols-2">
-            <TestimonialCard
-              quote="I was able to get the web app running in a weekend"
-              name="Peter"
-              imageSrc="/testimonial-peter.png"
-              color="bg-blue"
-            />
-            <TestimonialCard
-              quote="Well worth the money and time"
-              name="Patrick M."
-              imageSrc="/testimonial-patrick.png"
-              color="bg-green"
-            />
-            <TestimonialCard
-              quote="I've seen other ppl charge $100 for the boilerplate alone"
-              name="Princess Jean S."
-              imageSrc="/testimonial-princess.png"
-              color="bg-yellow"
-            />
-            <TestimonialCard
-              quote="I've never finished other courses cause it felt like 7 hrs of watching someone code"
-              name="Regine C."
-              imageSrc="/testimonial-regine.png"
-              color="bg-pink"
-            />
-          </div>
+          <TestimonialCarousel />
           <div className="mt-10 text-center">
             <CTAButton />
           </div>
@@ -521,56 +497,9 @@ export default function Home() {
             Your Instructor
           </h2>
           <p className="mx-auto mb-12 max-w-xl text-center font-medium text-muted">
-            You&apos;re learning from a builder who uses Cursor every day to
-            ship real products.
+            You&apos;re learning from a verified Cursor Ambassador and SaaS
+            Founder.
           </p>
-          <div className="grid gap-8 md:grid-cols-2">
-            <div className="neo-shadow bg-blue p-6">
-              <h3 className="mb-4 text-xl font-black uppercase">
-                Full Stack SaaS Founder
-              </h3>
-              <ul className="space-y-4 text-sm font-medium leading-relaxed">
-                <li className="flex items-start gap-3">
-                  <span className="inline-block bg-foreground text-surface px-1.5 py-0.5 text-xs font-black">
-                    ▸
-                  </span>
-                  I'm Founding Engineer at a $79M series A company
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="inline-block bg-foreground text-surface px-1.5 py-0.5 text-xs font-black">
-                    ▸
-                  </span>
-                  Built 10+ apps with Cursor — one has 5 stars in the App Store
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="inline-block bg-foreground text-surface px-1.5 py-0.5 text-xs font-black">
-                    ▸
-                  </span>
-                  Top 1% Cursor user
-                </li>
-              </ul>
-            </div>
-
-            <div className="neo-shadow bg-orange p-6">
-              <h3 className="mb-4 text-xl font-black uppercase">
-                Taught 300+ Students IRL
-              </h3>
-              <ul className="space-y-4 text-sm font-medium leading-relaxed">
-                <li className="flex items-start gap-3">
-                  <span className="inline-block bg-foreground text-surface px-1.5 py-0.5 text-xs font-black">
-                    ▸
-                  </span>
-                  Hosted a 200+ member Cursor event in Vancouver
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="inline-block bg-foreground text-surface px-1.5 py-0.5 text-xs font-black">
-                    ▸
-                  </span>
-                  100+ attendee Cursor event in Thailand
-                </li>
-              </ul>
-            </div>
-          </div>
           {/* ── About Image Carousel ── */}
           <ImageCarousel />
 
@@ -670,17 +599,17 @@ export default function Home() {
               </p>
             </div>
             <div className="neo-shadow bg-green p-5">
-              <p className="text-sm font-black uppercase">
-                Max Intelligence LLMs
-              </p>
+              <p className="text-sm font-black uppercase">Max IQ AI Models</p>
               <p className="mt-1 text-xs font-medium">
-                Claude 4.6 Opus / GPT Codex 5.3 / Gemini 3
+                Like Claude 4.6 Opus, GPT Codex 5.3, and Gemini 3
               </p>
             </div>
             <div className="neo-shadow bg-pink p-5">
-              <p className="text-sm font-black uppercase">Fast + Cheap LLMs</p>
+              <p className="text-sm font-black uppercase">
+                Fast + Affordable AI Models
+              </p>
               <p className="mt-1 text-xs font-medium">
-                Auto Mode, Composer-1.5
+                Like Cursor Auto Mode and Composer-1.5i
               </p>
             </div>
           </div>

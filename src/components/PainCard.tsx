@@ -9,6 +9,7 @@ export default function PainCard({
   imageSrc,
   imageCaptionAlt,
   color,
+  reverse = false,
 }: {
   emoji: string;
   title: string;
@@ -16,29 +17,38 @@ export default function PainCard({
   imageSrc?: string;
   imageCaptionAlt: string;
   color: string;
+  reverse?: boolean;
 }) {
   return (
-    <div className={`neo-shadow neo-hover p-6 ${color}`}>
-      <h3 className="mb-4 text-xl font-black uppercase tracking-tight">
-        {emoji} {title}
-      </h3>
-      <ul className="space-y-3">
-        {items.map((item, i) => (
-          <li key={i} className="text-sm leading-relaxed font-medium">
-            {item}
-          </li>
-        ))}
-      </ul>
+    <div
+      className={`neo-shadow overflow-hidden ${color} flex flex-col ${
+        reverse ? "md:flex-row-reverse" : "md:flex-row"
+      }`}
+    >
+      {/* Text side */}
+      <div className="flex flex-1 flex-col justify-center p-8">
+        <h3 className="mb-4 text-2xl font-black uppercase tracking-tight">
+          {emoji} {title}
+        </h3>
+        <ul className="space-y-3">
+          {items.map((item, i) => (
+            <li key={i} className="text-base leading-relaxed font-medium">
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Image side */}
       {imageSrc && (
-        <ZoomableImage
-          src={imageSrc}
-          alt={imageCaptionAlt}
-          className="mt-4 w-full border-3 border-foreground"
-        />
+        <div className="flex flex-1 border-t-3 border-foreground md:border-t-0 md:border-l-3">
+          <ZoomableImage
+            src={imageSrc}
+            alt={imageCaptionAlt}
+            className="h-full w-full"
+          />
+        </div>
       )}
-      <p className="mt-3 border-t-2 border-foreground pt-3 text-xs font-bold uppercase tracking-wider">
-        {imageCaptionAlt}
-      </p>
     </div>
   );
 }

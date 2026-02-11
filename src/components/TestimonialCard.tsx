@@ -1,7 +1,5 @@
 "use client";
 
-import ZoomableImage from "./ZoomableImage";
-
 export default function TestimonialCard({
   quote,
   name,
@@ -14,9 +12,10 @@ export default function TestimonialCard({
   color: string;
 }) {
   return (
-    <div className={`neo-shadow neo-hover ${color}`}>
+    <div className={`neo-shadow ${color}`}>
       {imageSrc && (
-        <ZoomableImage
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
           src={imageSrc}
           alt={name ? `${name}'s review` : "Student review"}
           className="w-full border-b-2 border-foreground"
