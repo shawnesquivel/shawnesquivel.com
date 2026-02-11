@@ -14,7 +14,7 @@ function CTAButton({ className = "" }: { className?: string }) {
       href={COURSE_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className={`neo-btn inline-block bg-accent px-8 py-4 text-base text-white ${className}`}
+      className={`neo-btn inline-block rounded-full bg-accent px-10 py-5 text-lg font-black uppercase tracking-wide text-white shadow-[6px_6px_0_0_#1a1a1a] hover:shadow-[2px_2px_0_0_#1a1a1a] hover:translate-x-1 hover:translate-y-1 transition-all ${className}`}
     >
       Enroll Now — Use Code SAVE30 for 30% Off
     </a>
@@ -181,7 +181,7 @@ export default function Home() {
               href={COURSE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="neo-btn bg-accent px-4 py-2 text-xs text-white"
+              className="neo-btn rounded-full bg-accent px-4 py-2 text-xs text-white"
             >
               Enroll Now
             </a>
@@ -218,7 +218,7 @@ export default function Home() {
             <CTAButton />
             <a
               href="#curriculum"
-              className="neo-btn bg-yellow px-6 py-4 text-base text-foreground"
+              className="neo-btn rounded-full bg-surface px-8 py-5 text-lg font-black uppercase tracking-wide text-foreground border-3 border-foreground shadow-[4px_4px_0_0_#1a1a1a] hover:shadow-[2px_2px_0_0_#1a1a1a] hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
             >
               See the Curriculum
             </a>
