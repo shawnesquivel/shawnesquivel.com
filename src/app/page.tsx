@@ -1,11 +1,12 @@
 import ImageCarousel from "@/components/ImageCarousel";
 import CopyCode from "@/components/CopyCode";
+import CountdownTimer from "@/components/CountdownTimer";
 import PainCard from "@/components/PainCard";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import ZoomableImage from "@/components/ZoomableImage";
 
 const COURSE_URL =
-  "https://shawnesquivel.thinkific.com/order?ct=a25f0eab-5e34-4699-b53e-2a2550eaa31b";
+  "https://shawnesquivel.thinkific.com/enroll/3491521?price_id=4414098&coupon=save30";
 
 function SectionDivider() {
   return (
@@ -64,14 +65,22 @@ function IncludedCard({
 /* ──────────────────────────────── FAQ Item ──────────────────────────────── */
 
 function FAQItem({
+  id,
   question,
   children,
+  defaultOpen,
 }: {
+  id?: string;
   question: string;
   children: React.ReactNode;
+  defaultOpen?: boolean;
 }) {
   return (
-    <details className="group neo-shadow bg-surface">
+    <details
+      id={id}
+      className="group neo-shadow bg-surface scroll-mt-24"
+      open={defaultOpen}
+    >
       <summary className="cursor-pointer px-6 py-5 text-base font-black uppercase tracking-tight list-none flex items-center justify-between">
         {question}
         <span className="ml-4 text-xl font-black transition-transform group-open:rotate-45">
@@ -155,13 +164,18 @@ export default function Home() {
             </span>
           </h1>
           <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed font-medium">
-            The hands-on Cursor course that 800+ students have used to build and
+            The hands-on Cursor course that 300+ students have used to build and
             ship production-ready apps — without writing a single line of code.
           </p>
 
-          <p className="mt-10 neo-shadow-sm inline-block bg-green px-4 py-2 text-xs font-black uppercase">
-            🔓 100% Satisfaction Guarantee · 30-day refund policy
-          </p>
+          <div className="mt-10 flex flex-col items-center gap-3">
+            <p className="neo-shadow-sm inline-block bg-green px-4 py-2 text-xs font-black uppercase">
+              🔓 100% Satisfaction Guarantee · 30-day refund policy
+            </p>
+            <p className="flex items-center gap-2 text-xs font-black uppercase">
+              30% off ends in <CountdownTimer variant="compact" />
+            </p>
+          </div>
 
           <div className="mt-6 flex flex-col items-center gap-5 sm:flex-row sm:justify-center">
             <CTAButton />
@@ -184,7 +198,7 @@ export default function Home() {
             Sound Familiar?
           </h2>
           <p className="mx-auto mb-12 max-w-2xl text-center font-medium text-muted">
-            After talking to 800+ vibe coders, the same 3 problems keep coming
+            After talking to 300+ vibe coders, the same 3 problems keep coming
             up:
           </p>
           <div className="space-y-8">
@@ -195,10 +209,10 @@ export default function Home() {
               items={[
                 "You fix one thing and AI breaks something else.",
                 "You spend hours going in circles with the same error.",
-                "And maybe you're racking up bills but you don't even understand why.",
               ]}
               imageSrc="/reddit-cursor-complaint.png"
               imageCaptionAlt="AI keeps breaking the code and going in circles"
+              imageCaption="A frustrated Cursor user on Reddit."
             />
             <PainCard
               emoji="⚠️"
@@ -212,6 +226,7 @@ export default function Home() {
               ]}
               imageSrc="/vibe-coders-getting-hacked-tweet.png"
               imageCaptionAlt="Vibe coders are getting hacked"
+              imageCaption="Vibe coder gets hacked after deploying his app."
             />
             <PainCard
               emoji="🤮"
@@ -224,6 +239,7 @@ export default function Home() {
               ]}
               imageSrc="/ugly-ai-designs.png"
               imageCaptionAlt="AI designs are generic and easy to spot"
+              imageCaption="Without a proper system, AI generates sloppy designs."
             />
           </div>
         </div>
@@ -309,161 +325,201 @@ export default function Home() {
       <SectionDivider />
 
       {/* ───── Curriculum ───── */}
-      <section id="curriculum" className="scroll-mt-24 px-6">
-        <div className="mx-auto max-w-4xl">
+      <section id="curriculum" className="scroll-mt-24">
+        <div className="px-6">
           <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
             What You&apos;ll Learn
           </h2>
-          <p className="mx-auto mb-4 max-w-xl text-center font-medium">
-            No 8-hour passive tutorials. You&apos;ll build and deploy real web
-            apps across 4 modules.
+          <p className="mx-auto mb-2 max-w-xl text-center font-medium">
+            4 modules. Hands-on builds. No passive watching.
           </p>
-          <p className="mx-auto mb-12 max-w-xl text-center text-sm font-medium text-muted">
-            Covering Agent Mode, Parallel Agents, Background Agents, and every
-            cutting-edge Cursor feature.
+          <p className="mx-auto mb-8 max-w-xl text-center text-sm font-medium text-muted">
+            Swipe to explore each module &rarr;
           </p>
+        </div>
 
-          <div className="space-y-6">
-            {/* Module 1 */}
-            <div className="neo-shadow bg-blue p-6">
-              <h3 className="mb-3 text-lg font-black uppercase">
-                <span className="inline-block bg-foreground text-surface px-2 py-0.5 mr-2 text-sm">
-                  101
-                </span>
-                Fundamentals of Cursor
-              </h3>
-              <ul className="space-y-2 text-sm font-medium">
-                <li>
-                  1. Use{" "}
+        {/* Horizontal scroll container */}
+        <div className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory px-6 pb-6 -mx-0 scrollbar-hide">
+          {/* Left spacer for centering on large screens */}
+          <div className="hidden shrink-0 lg:block lg:w-[calc((100vw-64rem)/2)]" />
+
+          {/* Module 1 */}
+          <div className="neo-shadow bg-blue p-8 shrink-0 snap-center w-[85vw] max-w-md flex flex-col">
+            <span className="neo-shadow-sm inline-block self-start bg-foreground text-surface px-3 py-1 text-xs font-black uppercase mb-4">
+              Module 1
+            </span>
+            <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
+              Fundamentals of Cursor
+            </h3>
+            <p className="mb-5 text-sm font-medium text-muted">
+              Master the core tools every Cursor user needs.
+            </p>
+            <ul className="space-y-3 text-sm font-medium">
+              <li className="flex gap-2">
+                <span className="shrink-0">1.</span>
+                <span>
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Cursor Agent
                   </code>{" "}
-                  to plan features and generate to-do lists
-                </li>
-                <li>
-                  2. Learn{" "}
+                  — plan features &amp; generate to-do lists
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">2.</span>
+                <span>
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Cursor Tab
                   </code>{" "}
-                  to autocomplete large sections of code
-                </li>
-                <li>
-                  3. Use{" "}
+                  — autocomplete large sections of code
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">3.</span>
+                <span>
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Cursor Rules
                   </code>{" "}
-                  to get features close to perfect in 1 message
-                </li>
-                <li>
-                  4. Use{" "}
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Cursor Plan Mode
-                  </code>{" "}
-                  to build with clarity.
-                </li>
-              </ul>
-            </div>
-
-            {/* Module 2 */}
-            <div className="neo-shadow bg-green p-6">
-              <h3 className="mb-1 text-lg font-black uppercase">
-                <span className="inline-block bg-foreground text-surface px-2 py-0.5 mr-2 text-sm">
-                  201
+                  — get features close to perfect in 1 message
                 </span>
-                Cursor Tools
-              </h3>
-              <p className="text-sm font-medium mb-3">
-                You hate debugging. Here&apos;s how you make AI do it for you.
-              </p>
-              <ul className="space-y-2 text-sm font-medium">
-                <li>
-                  1. Use{" "}
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">4.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Plan Mode
+                  </code>{" "}
+                  — create PRDs
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">5.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Parallel Agentic Workflows
+                  </code>
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Module 2 */}
+          <div className="neo-shadow bg-green p-8 shrink-0 snap-center w-[85vw] max-w-md flex flex-col">
+            <span className="neo-shadow-sm inline-block self-start bg-foreground text-surface px-3 py-1 text-xs font-black uppercase mb-4">
+              Module 2
+            </span>
+            <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
+              Cursor Tools
+            </h3>
+            <p className="mb-5 text-sm font-medium text-muted">
+              You hate debugging. Make AI do it for you.
+            </p>
+            <ul className="space-y-3 text-sm font-medium">
+              <li className="flex gap-2">
+                <span className="shrink-0">1.</span>
+                <span>
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Debug Mode
                   </code>{" "}
-                  to debug issues faster
-                </li>
-                <li>
-                  2. Use{" "}
+                  — debug issues faster
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">2.</span>
+                <span>
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     MCP
                   </code>{" "}
-                  to give your agent access to GitHub and your browser
-                </li>
-                <li>
-                  3. Use{" "}
+                  — give your agent access to GitHub &amp; your browser
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">3.</span>
+                <span>
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     BugBot
                   </code>{" "}
-                  to fix security issues with 1 click
-                </li>
-              </ul>
-            </div>
-
-            {/* Module 3 */}
-            <div className="neo-shadow bg-pink p-6">
-              <h3 className="mb-3 text-lg font-black uppercase">
-                <span className="inline-block bg-foreground text-surface px-2 py-0.5 mr-2 text-sm">
-                  301
+                  — fix security issues with 1 click
                 </span>
-                Cursor for Frontend
-              </h3>
-              <ul className="space-y-2 text-sm font-medium">
-                <li>
-                  1. Use Cursor&apos;s{" "}
+              </li>
+            </ul>
+          </div>
+
+          {/* Module 3 */}
+          <div className="neo-shadow bg-pink p-8 shrink-0 snap-center w-[85vw] max-w-md flex flex-col">
+            <span className="neo-shadow-sm inline-block self-start bg-foreground text-surface px-3 py-1 text-xs font-black uppercase mb-4">
+              Module 3
+            </span>
+            <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
+              Cursor for Frontend
+            </h3>
+            <p className="mb-5 text-sm font-medium text-muted">
+              Clone any design. No more generic AI UIs.
+            </p>
+            <ul className="space-y-3 text-sm font-medium">
+              <li className="flex gap-2">
+                <span className="shrink-0">1.</span>
+                <span>
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Visual Browser
                   </code>{" "}
-                  to edit designs instantly
-                </li>
-                <li>
-                  2. Use Cursor&apos;s{" "}
+                  — edit designs instantly
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">2.</span>
+                <span>
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Figma
                   </code>{" "}
-                  plugins to edit frontend design faster
-                </li>
-              </ul>
-            </div>
-
-            {/* Module 4 */}
-            <div className="neo-shadow bg-purple p-6">
-              <h3 className="mb-1 text-lg font-black uppercase">
-                <span className="inline-block bg-foreground text-surface px-2 py-0.5 mr-2 text-sm">
-                  401
+                  plugins — edit frontend design faster
                 </span>
-                Parallel Agentic Workflows
-              </h3>
-              <p className="text-sm font-medium mb-3">
-                The nitro boosts. Learn these and you&apos;ll be in the top 0.1%
-                of Cursor users.
-              </p>
-              <ul className="space-y-2 text-sm font-medium">
-                <li>
-                  1. Use{" "}
+              </li>
+            </ul>
+          </div>
+
+          {/* Module 4 */}
+          <div className="neo-shadow bg-purple p-8 shrink-0 snap-center w-[85vw] max-w-md flex flex-col">
+            <span className="neo-shadow-sm inline-block self-start bg-foreground text-surface px-3 py-1 text-xs font-black uppercase mb-4">
+              Module 4
+            </span>
+            <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
+              Parallel Agentic Workflows
+            </h3>
+            <p className="mb-5 text-sm font-medium text-muted">
+              The nitro boosts. Top 0.1% Cursor territory.
+            </p>
+            <ul className="space-y-3 text-sm font-medium">
+              <li className="flex gap-2">
+                <span className="shrink-0">1.</span>
+                <span>
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Agent Review
                   </code>{" "}
-                  to find security vulnerabilities
-                </li>
-                <li>
-                  2. Use{" "}
+                  — find security vulnerabilities
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">2.</span>
+                <span>
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Background Agents
                   </code>{" "}
-                  to code while you sleep
-                </li>
-              </ul>
-            </div>
+                  — code while you sleep
+                </span>
+              </li>
+            </ul>
           </div>
 
-          <div className="mt-10 text-center space-y-4">
-            <p className="neo-shadow-sm inline-block bg-yellow px-6 py-3 text-sm font-black uppercase">
-              🤖 Prompt like a pro · 💰 Launch to thousands of users
-            </p>
-            <br />
-            <CTAButton className="mt-4" />
-          </div>
+          {/* Right spacer */}
+          <div className="shrink-0 w-6 lg:w-[calc((100vw-64rem)/2)]" />
+        </div>
+
+        <div className="mt-6 text-center space-y-4 px-6">
+          <p className="neo-shadow-sm inline-block bg-yellow px-6 py-3 text-sm font-black uppercase">
+            🤖 Prompt like a pro · 💰 Launch to thousands of users
+          </p>
+          <br />
+          <CTAButton className="mt-4" />
         </div>
       </section>
 
@@ -621,11 +677,17 @@ export default function Home() {
           <p className="mb-4 text-lg font-bold">
             🚀 Launch pricing — 30% off while the course is new.
           </p>
-          <p className="mb-8 text-base font-medium">
+          <p className="mb-6 text-base font-medium">
             Use code <CopyCode code="SAVE30" /> at checkout.
             <br />
             Price goes up as new modules drop.
           </p>
+          <div className="mb-6">
+            <p className="mb-3 text-xs font-black uppercase tracking-widest">
+              Offer expires in
+            </p>
+            <CountdownTimer />
+          </div>
           <CTAButton />
           <p className="mt-8 text-sm font-bold">
             🔓 You&apos;re covered by a{" "}
@@ -658,8 +720,8 @@ export default function Home() {
               </p>
             </FAQItem>
 
-            <FAQItem question="🔓 100% Satisfaction Guarantee">
-              <p id="guarantee">
+            <FAQItem id="guarantee" question="🔓 100% Satisfaction Guarantee">
+              <p>
                 Hundreds of students have already built their first AI app with
                 this course. If you feel it wasn&apos;t worth the money, you get
                 a <strong>100% Money Back Guarantee</strong>.

@@ -41,6 +41,11 @@ export default function TestimonialCarousel() {
       className="relative overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => {
+        // Short delay so the carousel doesn't jerk immediately on tap release
+        setTimeout(() => setPaused(false), 2000);
+      }}
     >
       <div
         className="flex gap-6 animate-marquee"
