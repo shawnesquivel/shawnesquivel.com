@@ -71,6 +71,15 @@ body {
   box-shadow: 1px 1px 0 var(--color-border);
 }
 
+/* Hide scrollbar but keep scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Marquee scroll */
 @keyframes marquee {
   0% {

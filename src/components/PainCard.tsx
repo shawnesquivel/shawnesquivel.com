@@ -8,6 +8,7 @@ export default function PainCard({
   items,
   imageSrc,
   imageCaptionAlt,
+  imageCaption,
   color,
   reverse = false,
 }: {
@@ -16,6 +17,7 @@ export default function PainCard({
   items: string[];
   imageSrc?: string;
   imageCaptionAlt: string;
+  imageCaption?: string;
   color: string;
   reverse?: boolean;
 }) {
@@ -41,12 +43,17 @@ export default function PainCard({
 
       {/* Image side */}
       {imageSrc && (
-        <div className="flex flex-1 border-t-3 border-foreground md:border-t-0 md:border-l-3">
+        <div className="flex flex-1 flex-col border-t-3 border-foreground md:border-t-0 md:border-l-3">
           <ZoomableImage
             src={imageSrc}
             alt={imageCaptionAlt}
             className="h-full w-full"
           />
+          {imageCaption && (
+            <p className="border-t-2 border-foreground bg-surface px-4 py-2 text-center text-xs font-bold">
+              {imageCaption}
+            </p>
+          )}
         </div>
       )}
     </div>
