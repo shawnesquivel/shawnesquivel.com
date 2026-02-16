@@ -155,7 +155,7 @@ export default function Home() {
             </span>
           </h1>
           <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed font-medium">
-            The hands-on Cursor course that 300+ students have used to build and
+            The hands-on Cursor course that 800+ students have used to build and
             ship production-ready apps — without writing a single line of code.
           </p>
 
@@ -184,7 +184,7 @@ export default function Home() {
             Sound Familiar?
           </h2>
           <p className="mx-auto mb-12 max-w-2xl text-center font-medium text-muted">
-            After talking to 300+ vibe coders, the same 3 problems keep coming
+            After talking to 800+ vibe coders, the same 3 problems keep coming
             up:
           </p>
           <div className="space-y-8">
@@ -359,13 +359,7 @@ export default function Home() {
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Cursor Plan Mode
                   </code>{" "}
-                  to create PRDs
-                </li>
-                <li>
-                  5. Learn{" "}
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Parallel Agentic Workflows
-                  </code>
+                  to build with clarity.
                 </li>
               </ul>
             </div>

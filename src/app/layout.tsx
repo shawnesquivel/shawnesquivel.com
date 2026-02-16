@@ -14,6 +14,27 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.png",
   },
+  openGraph: {
+    title: "Build Apps with Cursor",
+    description:
+      "Go from idea to deployed app in one weekend. The hands-on Cursor course for non-coders and developers alike.",
+    images: [
+      {
+        url: "/thumbnail.png",
+        width: 1200,
+        height: 630,
+        alt: "Build Apps with Cursor — Go from idea to deployed app in one weekend",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Build Apps with Cursor",
+    description:
+      "Go from idea to deployed app in one weekend. The hands-on Cursor course for non-coders and developers alike.",
+    images: ["/thumbnail.png"],
+  },
 };
 
 export default function RootLayout({
