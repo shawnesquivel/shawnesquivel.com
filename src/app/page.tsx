@@ -349,11 +349,8 @@ export default function Home() {
               Module 1
             </span>
             <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
-              Fundamentals of Cursor
+              Getting Started
             </h3>
-            <p className="mb-5 text-sm font-medium text-muted">
-              Master the core tools every Cursor user needs.
-            </p>
             <ul className="space-y-3 text-sm font-medium">
               <li className="flex gap-2">
                 <span className="shrink-0">1.</span>
@@ -361,7 +358,7 @@ export default function Home() {
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Cursor Agent
                   </code>{" "}
-                  — plan features &amp; generate to-do lists
+                  — turn ideas into step-by-step plans
                 </span>
               </li>
               <li className="flex gap-2">
@@ -370,7 +367,7 @@ export default function Home() {
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Cursor Tab
                   </code>{" "}
-                  — autocomplete large sections of code
+                  — let AI write the code for you
                 </span>
               </li>
               <li className="flex gap-2">
@@ -379,7 +376,7 @@ export default function Home() {
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Cursor Rules
                   </code>{" "}
-                  — get features close to perfect in 1 message
+                  — get features right on the first try
                 </span>
               </li>
               <li className="flex gap-2">
@@ -388,15 +385,7 @@ export default function Home() {
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Plan Mode
                   </code>{" "}
-                  — create PRDs
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">5.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Parallel Agentic Workflows
-                  </code>
+                  — plan before you build so AI doesn&apos;t go off the rails
                 </span>
               </li>
             </ul>
@@ -408,11 +397,8 @@ export default function Home() {
               Module 2
             </span>
             <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
-              Cursor Tools
+              Fix Bugs &amp; Stay Secure
             </h3>
-            <p className="mb-5 text-sm font-medium text-muted">
-              You hate debugging. Make AI do it for you.
-            </p>
             <ul className="space-y-3 text-sm font-medium">
               <li className="flex gap-2">
                 <span className="shrink-0">1.</span>
@@ -420,7 +406,7 @@ export default function Home() {
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Debug Mode
                   </code>{" "}
-                  — debug issues faster
+                  — fix bugs without going in circles
                 </span>
               </li>
               <li className="flex gap-2">
@@ -429,7 +415,7 @@ export default function Home() {
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     MCP
                   </code>{" "}
-                  — give your agent access to GitHub &amp; your browser
+                  — connect AI to your browser &amp; other tools
                 </span>
               </li>
               <li className="flex gap-2">
@@ -438,7 +424,7 @@ export default function Home() {
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     BugBot
                   </code>{" "}
-                  — fix security issues with 1 click
+                  — catch security holes before hackers do
                 </span>
               </li>
             </ul>
@@ -450,11 +436,8 @@ export default function Home() {
               Module 3
             </span>
             <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
-              Cursor for Frontend
+              Make It Look Great
             </h3>
-            <p className="mb-5 text-sm font-medium text-muted">
-              Clone any design. No more generic AI UIs.
-            </p>
             <ul className="space-y-3 text-sm font-medium">
               <li className="flex gap-2">
                 <span className="shrink-0">1.</span>
@@ -462,16 +445,16 @@ export default function Home() {
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Visual Browser
                   </code>{" "}
-                  — edit designs instantly
+                  — tweak designs by clicking, not coding
                 </span>
               </li>
               <li className="flex gap-2">
                 <span className="shrink-0">2.</span>
                 <span>
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Figma
+                    Figma to Code
                   </code>{" "}
-                  plugins — edit frontend design faster
+                  — turn any design into a real app
                 </span>
               </li>
             </ul>
@@ -483,11 +466,8 @@ export default function Home() {
               Module 4
             </span>
             <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
-              Parallel Agentic Workflows
+              Build 10x Faster
             </h3>
-            <p className="mb-5 text-sm font-medium text-muted">
-              The nitro boosts. Top 0.1% Cursor territory.
-            </p>
             <ul className="space-y-3 text-sm font-medium">
               <li className="flex gap-2">
                 <span className="shrink-0">1.</span>
@@ -495,7 +475,7 @@ export default function Home() {
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Agent Review
                   </code>{" "}
-                  — find security vulnerabilities
+                  — automatically catch problems before your users do
                 </span>
               </li>
               <li className="flex gap-2">
@@ -504,7 +484,16 @@ export default function Home() {
                   <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
                     Background Agents
                   </code>{" "}
-                  — code while you sleep
+                  — AI builds features while you sleep
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">3.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Parallel Agents
+                  </code>{" "}
+                  — build multiple features at once
                 </span>
               </li>
             </ul>
@@ -512,14 +501,6 @@ export default function Home() {
 
           {/* Right spacer */}
           <div className="shrink-0 w-6 lg:w-[calc((100vw-64rem)/2)]" />
-        </div>
-
-        <div className="mt-6 text-center space-y-4 px-6">
-          <p className="neo-shadow-sm inline-block bg-yellow px-6 py-3 text-sm font-black uppercase">
-            🤖 Prompt like a pro · 💰 Launch to thousands of users
-          </p>
-          <br />
-          <CTAButton className="mt-4" />
         </div>
       </section>
 
