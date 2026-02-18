@@ -32,17 +32,9 @@ export default async function HackathonVancouverPage() {
           </p>
         </header>
 
-        <SectionCard
-          title="Feature 1: Approved Guest Ideas"
-          subtitle="Interactive explorer with filters, search, wall view, and LinkedIn links."
-          className="bg-blue"
-        >
-          <GuestExplorer guests={data.approvedGuests} />
-        </SectionCard>
-
         <section className="grid gap-6 lg:grid-cols-2">
           <SectionCard
-            title="Feature 2: In-person vs Remote"
+            title="In-Person vs Remote"
             subtitle="Simple visual diagram for approved guests."
             className="bg-pink"
           >
@@ -53,7 +45,7 @@ export default async function HackathonVancouverPage() {
           </SectionCard>
 
           <SectionCard
-            title="Feature 2: Cursor Experience Level"
+            title="Cursor Experience Level"
             subtitle="Simple visual diagram for approved guests."
             className="bg-green"
           >
@@ -63,6 +55,14 @@ export default async function HackathonVancouverPage() {
             />
           </SectionCard>
         </section>
+
+        <SectionCard
+          title="Approved Guest Explorer"
+          subtitle="Interactive cards with filters, search, wall view, and LinkedIn links."
+          className="bg-blue"
+        >
+          <GuestExplorer guests={data.approvedGuests} />
+        </SectionCard>
       </div>
     </main>
   );

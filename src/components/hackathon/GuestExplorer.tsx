@@ -55,7 +55,7 @@ function calculateStats(guests: ApprovedGuest[]) {
 
 export default function GuestExplorer({ guests }: GuestExplorerProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [attendanceFilter, setAttendanceFilter] = useState("all");
+  const [attendanceFilter, setAttendanceFilter] = useState("In-Person @ UBC");
   const [experienceFilter, setExperienceFilter] = useState("all");
   const [viewMode, setViewMode] = useState<"list" | "wall">("list");
   const [shuffleTick, setShuffleTick] = useState(0);
