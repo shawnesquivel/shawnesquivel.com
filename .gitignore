@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+public/Cursor Hackathon Vancouver - Guests - *.csv
 
 # debug
 npm-debug.log*

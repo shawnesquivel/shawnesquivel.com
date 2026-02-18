@@ -1,0 +1,1532 @@
+[
+  {
+    "firstName": "Shawn",
+    "lastName": "Esquivel",
+    "linkedinUrl": "https://linkedin.com/in/shawnesquivel",
+    "jobOrCompany": "Amihan Ventures Inc - Founder",
+    "majorOrSchool": "a",
+    "buildIdea": "a",
+    "attendanceMode": "Remote/Virtual",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Kumar",
+    "lastName": "Sanjnah Ananda",
+    "linkedinUrl": "https://linkedin.com/in/sanjnah_anand",
+    "jobOrCompany": "Salesforce",
+    "majorOrSchool": "",
+    "buildIdea": "I'd like to build a nail salon game maybe, not sure tbh",
+    "attendanceMode": "Remote/Virtual",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Haocheng",
+    "lastName": "Fan",
+    "linkedinUrl": "https://linkedin.com/in/haocheng-stephen-fan-236b16309",
+    "jobOrCompany": "Planview (COOP)",
+    "majorOrSchool": "CS UBC",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "Remote/Virtual",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Mark",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/mark-skrypnyk",
+    "jobOrCompany": "N/A",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "A hiring platform that connects companies to candidates worldwide for remote IT positions.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it almost every day"
+  },
+  {
+    "firstName": "Neel",
+    "lastName": "Vaswani",
+    "linkedinUrl": "https://linkedin.com/in/neel-vaswani-b7939b303",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "I want to build a platform that connects companies worldwide to candidates worldwide for remote IT positions. Sort of like a Remote hiring agency.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it almost every day"
+  },
+  {
+    "firstName": "Eric",
+    "lastName": "Zhou",
+    "linkedinUrl": "https://linkedin.com/in/eric-zhou-ez",
+    "jobOrCompany": "N/A",
+    "majorOrSchool": "CS @ UBC",
+    "buildIdea": "Browser extension that tunes your resume to the current job posting.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it almost every day"
+  },
+  {
+    "firstName": "Siddhant",
+    "lastName": "Kumar",
+    "linkedinUrl": "https://linkedin.com/in/siddhant-kumar-s28",
+    "jobOrCompany": "Boomi",
+    "majorOrSchool": "",
+    "buildIdea": "An AI agent that triggers on production alerts to autonomously analyze logs, infrastructure, and code, leveraging pre-indexed knowledge of your codebase and IaC to deliver root cause analysis and potential fixes before on-call engineers even acknowledge the incident.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it almost every day"
+  },
+  {
+    "firstName": "Tuan",
+    "lastName": "Le",
+    "linkedinUrl": "https://linkedin.com/in/tuanlt",
+    "jobOrCompany": "Viva Leading Tech Inc. (our startup company)",
+    "majorOrSchool": "",
+    "buildIdea": "I am not a professional developer, but I use Cursor AI and Antigravity to develop our Personal Finance Management app. My core expertise lies in Cybersecurity and Infrastructure",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Unknown",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/patrick-perdomo",
+    "jobOrCompany": "Mocra",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "AI video observability",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Patrick",
+    "lastName": "Ma",
+    "linkedinUrl": "https://linkedin.com/in/tszhoma",
+    "jobOrCompany": "University of British Columbia",
+    "majorOrSchool": "",
+    "buildIdea": "AI Investment Analysis",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Daniel",
+    "lastName": "Ou",
+    "linkedinUrl": "https://linkedin.com/in/danielou1208",
+    "jobOrCompany": "n/a",
+    "majorOrSchool": "UBC Computer Science",
+    "buildIdea": "I would like to build an application that allows users to track LLM usage limits across various providers and give insights on how to optimize usage and also give reminders/notifications when usage limits reset.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Harris",
+    "lastName": "Jan",
+    "linkedinUrl": "https://linkedin.com/in/harris-jan-23366b298",
+    "jobOrCompany": "Royal Canadian Air Force",
+    "majorOrSchool": "Computer Science",
+    "buildIdea": "Productivity Tool",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it almost every day"
+  },
+  {
+    "firstName": "Athul",
+    "lastName": "Sasidharan",
+    "linkedinUrl": "https://linkedin.com/in/athul-sasidharan-48a1ba195",
+    "jobOrCompany": "",
+    "majorOrSchool": "MDS, UBC",
+    "buildIdea": "Auto Tailored cover letter builder, will probably change",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "Never Tried It"
+  },
+  {
+    "firstName": "Jackson",
+    "lastName": "Lu",
+    "linkedinUrl": "https://linkedin.com/in/jackson-lu-profiles",
+    "jobOrCompany": "none",
+    "majorOrSchool": "Data science, UBC",
+    "buildIdea": "web app using computer vision",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "Never Tried It"
+  },
+  {
+    "firstName": "Amin",
+    "lastName": "Sohrabi",
+    "linkedinUrl": "https://linkedin.com/in/amin-sohrabi",
+    "jobOrCompany": "Luella AI",
+    "majorOrSchool": "",
+    "buildIdea": "A GPS tracking system",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Pedram",
+    "lastName": "Taheri",
+    "linkedinUrl": "https://linkedin.com/in/pdrmtaheri",
+    "jobOrCompany": "Offerland",
+    "majorOrSchool": "",
+    "buildIdea": "A single portal to manage all of your LLMs connections, APIs, integrations, and MCPs",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it almost every day"
+  },
+  {
+    "firstName": "Pouya",
+    "lastName": "MozaffarMagham",
+    "linkedinUrl": "https://linkedin.com/in/pomzi",
+    "jobOrCompany": "Shopify",
+    "majorOrSchool": "",
+    "buildIdea": "A GPS tracking system",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it almost every day"
+  },
+  {
+    "firstName": "Cauê",
+    "lastName": "Casonato",
+    "linkedinUrl": "https://linkedin.com/in/caue-casonato",
+    "jobOrCompany": "N/A",
+    "majorOrSchool": "CCTB, Software Quality Assurance and Engineering Diploma",
+    "buildIdea": "Auto job-applier",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Darren",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/darren-christian-iskandar-33b27a364",
+    "jobOrCompany": "",
+    "majorOrSchool": "UBC",
+    "buildIdea": "I want to build an analytic tool to determine which job skills/experiences are mostly sought by employers from online job postings (linkedIn, Indeed & etc.). The purpose of this is to help clients refined their resume and skills to these specific job skill requirements.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "Never Tried It"
+  },
+  {
+    "firstName": "Noah",
+    "lastName": "Geerts",
+    "linkedinUrl": "https://linkedin.com/in/noahgeerts",
+    "jobOrCompany": "FCC",
+    "majorOrSchool": "",
+    "buildIdea": "AI fitness coach",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Sayyam",
+    "lastName": "Singla",
+    "linkedinUrl": "https://linkedin.com/in/sayyam-singla",
+    "jobOrCompany": "Spacex",
+    "majorOrSchool": "Computer Engineering",
+    "buildIdea": "I wanna build a low level application",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "Never Tried It"
+  },
+  {
+    "firstName": "Chris",
+    "lastName": "chalcraft",
+    "linkedinUrl": "https://linkedin.com/in/cchalc",
+    "jobOrCompany": "Databricks - Manager AI Specialists",
+    "majorOrSchool": "",
+    "buildIdea": "a way to automate checking events and building an app to see what is happening in the city.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Erik",
+    "lastName": "Wang",
+    "linkedinUrl": "https://linkedin.com/in/erikwang21",
+    "jobOrCompany": "Arga Labs",
+    "majorOrSchool": "Mathematics",
+    "buildIdea": "Automatic LLM benchmarking system with option to add labeled data or human in the loop depending on whatever data you have",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it almost every day"
+  },
+  {
+    "firstName": "Akira",
+    "lastName": "Tong",
+    "linkedinUrl": "https://linkedin.com/in/akira-tong",
+    "jobOrCompany": "",
+    "majorOrSchool": "BUCS, UBC",
+    "buildIdea": "Context sourcing for debugging (e.g. LLM ready slack/jira/discord/any platform context to feed into coding tools for debugging)",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it almost every day"
+  },
+  {
+    "firstName": "Aaryan",
+    "lastName": "Rampal",
+    "linkedinUrl": "https://linkedin.com/in/aaryan-rampal",
+    "jobOrCompany": "Astera Labs",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "Not sure yet, something dev tooling related like maybe shared context across multiple ai assisted tools",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Purity",
+    "lastName": "Jangaya",
+    "linkedinUrl": "https://linkedin.com/in/purity-jangaya",
+    "jobOrCompany": "",
+    "majorOrSchool": "Masters of Data Science, UBC",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Ronit",
+    "lastName": "Chawla",
+    "linkedinUrl": "https://linkedin.com/in/ronit-chawla",
+    "jobOrCompany": "",
+    "majorOrSchool": "CHBE",
+    "buildIdea": "An AI email extension that can read your emails, categorize them and have replies ready based on prompts from you. It will have different tones based on data collected from prompts, and write emails like you do to different people. The other option is a AI Sleep apnea analyzer, that takes data from sleep apnea machines and helps them undertsand their data to optimize their sleep better",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it sometimes"
+  },
+  {
+    "firstName": "Medhansh",
+    "lastName": "Choubey",
+    "linkedinUrl": "https://linkedin.com/in/medhanshchoubey",
+    "jobOrCompany": "",
+    "majorOrSchool": "Statistics, UBC",
+    "buildIdea": "AI powered code review assistant that automatically suggests performance optimizations and catches security vulnerabilities in pull requests.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it almost every day"
+  },
+  {
+    "firstName": "Ria",
+    "lastName": "Gupta",
+    "linkedinUrl": "https://linkedin.com/in/ria-gupta-b58714b3",
+    "jobOrCompany": "Self",
+    "majorOrSchool": "",
+    "buildIdea": "an everyday problem solving app",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": "I use it almost every day"
+  },
+  {
+    "firstName": "Ashwin",
+    "lastName": "Deepak",
+    "linkedinUrl": "https://linkedin.com/in/ashwin-deepak-7a1096160",
+    "jobOrCompany": "https://github.com/ashwwwin/furi",
+    "majorOrSchool": "",
+    "buildIdea": "ai dating app",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Unknown",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/nourhabib23",
+    "jobOrCompany": "",
+    "majorOrSchool": "",
+    "buildIdea": "Voice driven AI knowledge base",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Mia",
+    "lastName": "Jang",
+    "linkedinUrl": "https://linkedin.com/in/mialovesai",
+    "jobOrCompany": "Meta",
+    "majorOrSchool": "",
+    "buildIdea": "Safe Youtube for Children",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Charlie",
+    "lastName": "Ma",
+    "linkedinUrl": "https://linkedin.com/in/charliethefounder",
+    "jobOrCompany": "Aweesome - CEO",
+    "majorOrSchool": "",
+    "buildIdea": "mobile-first whiteboard app",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Yonas",
+    "lastName": "Gebre",
+    "linkedinUrl": "https://linkedin.com/in/yonassgebre",
+    "jobOrCompany": "UBC",
+    "majorOrSchool": "Data Science",
+    "buildIdea": "Financial Coaching platform",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Zoella",
+    "lastName": "Bolkiah",
+    "linkedinUrl": "https://linkedin.com/in/zoellab",
+    "jobOrCompany": "Osyrai",
+    "majorOrSchool": "Langara - CS",
+    "buildIdea": "MCP Server for Rent A Human AI",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Arnold",
+    "lastName": "Ying",
+    "linkedinUrl": "https://linkedin.com/in/arnoldying",
+    "jobOrCompany": "Salesforce",
+    "majorOrSchool": "",
+    "buildIdea": "Flavour Network Graph, an interactive search engine and visual discovery tool for unconventional flavor pairings",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Jennifer",
+    "lastName": "Tsang",
+    "linkedinUrl": "https://linkedin.com/in/jennifertsang8919",
+    "jobOrCompany": "",
+    "majorOrSchool": "Master of Data Science at UBC",
+    "buildIdea": "I plan to build a Flavour Network Graph, an interactive search engine and visual discovery tool for unconventional flavour pairings based on chemical synergies. Unlike LLMs that provide generic culinary advice, this app will use a clustering algorithm such as KNN on a molecular compound dataset to identify \"flavour neighbours\", ingredients that share significant aromatic profiles but are rarely paired (e.g., White Chocolate and Miso). The core of the project is an interactive Force-Directed Graph (using D3.js or React-Force-Graph) that allows users to explore these relationships spatially. As someone who loves cooking and baking, I’ve always been fascinated by why certain \"weird\" combinations work. My goal is to move beyond text-based recipes and create a data-driven tool that helps chefs and bakers visualize the \"chemical bridge\" between ingredients in real-time.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Javien",
+    "lastName": "Chen",
+    "linkedinUrl": "https://linkedin.com/in/tjc321",
+    "jobOrCompany": "",
+    "majorOrSchool": "Northeastern University Vancouver - MS-Information Systems",
+    "buildIdea": "Web Application",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Victoria",
+    "lastName": "Farkas",
+    "linkedinUrl": "https://linkedin.com/in/victoriafarkas01",
+    "jobOrCompany": "",
+    "majorOrSchool": "UBC, Master of Data Science",
+    "buildIdea": "Trying to see if I can use cursor to create custom/template workflows for ML projects",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Grigory",
+    "lastName": "Artazyan",
+    "linkedinUrl": "https://linkedin.com/in/grigory-artazyan",
+    "jobOrCompany": "",
+    "majorOrSchool": "Data Science",
+    "buildIdea": "exploring spacial and temporal data representation (learning recourse dashboard)",
+    "attendanceMode": "Remote/Virtual",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Amol",
+    "lastName": "Chahal",
+    "linkedinUrl": "https://linkedin.com/in/amolchahal",
+    "jobOrCompany": "felix",
+    "majorOrSchool": "",
+    "buildIdea": "going to build cursor for product management",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Shadab",
+    "lastName": "Shaikh",
+    "linkedinUrl": "https://linkedin.com/in/shadab-shaikh-1251bb110",
+    "jobOrCompany": "Looking for a job",
+    "majorOrSchool": "",
+    "buildIdea": "clippy (microsoft) but for helping you learn stuff on the internet, and much better",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Rodrigo",
+    "lastName": "Del Aguila",
+    "linkedinUrl": "https://linkedin.com/in/rodrigo-delaguila",
+    "jobOrCompany": "Pario",
+    "majorOrSchool": "",
+    "buildIdea": "Agents as a Service",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Unknown",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/sky-sheng",
+    "jobOrCompany": "UBC",
+    "majorOrSchool": "UBC",
+    "buildIdea": "A platform for anyone to report bias in AI",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Kevin",
+    "lastName": "Hart",
+    "linkedinUrl": "https://linkedin.com/in/kevinrhart",
+    "jobOrCompany": "HAVEN IAQ",
+    "majorOrSchool": "",
+    "buildIdea": "A webpage where you type in your postal code and it pulls the past 12 months of air quality data from Google API and then raises education about what sort of air quality issues your home is likely to encounter",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Udbhav",
+    "lastName": "Kansal",
+    "linkedinUrl": "https://linkedin.com/in/udbhav-kansal",
+    "jobOrCompany": "Snica inc",
+    "majorOrSchool": "Computer Science, UBC",
+    "buildIdea": "A visual diffusion model",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Unknown",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/gurveer-madurai",
+    "jobOrCompany": "Student",
+    "majorOrSchool": "Data science",
+    "buildIdea": "ML related application",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Joy",
+    "lastName": "Narula",
+    "linkedinUrl": "https://linkedin.com/in/joynarula",
+    "jobOrCompany": "Comm100",
+    "majorOrSchool": "",
+    "buildIdea": "DevOps Debugging Agent",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Usman",
+    "lastName": "Omer",
+    "linkedinUrl": "https://linkedin.com/in/usmanomer",
+    "jobOrCompany": "I am a student",
+    "majorOrSchool": "CC AT UBC",
+    "buildIdea": "I want to build an agent that indexes popular github repos and creates pull requests based on issues",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Gary",
+    "lastName": "Hilares",
+    "linkedinUrl": "https://linkedin.com/in/gary-hilares",
+    "jobOrCompany": "Tetra Tech",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "Agentic product manager, from product discovery to product validation",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Garv",
+    "lastName": "Singh Saini",
+    "linkedinUrl": "https://linkedin.com/in/garv-singh-saini-979a071b0",
+    "jobOrCompany": "Student",
+    "majorOrSchool": "CS, UFV",
+    "buildIdea": "Prompt-to-Architecture\" GAN Designer",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Sam",
+    "lastName": "Guarascio",
+    "linkedinUrl": "https://linkedin.com/in/guarascio",
+    "jobOrCompany": "Co-Founder @ Mocra & prev @ YC",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "AI video observability",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Yash",
+    "lastName": "Sharma",
+    "linkedinUrl": "https://linkedin.com/in/yash-sharma-76983239a",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS,UBC",
+    "buildIdea": "I plan to build a browser extension name \"POWER\", which addresses the issue of efficient use of browser by leveraging AI task automation. My goal is to move beyond basic AI wrappers and explore multi-step autonomously working task completing agent. It is going to involve auto task completion checks to loop the automation until the specified task is completed. It will also handle tasks where some human intervention is required with enhanced and simple UI between the automation for smoother user experience.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Sadra",
+    "lastName": "Khosravi",
+    "linkedinUrl": "https://linkedin.com/in/sadrakh",
+    "jobOrCompany": "Rio Tinto",
+    "majorOrSchool": "CMS, UBC",
+    "buildIdea": "An agentic AI mobile app for studying and productivity",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "James",
+    "lastName": "Zhang",
+    "linkedinUrl": "https://linkedin.com/in/james-zhang-b1a6a5382",
+    "jobOrCompany": "",
+    "majorOrSchool": "UBC Computer Science",
+    "buildIdea": "a tool for linguistics students to learn IPA tables easily",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Victor",
+    "lastName": "Thai",
+    "linkedinUrl": "https://linkedin.com/in/vvictort20",
+    "jobOrCompany": "",
+    "majorOrSchool": "BSc in Computer Science at UBC",
+    "buildIdea": "This time around, I want to build an app that acts like GitHub but for the knowledge you've learned. This way users can track their ideas and knowledge on the fly.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Unknown",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/leonnzhang",
+    "jobOrCompany": "",
+    "majorOrSchool": "STAT,COMR UBC",
+    "buildIdea": "AI agents for elderly life assistance. TLDR: Accessible Alexa for the elderly",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Nimesh",
+    "lastName": "Pandey",
+    "linkedinUrl": "https://linkedin.com/in/nimesh-pandey-57aa24217",
+    "jobOrCompany": "University of British Columbia",
+    "majorOrSchool": "CPEN",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Alex",
+    "lastName": "Rai",
+    "linkedinUrl": "https://linkedin.com/in/alexrai",
+    "jobOrCompany": "vista inc - manager",
+    "majorOrSchool": "",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "Remote/Virtual",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Abdullah",
+    "lastName": "Shah",
+    "linkedinUrl": "https://linkedin.com/in/abd-shah",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, UVic",
+    "buildIdea": "I’m building CodePilot, an AI-powered developer assistant that analyzes an entire repository instead of just a single file and helps engineers perform safe, coordinated multi-file refactors with clear explanations and suggested diffs; the idea is that while most AI coding tools focus on autocomplete or edits in the current context, CodePilot scans the project structure, understands relationships between files, and generates structured refactor plans such as modularizing code, improving architecture, adding error handling, or upgrading patterns across the codebase, then presents the changes as reviewable patches so developers stay in control—making it a practical, AI-native tool that enhances real-world software development workflows rather than just generating isolated snippets.",
+    "attendanceMode": "Remote/Virtual",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Rayyan",
+    "lastName": "Adnan",
+    "linkedinUrl": "https://linkedin.com/in/rayyanadnan",
+    "jobOrCompany": "Kinaxis",
+    "majorOrSchool": "CS + Business @ UCalgary",
+    "buildIdea": "AI productivity tool",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Arnav",
+    "lastName": "Kapadia",
+    "linkedinUrl": "https://linkedin.com/in/arnav-kapadia-060306284",
+    "jobOrCompany": "UBC Agrobot Design Team",
+    "majorOrSchool": "UBC Electrical Engineering (ELEC)",
+    "buildIdea": "Real-Time Interview Feedback for Learning to Code",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Hang",
+    "lastName": "Liu",
+    "linkedinUrl": "https://linkedin.com/in/h4ng",
+    "jobOrCompany": "",
+    "majorOrSchool": "UBC Computer Engineering",
+    "buildIdea": "AI agents capable of drawing things (no ai slop)",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Mohammad",
+    "lastName": "Reza Navazani",
+    "linkedinUrl": "https://linkedin.com/in/reza-navazani",
+    "jobOrCompany": "Self-Employed",
+    "majorOrSchool": "",
+    "buildIdea": "Agentic Intelligent Shop assist web app [Python, FastAPI, React, YoloV8]",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Diar",
+    "lastName": "Shakimov",
+    "linkedinUrl": "https://linkedin.com/in/dshakimov",
+    "jobOrCompany": "EA SPORTS - C++ Software Engineering Co-op",
+    "majorOrSchool": "CS, SFU",
+    "buildIdea": "I hate commercials. So my idea is to basically integrate the commercials into media by branding parts of a video. Ie in a restaurant the actors are sipping some drinks and in each country, companies can buy rights to make it their brand on the can without having to reshoot it, just automating the visual change with AI. Users get no ads, companies get integrated marketing. Alternatively, I was thinking of a smart, in vehicle system audio system to pick tunes for the moment. Ie we have a local llm take in params like time of day, day of the week, calendar events, but also a secure built in mic to detect tone to pick the perfect song for any moment. Ie say the mic picks up that it was silent for a while and then your girlfriend is mad at you, it might start playing \"Sorry\" by Justin Bieber.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Alex",
+    "lastName": "Gour",
+    "linkedinUrl": "https://linkedin.com/in/alexgour",
+    "jobOrCompany": "",
+    "majorOrSchool": "Business and Computer Science, UBC",
+    "buildIdea": "I want to use my AR glasses to create a automated shopping software where by just hand motions or an extended glance, the program can reorder items for the user.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Unknown",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/saurav-roy-ubc",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "An AI counsellor that detects the tone of your voice and give you mental health support based on your emotion level",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Naman",
+    "lastName": "Miglani",
+    "linkedinUrl": "https://linkedin.com/in/naman-miglani",
+    "jobOrCompany": "",
+    "majorOrSchool": "UBC CS",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "Remote/Virtual",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Hamzah",
+    "lastName": "Chaudhry",
+    "linkedinUrl": "https://linkedin.com/in/hamzahchaudhry",
+    "jobOrCompany": "N/A",
+    "majorOrSchool": "Computer Engineering @ UBC",
+    "buildIdea": "I’m interested in building a developer productivity or systems-focused tool, likely around understanding, debugging, or optimizing complex codebases. I come from a low-level / systems background, so I’m excited to work with a team to build something practical that combines strong execution with a clean demo.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Shaurya",
+    "lastName": "Thareja",
+    "linkedinUrl": "https://linkedin.com/in/shaurya-thareja-4a9722207",
+    "jobOrCompany": "UBC Computer Science (as a TA)",
+    "majorOrSchool": "CS + Cognitive Systems, UBC",
+    "buildIdea": "I wanna expand AI to other sectors that need it desperately but the world isn’t looking at them because they just wanna make faster coding models!",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Reilley",
+    "lastName": "Pfrimmer",
+    "linkedinUrl": "https://linkedin.com/in/reilley-pfrimmer",
+    "jobOrCompany": "",
+    "majorOrSchool": "Engineering Undergraduate @ UVic",
+    "buildIdea": "Our project is a smart calendar assistant that automatically adds realistic travel time to Google Calendar events. Instead of blocking out only class time, the tool reads event locations, determines the user’s starting point, calculates the optimal travel time by method (walking, biking, or public transit), and iserts a buffer directly into the schedule. By leveraging Cursor’s Composer-1 to orchestrate calendar integrations, location parsing, routing logic, and edge cases like back-to-back events, we aim to turn static schedules into  actionable plans. The result will be a seamless, behind the scenes tool that helps studets plan their days realistically and arrive on time to classes, meetings, and events, without changing how they already use their calendar.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Daennah",
+    "lastName": "Salazar",
+    "linkedinUrl": "https://linkedin.com/in/daennahsalazar",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, UVic",
+    "buildIdea": "A personal colour palette finder/Colour analysis that analyzes the selfie the user takes.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Hanyong",
+    "lastName": "Jin",
+    "linkedinUrl": "https://linkedin.com/in/hanyong-jin-3597873a5",
+    "jobOrCompany": "",
+    "majorOrSchool": "SFU",
+    "buildIdea": "I want to build that connects many people. I am hoping to utilize the fact that everyone has phones and see if I can make a party game using their phone's as a controller. Hoping to make it similar style to a kahoot. Using Cursor AI, I think it is possible to create something with a big scope in a short amount of time.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Darius",
+    "lastName": "Alexander",
+    "linkedinUrl": "https://linkedin.com/in/darius-alexander",
+    "jobOrCompany": "",
+    "majorOrSchool": "UBC BUCS (Business and Computer Science)",
+    "buildIdea": "I'm wanting to build an agentic CRM tool for organizations and clubs to streamline/automate partnerships outreach that will 10x efficiency",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "David",
+    "lastName": "Wang",
+    "linkedinUrl": "https://linkedin.com/in/david-wang-2b3276252",
+    "jobOrCompany": "N/A",
+    "majorOrSchool": "First Year UBC student aiming to go into CS",
+    "buildIdea": "Study app that help users socialize.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Sarim",
+    "lastName": "Zulkifl",
+    "linkedinUrl": "https://linkedin.com/in/sarim-zulkifl-48471725b",
+    "jobOrCompany": "Berlinguette Group UBC",
+    "majorOrSchool": "CS at UBC",
+    "buildIdea": "I want to build an ai platform that helps developers code",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Justin",
+    "lastName": "Wang",
+    "linkedinUrl": "",
+    "jobOrCompany": "",
+    "majorOrSchool": "Sauder, UBC",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Jaden",
+    "lastName": "Majid",
+    "linkedinUrl": "",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Tina",
+    "lastName": "Sun",
+    "linkedinUrl": "https://linkedin.com/in/tinajysun",
+    "jobOrCompany": "",
+    "majorOrSchool": "Business & CS @ UBC",
+    "buildIdea": "I want to build a smart calendar tool that automatically adds realistic travel time to my Google Calendar events. Right now, I only block out the class time itself, which doesn’t account for how long it actually takes to get from my dorm or a previous class to my next one. This application would read event locations, determine my starting point, calculate the appropriate travel time via my chosen form of transportation, and automatically block off that buffer before each class. By using Cursor’s Composer-1 to handle calendar integrations, location logic, and edge cases like back-to-back classes, the goal is to create a simple but impactful tool that helps students plan their days more realistically and avoid being late to classes and events.",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Damian",
+    "lastName": "Suidgeest",
+    "linkedinUrl": "https://linkedin.com/in/damian-suidgeest",
+    "jobOrCompany": "Goldman Sachs",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "Something awesome - no firm plan yet",
+    "attendanceMode": "In-Person @ UBC",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Torrin",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/torrin-pataki",
+    "jobOrCompany": "FileMind - AI Engineer",
+    "majorOrSchool": "BUCS @ UBC",
+    "buildIdea": "Real-world robots have a data problem. For this hackathon, we’re building a system that automatically finds, cleans, and organizes existing data from across the internet so anyone can quickly filter and pull usable datasets for training robots.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Prabuddha",
+    "lastName": "Tamhane",
+    "linkedinUrl": "https://linkedin.com/in/prabuddha-tamhane",
+    "jobOrCompany": "",
+    "majorOrSchool": "MDS UBC",
+    "buildIdea": "End-to-end paper trading algorithmic bot with multiple strategies and RAG to get info on stocks/cryptos/ETFs and make decisions.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Griffin",
+    "lastName": "Velichko",
+    "linkedinUrl": "https://linkedin.com/in/griffin-velichko",
+    "jobOrCompany": "",
+    "majorOrSchool": "Double Major in Business & CS @ UBC",
+    "buildIdea": "Real-world robots have a data problem. We will build a system that automatically finds, cleans, and organizes existing POV data from across the internet so anyone can quickly filter and pull usable datasets for training robots.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Theo",
+    "lastName": "Nash",
+    "linkedinUrl": "https://linkedin.com/in/theo-nash",
+    "jobOrCompany": "mundane.bot",
+    "majorOrSchool": "stanford, tsinghua",
+    "buildIdea": "tbd. something about robots",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Jasjot",
+    "lastName": "Parmar",
+    "linkedinUrl": "https://linkedin.com/in/jasjotparmar",
+    "jobOrCompany": "NA",
+    "majorOrSchool": "Data Science (Masters), UBC",
+    "buildIdea": "An accessibility related tool - I have a stutter so maybe a speech therapy MVP or something that promotes accessibility",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Maggie",
+    "lastName": "Di",
+    "linkedinUrl": "",
+    "jobOrCompany": "",
+    "majorOrSchool": "ENS, UBC",
+    "buildIdea": "Not sure",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Unknown",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/jaydenpiao",
+    "jobOrCompany": "Google",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "Not sure yet",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Asim Ali",
+    "lastName": "Mir",
+    "linkedinUrl": "https://linkedin.com/in/mirasimali",
+    "jobOrCompany": "university of toronto",
+    "majorOrSchool": "CS, UOFT",
+    "buildIdea": "I want to build something related to AI context since this is a recurring problem im facing in my real life",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Daniel",
+    "lastName": "Mok",
+    "linkedinUrl": "https://linkedin.com/in/dmok22",
+    "jobOrCompany": "",
+    "majorOrSchool": "Eng, UBC",
+    "buildIdea": "Next GenAI",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Sibi",
+    "lastName": "S",
+    "linkedinUrl": "https://linkedin.com/in/ssibi",
+    "jobOrCompany": "League Inc",
+    "majorOrSchool": "",
+    "buildIdea": "It’s a mobile app for small groups of friends who want real accountability. You commit to a fitness goal and put some money on the line. Your activity is verified automatically through Strava or Garmin, so there’s no self-reporting. If you miss the goal, the money is automatically sent to your friends or a penalty you chose upfront. It’s private, simple, and hard to cheat.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Hrishi",
+    "lastName": "Logani",
+    "linkedinUrl": "https://linkedin.com/in/loganihrishi",
+    "jobOrCompany": "UBC Cloud Innovation Centre",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "something that optimises my time and finances",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Tiya",
+    "lastName": "Verma",
+    "linkedinUrl": "",
+    "jobOrCompany": "",
+    "majorOrSchool": "",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Vedang",
+    "lastName": "Patel",
+    "linkedinUrl": "https://linkedin.com/in/vedang-patel-789a0b39b",
+    "jobOrCompany": "Nandos rn and my own startup",
+    "majorOrSchool": "Langara Accounting",
+    "buildIdea": "An app for iOS and macOS",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Saicharanraj",
+    "lastName": "Pusuluri",
+    "linkedinUrl": "https://linkedin.com/in/saipusuluri",
+    "jobOrCompany": "",
+    "majorOrSchool": "math and data science, UBC",
+    "buildIdea": "a roommate chore application?",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Mfon",
+    "lastName": "Udoh",
+    "linkedinUrl": "https://linkedin.com/in/mfonudoh18",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, TRU",
+    "buildIdea": "Not sure yet, but probably something to do with agent context. I’ve seen some really inspiring projects on that recently",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Unknown",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/iantang004",
+    "jobOrCompany": "Prosper Foudnation",
+    "majorOrSchool": "CS & Business, UBC",
+    "buildIdea": "I want to build an Algorithm Pattern Documentation Generator that automatically creates structured learning materials from LeetCode problems. Right now I’m unfortunately stuck doing 10+ hours of LeetCode weekly for interview prep, and my biggest issue isn't solving problems, it's retention. I manually document every problem by pattern with templates and common mistakes, which works great but takes roughly 15 minutes per problem if I want it comprehensive and detailed. This tool will take a LeetCode URL and auto-generate pattern classification, solution templates, edge cases, and structured notes in my existing format. I'm using Next.js + TypeScript, and Composer-1.5 is perfect for analyzing code and extracting algorithmic patterns intelligently. This solves my actual daily problem and turns 15-20 minutes of documentation into 30 seconds.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Unknown",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/ahmetdumlu",
+    "jobOrCompany": "Microsoft",
+    "majorOrSchool": "",
+    "buildIdea": "Personal AI Agent for finances",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Kudakwashe",
+    "lastName": "Mutizhe",
+    "linkedinUrl": "https://linkedin.com/in/kudakwashe-mutizhe",
+    "jobOrCompany": "",
+    "majorOrSchool": "",
+    "buildIdea": "Something that will make an impact",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Jared",
+    "lastName": "Shum",
+    "linkedinUrl": "https://linkedin.com/in/jared-shum-a9199034b",
+    "jobOrCompany": "Graze AI",
+    "majorOrSchool": "",
+    "buildIdea": "A visual debugger for LLM applications that maps memory retrieval as an interactive cobweb graph, showing which memories influence each response. Developers can inspect, disable, or adjust memory paths to fix incorrect or faulty outputs.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Dongyun",
+    "lastName": "Nam",
+    "linkedinUrl": "https://linkedin.com/in/dongyun-nam-‍-596387343",
+    "jobOrCompany": "",
+    "majorOrSchool": "Cs ubc",
+    "buildIdea": "Ai agent",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Elijah",
+    "lastName": "Zhao",
+    "linkedinUrl": "https://linkedin.com/in/elijahzhao24",
+    "jobOrCompany": "Nexera Robotics",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "Cursor for figma/design",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Harpreet",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/hs07",
+    "jobOrCompany": "",
+    "majorOrSchool": "Master of Data Science",
+    "buildIdea": "Energy consumption models for extreme weathers in Canada",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Lavanya",
+    "lastName": "Gupta",
+    "linkedinUrl": "https://linkedin.com/in/guptalavanya13",
+    "jobOrCompany": "NA",
+    "majorOrSchool": "Data Science UBC",
+    "buildIdea": "UBC Policy Copilot (with citations)",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Tanav",
+    "lastName": "Bajaj",
+    "linkedinUrl": "https://linkedin.com/in/tanav-bajaj",
+    "jobOrCompany": "University of British Columbia  - Research Assistant",
+    "majorOrSchool": "MDS , UBC",
+    "buildIdea": "UBC Policy Copilot",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Owen",
+    "lastName": "Fisher",
+    "linkedinUrl": "",
+    "jobOrCompany": "Royal bank of canada",
+    "majorOrSchool": "UBC",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Shenghua",
+    "lastName": "Jin",
+    "linkedinUrl": "https://linkedin.com/in/shenghua-jin",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, Simon Fraser University",
+    "buildIdea": "I want to build a 'Code-to-Firmware' optimizer that takes high-level Python logic and transpiles it into highly optimized C++ for embedded controllers. Having worked on real-time systems for Ascension Robotics, I know that latency is critical. I want to build a developer tool that analyzes C++ code for memory safety and efficiency specifically for hardware constraints, effectively bringing an 'AI Senior Engineer' into the embedded workflow.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Daniel",
+    "lastName": "Zhang",
+    "linkedinUrl": "https://linkedin.com/in/danelzhan",
+    "jobOrCompany": "unempluzz",
+    "majorOrSchool": "computer eng, ubc",
+    "buildIdea": "ai tooling for platform integration",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Angela",
+    "lastName": "Felicia",
+    "linkedinUrl": "https://linkedin.com/in/angela-feliciaa",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS @ UBC",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Angela",
+    "lastName": "Huang",
+    "linkedinUrl": "https://linkedin.com/in/angelatxhuang",
+    "jobOrCompany": "Hootsuite",
+    "majorOrSchool": "UBC, BUCS",
+    "buildIdea": "An app that helps you find other people that are going to a concert that you’re going to.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Hamza",
+    "lastName": "Imtiaz",
+    "linkedinUrl": "https://linkedin.com/in/hamza-imtiaz1",
+    "jobOrCompany": "CeresAI",
+    "majorOrSchool": "University of Calgary",
+    "buildIdea": "AI Productivity Copilot tool",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Saketh",
+    "lastName": "Poori",
+    "linkedinUrl": "https://linkedin.com/in/saketh-poori",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS at SFU",
+    "buildIdea": "Possibly something in the EdTech space",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Jimmy",
+    "lastName": "Sam",
+    "linkedinUrl": "https://linkedin.com/in/jimmy-sam-13b7b8297",
+    "jobOrCompany": "advizr as a swe",
+    "majorOrSchool": "cs + business @ ubc",
+    "buildIdea": "an agentic ai project. not sure what yet.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Ramika",
+    "lastName": "De Silva",
+    "linkedinUrl": "https://linkedin.com/in/ramikadesilva",
+    "jobOrCompany": "Synexus Labs (just ended)",
+    "majorOrSchool": "UBC BUCS (CS + Business @ UBC)",
+    "buildIdea": "A CI/CD-focused Project that lets you convert Git commits and other project updates to X tweets from terminal - help people build in public !",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Bhavya",
+    "lastName": "Chadha",
+    "linkedinUrl": "https://linkedin.com/in/chadhabhavya",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Anas",
+    "lastName": "Ahmed",
+    "linkedinUrl": "https://linkedin.com/in/anasahmed05",
+    "jobOrCompany": "Atlas Power Technologies Inc.",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "Some sort of agentic tool to help developers",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Mykola",
+    "lastName": "Bohoslavets",
+    "linkedinUrl": "https://linkedin.com/in/mykola-bohoslavets-a07244375",
+    "jobOrCompany": "Advisor - Advisor",
+    "majorOrSchool": "e.g",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Devind",
+    "lastName": "Dev",
+    "linkedinUrl": "https://linkedin.com/in/devindxdev",
+    "jobOrCompany": "Cosquadrant",
+    "majorOrSchool": "",
+    "buildIdea": "Something innovative and helpful for the community",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Harsh",
+    "lastName": "Amin",
+    "linkedinUrl": "https://linkedin.com/in/hamin06",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Demetrio",
+    "lastName": "Franklyn Edryan",
+    "linkedinUrl": "https://linkedin.com/in/demetrio-franklyn-edryan",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS & MATH, UBC",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Shoichiro",
+    "lastName": "Adachi",
+    "linkedinUrl": "https://linkedin.com/in/shoichiroadachi",
+    "jobOrCompany": "Colare - Student",
+    "majorOrSchool": "UofT Ind. Eng. (curr on gap)",
+    "buildIdea": "making things related to world model",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Jaskirat",
+    "lastName": "Singh",
+    "linkedinUrl": "https://linkedin.com/in/jaskirat-singh-a12227238",
+    "jobOrCompany": "Humonos.com",
+    "majorOrSchool": "",
+    "buildIdea": "Robot simulator",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Samarth",
+    "lastName": "Kapila",
+    "linkedinUrl": "",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "it’s a secret but trust me it’s cool :)",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Jefferson Abraham",
+    "lastName": "Dermawan",
+    "linkedinUrl": "https://linkedin.com/in/jeffersondermawan",
+    "jobOrCompany": "LintelAi, University of British Columbia",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "I plan to build a tool that scans project dependencies and explains risk, outdated packages, and potential vulnerabilities in plain language, along with suggested fixes and upgrade PRs.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Andy",
+    "lastName": "Xie",
+    "linkedinUrl": "https://linkedin.com/in/7789298673",
+    "jobOrCompany": "",
+    "majorOrSchool": "UBC Computer Science",
+    "buildIdea": "I want to build something that interacts with the real world",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Umang",
+    "lastName": "Bhavsar",
+    "linkedinUrl": "https://linkedin.com/in/umang-bhavsar-07874629b",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "not sure at the moment",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Unknown",
+    "lastName": "",
+    "linkedinUrl": "https://linkedin.com/in/warrenlukedmello",
+    "jobOrCompany": "I work for DarkVision as a Data Analyst",
+    "majorOrSchool": "Im a Cognitive Systems Major at UBC",
+    "buildIdea": "A project at the intersection of MLOps and AI infrastructure given the growth of AI systems in today’s world",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Eric",
+    "lastName": "Zhang",
+    "linkedinUrl": "https://linkedin.com/in/eric-zhang-a3260728b",
+    "jobOrCompany": "NA",
+    "majorOrSchool": "UBC BSc Major in Computer Science",
+    "buildIdea": "If there is a theme, I’ll see based on that, if not, whatever could be an modern issue or close to it.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Jonathan Calvin",
+    "lastName": "Rimbun Sinaga",
+    "linkedinUrl": "https://linkedin.com/in/jonathancalvin",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "Something cool and useful",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Michael",
+    "lastName": "Hewlett",
+    "linkedinUrl": "https://linkedin.com/in/mdahewlett",
+    "jobOrCompany": "TrustFlight",
+    "majorOrSchool": "",
+    "buildIdea": "Mandarin tone tutor",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Sylvine",
+    "lastName": "Zhang",
+    "linkedinUrl": "https://linkedin.com/in/sylvine-zhang-70109039b",
+    "jobOrCompany": "",
+    "majorOrSchool": "Science",
+    "buildIdea": "A small web app prototype using Cursor/Composer-1 to learn AI-assisted development",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Matin",
+    "lastName": "Rahimi",
+    "linkedinUrl": "https://linkedin.com/in/matinrhmk",
+    "jobOrCompany": "Design Eng @ Uber",
+    "majorOrSchool": "IXD @ ECU",
+    "buildIdea": "Not decided yet, will decide. :)",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Andrei",
+    "lastName": "Doroteo",
+    "linkedinUrl": "https://linkedin.com/in/andrei-doroteo",
+    "jobOrCompany": "",
+    "majorOrSchool": "UBC Statistics",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Ariv",
+    "lastName": "Chaudhry",
+    "linkedinUrl": "https://linkedin.com/in/6047049901",
+    "jobOrCompany": "",
+    "majorOrSchool": "Computer science",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Kris",
+    "lastName": "",
+    "linkedinUrl": "",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS UBC",
+    "buildIdea": "AI ML tools",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Mehrdad",
+    "lastName": "Momeni Zadeh",
+    "linkedinUrl": "https://linkedin.com/in/mehrdad-momeni-zadeh-mma236",
+    "jobOrCompany": "DeLTA Lab @ SFU",
+    "majorOrSchool": "CS, SFU",
+    "buildIdea": "A winner app",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Miguel",
+    "lastName": "Ferrer",
+    "linkedinUrl": "https://linkedin.com/in/mffdr",
+    "jobOrCompany": "Play MPE",
+    "majorOrSchool": "Masters in UX UI",
+    "buildIdea": "Music App",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Ojasv",
+    "lastName": "Issar",
+    "linkedinUrl": "https://linkedin.com/in/ojasvissar",
+    "jobOrCompany": "NA",
+    "majorOrSchool": "Data Science @ UBC",
+    "buildIdea": "Something Environment Related",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Abdul",
+    "lastName": "Khurram",
+    "linkedinUrl": "https://linkedin.com/in/abdulkhurram",
+    "jobOrCompany": "RBC Royal Bank (Co-op)",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "Not sure yet",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Aryaman",
+    "lastName": "Deora",
+    "linkedinUrl": "https://linkedin.com/in/aryaman-deora",
+    "jobOrCompany": "Na",
+    "majorOrSchool": "Business Technology Management",
+    "buildIdea": "A game night app.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Kanish",
+    "lastName": "Khanna",
+    "linkedinUrl": "https://linkedin.com/in/kanishkhanna",
+    "jobOrCompany": "Samsung Electronics (Cloud Devops Co-op)",
+    "majorOrSchool": "Computer Science",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Rudra",
+    "lastName": "Dave",
+    "linkedinUrl": "https://linkedin.com/in/rudra-dave-b22185293",
+    "jobOrCompany": "I work for a local real estate company in Vancouver called ForthGen Holdings LTD",
+    "majorOrSchool": "CS @ UBC",
+    "buildIdea": "I want to build something impactful that fixes a real world issue, one of the ideas one my mind is a tool to help companies with only single region servers when events like the AWS outage happen. But I'm still undecided",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Naman",
+    "lastName": "Pahuja",
+    "linkedinUrl": "https://linkedin.com/in/naman-pahuja-04191a213",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS at UBC",
+    "buildIdea": "An AI specialised project (can’t reveal it here )",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Matthew",
+    "lastName": "Lin",
+    "linkedinUrl": "https://linkedin.com/in/matthew-lin-0167462b9",
+    "jobOrCompany": "",
+    "majorOrSchool": "Engineering Science, SFU",
+    "buildIdea": "A soldering simulator game",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Sophie",
+    "lastName": "Jiang",
+    "linkedinUrl": "https://linkedin.com/in/sophiej07",
+    "jobOrCompany": "",
+    "majorOrSchool": "Undeclared (1st year BSc), UBC",
+    "buildIdea": "TBD",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Allison",
+    "lastName": "Li",
+    "linkedinUrl": "https://linkedin.com/in/allisonli-ca",
+    "jobOrCompany": "Slalom",
+    "majorOrSchool": "",
+    "buildIdea": "Maybe a golf app, not yet determined",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Ketan",
+    "lastName": "Saraf",
+    "linkedinUrl": "https://linkedin.com/in/ketan-saraf-174043212",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, UBC",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Kris",
+    "lastName": "Krüg",
+    "linkedinUrl": "https://linkedin.com/in/kriskrug",
+    "jobOrCompany": "BC + AI - Executive Director",
+    "majorOrSchool": "",
+    "buildIdea": "Cylon Detector for artificial consciousnesses.",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Ramtin",
+    "lastName": "Movahed",
+    "linkedinUrl": "https://linkedin.com/in/ramtin-movahed",
+    "jobOrCompany": "PressReader",
+    "majorOrSchool": "",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Arash",
+    "lastName": "Naghavi",
+    "linkedinUrl": "https://linkedin.com/in/arash-naghavi-b907b21b6",
+    "jobOrCompany": "UBC",
+    "majorOrSchool": "Cs",
+    "buildIdea": "UBC coin a cryptocurrency only for ubc students",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Jess",
+    "lastName": "Villanueva",
+    "linkedinUrl": "https://linkedin.com/in/jessvillanueva-in",
+    "jobOrCompany": "Third Door Stories",
+    "majorOrSchool": "Not a student, going independently :)",
+    "buildIdea": "Something within boosting mental health support workflows!",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Sigrid",
+    "lastName": "Jin",
+    "linkedinUrl": "https://linkedin.com/in/sigridjineth",
+    "jobOrCompany": "",
+    "majorOrSchool": "CS, UBC Okanagan",
+    "buildIdea": "No idea shared",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Casey",
+    "lastName": "Blustein",
+    "linkedinUrl": "https://linkedin.com/in/caseyblustein",
+    "jobOrCompany": "Parallax",
+    "majorOrSchool": "",
+    "buildIdea": "An anti-LLM chrome extension to help people be less lazy. Or a fantasy polymarket pool for friends",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  },
+  {
+    "firstName": "Zhiqiang",
+    "lastName": "Zhou",
+    "linkedinUrl": "https://linkedin.com/in/zhiqiang-zhou-9964a028b",
+    "jobOrCompany": "LayerZero",
+    "majorOrSchool": "",
+    "buildIdea": "build a tasted coding agent based on history",
+    "attendanceMode": "",
+    "cursorExperienceLevel": ""
+  }
+]
