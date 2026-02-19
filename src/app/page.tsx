@@ -164,7 +164,7 @@ export default function Home() {
             </span>
           </h1>
           <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed font-medium">
-            The hands-on Cursor course that 300+ students have used to build and
+            The hands-on Cursor course that 800 students have used to build and
             ship production-ready apps — without writing a single line of code.
           </p>
 
@@ -510,7 +510,7 @@ export default function Home() {
       <section id="testimonials" className="scroll-mt-24 px-6">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">
-            300+ Students. Real Results.
+            800 Students. Real Results.
           </h2>
           <TestimonialCarousel />
           <div className="mt-10 text-center">
