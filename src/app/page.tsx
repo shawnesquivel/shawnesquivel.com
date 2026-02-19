@@ -198,7 +198,7 @@ export default function Home() {
             Sound Familiar?
           </h2>
           <p className="mx-auto mb-12 max-w-2xl text-center font-medium text-muted">
-            After talking to 300+ vibe coders, the same 3 problems keep coming
+            After talking to 800 vibe coders, the same 3 problems keep coming
             up:
           </p>
           <div className="space-y-8">

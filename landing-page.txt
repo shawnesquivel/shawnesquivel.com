@@ -1,6 +1,6 @@
 # The Problems With Vibe Coding
 
-I’ve spoken to 300+ vibe coders and Cursor users. Their complaints usually fit into one of the following categories:
+I’ve spoken to 800 vibe coders and Cursor users. Their complaints usually fit into one of the following categories:
 
 ### 🐞 Endless Bugs
 
