@@ -3,7 +3,8 @@ import type { ReactNode } from "react";
 
 import WorkshopInquiryForm from "@/components/WorkshopInquiryForm";
 
-const GOOGLE_FORM_URL = "https://forms.gle/your-workshop-inquiry-link";
+const GOOGLE_FORM_URL =
+  process.env.NEXT_PUBLIC_WORKSHOP_GOOGLE_FORM_URL ?? "https://forms.gle/";
 
 export const metadata: Metadata = {
   title: "Cursor Workshops Vancouver | Build with Cursor",
@@ -128,7 +129,7 @@ export default function WorkshopsPage() {
       <section className="flex min-h-screen items-center justify-center px-6 pt-24">
         <div className="mx-auto max-w-3xl text-center">
           <p className="neo-shadow-sm mb-8 inline-block bg-pink px-4 py-2 text-sm font-black uppercase tracking-widest">
-            In-Person Workshops · Vancouver, Canada
+            Build Apps With Cursor · In-Person Vancouver
           </p>
           <h1 className="text-4xl font-black leading-tight uppercase tracking-tight sm:text-5xl md:text-7xl">
             Go From No Experience
