@@ -137,7 +137,7 @@ export default function WorkshopInquiryForm({
             {submissionPreview.trackInterest}.
           </p>
           <p className="mt-2 text-sm font-medium">
-            Next step: click the Google Form below to send your full inquiry.
+            Continue to the inquiry form to share final details.
           </p>
         </div>
       )}
@@ -148,7 +148,7 @@ export default function WorkshopInquiryForm({
         rel="noopener noreferrer"
         className="inline-block rounded-full border-3 border-foreground bg-surface px-8 py-4 text-sm font-black uppercase tracking-wide text-foreground shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_0_#1a1a1a] active:translate-x-1 active:translate-y-1 active:shadow-none"
       >
-        Open Google Form to Inquire
+        Continue to Inquiry Form
       </a>
     </div>
   );

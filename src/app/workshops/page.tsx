@@ -12,6 +12,15 @@ export const metadata: Metadata = {
     "Hands-on in-person Cursor workshops in Vancouver. Go from no experience to building and deploying your first app.",
 };
 
+const FEATURE_COVERAGE_ITEMS = [
+  "Agent & Plan Mode",
+  "Cursor Tab & Rules",
+  "Debug workflows",
+  "MCP + tool usage",
+  "Prompt patterns",
+  "Deployment checklist",
+];
+
 function SectionDivider() {
   return (
     <div className="mx-auto my-16 h-1 w-full max-w-5xl bg-foreground md:my-20" />
@@ -153,9 +162,6 @@ export default function WorkshopsPage() {
             <span className="neo-shadow-sm bg-blue px-3 py-2">
               Build your first app live
             </span>
-            <span className="neo-shadow-sm bg-purple px-3 py-2">
-              No pricing shown publicly
-            </span>
           </div>
 
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -169,8 +175,7 @@ export default function WorkshopsPage() {
           </div>
 
           <p className="mx-auto mt-5 max-w-xl text-sm font-bold text-muted">
-            To inquire about pricing and availability, submit the form below and
-            continue to the Google Form.
+            Submit your details below to reserve your workshop spot.
           </p>
         </div>
       </section>
@@ -232,62 +237,47 @@ export default function WorkshopsPage() {
             Workshop Structure (9am - 3pm)
           </h2>
           <p className="mx-auto mb-12 max-w-3xl text-center font-medium text-muted">
-            One focused day. Hands-on coding. We cover building your first app,
-            prompt-engineering best practices, and the Cursor features that help
-            you ship faster.
+            One focused day. Hands-on coding from start to finish. Tracks define
+            your primary tool for the day, not breakout groups.
           </p>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-2">
             <div className="neo-shadow bg-blue p-6">
               <p className="mb-2 text-xs font-black uppercase">
-                9:00am - 10:30am
+                9:00am - 12:00pm
               </p>
               <h3 className="mb-2 text-xl font-black uppercase">
-                Foundations + Setup
+                Crash Course + First Build
               </h3>
-              <p className="text-sm font-medium leading-relaxed">
-                Set up your project, understand AI-assisted workflows, and go
-                from zero to your first working feature.
-              </p>
-            </div>
-
-            <div className="neo-shadow bg-green p-6">
-              <p className="mb-2 text-xs font-black uppercase">
-                10:45am - 12:15pm
-              </p>
-              <h3 className="mb-2 text-xl font-black uppercase">
-                Build Your First App
-              </h3>
-              <p className="text-sm font-medium leading-relaxed">
-                Live coding sprint where you build an app end-to-end with guided
-                prompts, structure, and deployment-ready patterns.
-              </p>
-            </div>
-
-            <div className="neo-shadow bg-pink p-6">
-              <p className="mb-2 text-xs font-black uppercase">
-                1:00pm - 2:00pm
-              </p>
-              <h3 className="mb-2 text-xl font-black uppercase">
-                Prompt Engineering Best Practices
-              </h3>
-              <p className="text-sm font-medium leading-relaxed">
-                Learn how to write prompts that produce reliable outputs, reduce
-                rework, and keep AI focused on your product goals.
-              </p>
+              <ul className="space-y-2 text-sm font-medium leading-relaxed">
+                <li>
+                  Cursor fundamentals, prompt engineering, and Plan Mode
+                  workflows.
+                </li>
+                <li>
+                  Guided workshop sprint to build your first app end-to-end.
+                </li>
+                <li>Ship a working feature before lunch.</li>
+              </ul>
             </div>
 
             <div className="neo-shadow bg-yellow p-6">
               <p className="mb-2 text-xs font-black uppercase">
-                2:00pm - 3:00pm
+                12:00pm - 3:00pm
               </p>
               <h3 className="mb-2 text-xl font-black uppercase">
-                Tracks + Deploy
+                Advanced Workflows + Deploy
               </h3>
-              <p className="text-sm font-medium leading-relaxed">
-                Break into track-focused workflows for Cursor, Claude Code, and
-                Codex, then deploy your app and define next steps.
-              </p>
+              <ul className="space-y-2 text-sm font-medium leading-relaxed">
+                <li>
+                  Parallel agents, AI code review, and Debug Mode in live reps.
+                </li>
+                <li>
+                  Apply your selected tool track (Cursor, Claude Code, or Codex)
+                  to the same build workflow.
+                </li>
+                <li>Deploy and leave with a repeatable production workflow.</li>
+              </ul>
             </div>
           </div>
 
@@ -295,30 +285,39 @@ export default function WorkshopsPage() {
             <h3 className="mb-4 text-xl font-black uppercase">
               Cursor Feature Coverage
             </h3>
-            <div className="flex flex-wrap gap-3 text-xs font-black uppercase">
-              <span className="neo-shadow-sm bg-blue px-3 py-2">
-                Agent &amp; Plan Mode
-              </span>
-              <span className="neo-shadow-sm bg-green px-3 py-2">
-                Cursor Tab &amp; Rules
-              </span>
-              <span className="neo-shadow-sm bg-pink px-3 py-2">
-                Debug workflows
-              </span>
-              <span className="neo-shadow-sm bg-purple px-3 py-2">
-                MCP + tool usage
-              </span>
-              <span className="neo-shadow-sm bg-yellow px-3 py-2">
-                Prompt patterns
-              </span>
-              <span className="neo-shadow-sm bg-orange px-3 py-2">
-                Deployment checklist
-              </span>
+            <div className="space-y-3 overflow-hidden">
+              <div className="flex w-max gap-3 animate-marquee text-xs font-black uppercase">
+                {[...FEATURE_COVERAGE_ITEMS, ...FEATURE_COVERAGE_ITEMS].map(
+                  (item, index) => (
+                    <span
+                      key={`left-${item}-${index}`}
+                      className="neo-shadow-sm bg-blue px-3 py-2"
+                    >
+                      {item}
+                    </span>
+                  ),
+                )}
+              </div>
+              <div
+                className="flex w-max gap-3 animate-marquee text-xs font-black uppercase"
+                style={{ animationDirection: "reverse", animationDuration: "18s" }}
+              >
+                {[...FEATURE_COVERAGE_ITEMS, ...FEATURE_COVERAGE_ITEMS].map(
+                  (item, index) => (
+                    <span
+                      key={`right-${item}-${index}`}
+                      className="neo-shadow-sm bg-yellow px-3 py-2"
+                    >
+                      {item}
+                    </span>
+                  ),
+                )}
+              </div>
             </div>
           </div>
 
           <div className="mt-10 text-center">
-            <ScrollToFormButton>Reserve a Spot</ScrollToFormButton>
+            <ScrollToFormButton>Reserve My Spot</ScrollToFormButton>
           </div>
         </div>
       </section>
@@ -391,7 +390,7 @@ export default function WorkshopsPage() {
                 idea to deployed internal tool using Cursor.&rdquo;
               </p>
               <p className="mt-4 text-xs font-black uppercase">
-                — Product Manager, Vancouver
+                — Product Manager, Ekona Power
               </p>
             </div>
             <div className="neo-shadow bg-surface p-6">
@@ -400,7 +399,7 @@ export default function WorkshopsPage() {
                 ship faster with fewer broken prompts.&rdquo;
               </p>
               <p className="mt-4 text-xs font-black uppercase">
-                — Technical Lead, Burnaby
+                — Technical Lead, Shopify
               </p>
             </div>
             <div className="neo-shadow bg-surface p-6">
@@ -409,7 +408,7 @@ export default function WorkshopsPage() {
                 could apply at work the next day.&rdquo;
               </p>
               <p className="mt-4 text-xs font-black uppercase">
-                — Software Engineer, Richmond
+                — Startup Founder
               </p>
             </div>
           </div>
@@ -534,18 +533,10 @@ export default function WorkshopsPage() {
               </p>
             </FAQItem>
 
-            <FAQItem question="💰 Why is there no public pricing on this page?">
-              <p>
-                Pricing is shared through the inquiry flow. Submit the form and
-                continue to the Google Form to receive details.
-              </p>
-            </FAQItem>
-
             <FAQItem question="👋 How do I get workshop dates and seat availability?">
               <p>
-                Use the enrollment form below. You&apos;ll then be directed to
-                the Google Form where we collect final details and follow up
-                with available dates.
+                Use the enrollment form below and we&apos;ll follow up with
+                available dates.
               </p>
             </FAQItem>
           </div>
@@ -560,8 +551,7 @@ export default function WorkshopsPage() {
             Enroll Now
           </h2>
           <p className="mx-auto mb-8 max-w-2xl text-center font-medium">
-            Submit your interest below, then continue to the Google Form for
-            full inquiry details. Pricing is not shown on this page.
+            Submit your interest below and we&apos;ll follow up with details.
           </p>
           <WorkshopInquiryForm googleFormUrl={GOOGLE_FORM_URL} />
         </div>
