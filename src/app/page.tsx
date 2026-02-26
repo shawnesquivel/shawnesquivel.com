@@ -104,18 +104,6 @@ export default function Home() {
           </span>
           <div className="flex items-center gap-5 text-sm font-bold uppercase">
             <a
-              href="/course"
-              className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
-            >
-              Free Course
-            </a>
-            <a
-              href="#problems"
-              className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
-            >
-              Problems
-            </a>
-            <a
               href="#curriculum"
               className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
             >
@@ -126,12 +114,6 @@ export default function Home() {
               className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
             >
               Testimonials
-            </a>
-            <a
-              href="#about"
-              className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
-            >
-              About
             </a>
             <a
               href="#pricing"
@@ -189,6 +171,21 @@ export default function Home() {
             >
               See the Curriculum
             </a>
+          </div>
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ───── Testimonials ───── */}
+      <section id="testimonials" className="scroll-mt-24 px-6">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">
+            <StudentCounter />+ Students. Real Results.
+          </h2>
+          <TestimonialCarousel />
+          <div className="mt-10 text-center">
+            <CTAButton />
           </div>
         </div>
       </section>
@@ -323,224 +320,6 @@ export default function Home() {
             This is the exact workflow you&apos;ll build. A team of AI agents,
             working for you.
           </p>
-        </div>
-      </section>
-
-      <SectionDivider />
-
-      {/* ───── Curriculum ───── */}
-      <section id="curriculum" className="scroll-mt-24">
-        <div className="px-6">
-          <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
-            What You&apos;ll Learn
-          </h2>
-          <p className="mx-auto mb-2 max-w-xl text-center font-medium">
-            4 modules. Hands-on builds. No passive watching.
-          </p>
-          <p className="mx-auto mb-8 max-w-xl text-center text-sm font-medium text-muted">
-            Swipe to explore each module &rarr;
-          </p>
-        </div>
-
-        {/* Horizontal scroll container */}
-        <div className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory px-6 pb-6 -mx-0 scrollbar-hide">
-          {/* Left spacer for centering on large screens */}
-          <div className="hidden shrink-0 lg:block lg:w-[calc((100vw-64rem)/2)]" />
-
-          {/* Module 1 */}
-          <div className="neo-shadow bg-blue p-8 shrink-0 snap-center w-[85vw] max-w-md flex flex-col">
-            <span className="neo-shadow-sm inline-block self-start bg-foreground text-surface px-3 py-1 text-xs font-black uppercase mb-4">
-              Module 1
-            </span>
-            <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
-              Getting Started
-            </h3>
-            <ul className="space-y-3 text-sm font-medium">
-              <li className="flex gap-2">
-                <span className="shrink-0">1.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Cursor Agent
-                  </code>{" "}
-                  — turn ideas into step-by-step plans
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">2.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Cursor Tab
-                  </code>{" "}
-                  — let AI write the code for you
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">3.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Cursor Rules
-                  </code>{" "}
-                  — get features right on the first try
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">4.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Plan Mode
-                  </code>{" "}
-                  — plan before you build so AI doesn&apos;t go off the rails
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Module 2 */}
-          <div className="neo-shadow bg-green p-8 shrink-0 snap-center w-[85vw] max-w-md flex flex-col">
-            <span className="neo-shadow-sm inline-block self-start bg-foreground text-surface px-3 py-1 text-xs font-black uppercase mb-4">
-              Module 2
-            </span>
-            <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
-              Fix Bugs &amp; Stay Secure
-            </h3>
-            <ul className="space-y-3 text-sm font-medium">
-              <li className="flex gap-2">
-                <span className="shrink-0">1.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Debug Mode
-                  </code>{" "}
-                  — fix bugs without going in circles
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">2.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    MCP
-                  </code>{" "}
-                  — connect AI to your browser &amp; other tools
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">3.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    BugBot
-                  </code>{" "}
-                  — catch security holes before hackers do
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Module 3 */}
-          <div className="neo-shadow bg-pink p-8 shrink-0 snap-center w-[85vw] max-w-md flex flex-col">
-            <span className="neo-shadow-sm inline-block self-start bg-foreground text-surface px-3 py-1 text-xs font-black uppercase mb-4">
-              Module 3
-            </span>
-            <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
-              Make It Look Great
-            </h3>
-            <ul className="space-y-3 text-sm font-medium">
-              <li className="flex gap-2">
-                <span className="shrink-0">1.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Visual Browser
-                  </code>{" "}
-                  — tweak designs by clicking, not coding
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">2.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Figma to Code
-                  </code>{" "}
-                  — turn any design into a real app
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Module 4 */}
-          <div className="neo-shadow bg-purple p-8 shrink-0 snap-center w-[85vw] max-w-md flex flex-col">
-            <span className="neo-shadow-sm inline-block self-start bg-foreground text-surface px-3 py-1 text-xs font-black uppercase mb-4">
-              Module 4
-            </span>
-            <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
-              Build 10x Faster
-            </h3>
-            <ul className="space-y-3 text-sm font-medium">
-              <li className="flex gap-2">
-                <span className="shrink-0">1.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Agent Review
-                  </code>{" "}
-                  — automatically catch problems before your users do
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">2.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Background Agents
-                  </code>{" "}
-                  — AI builds features while you sleep
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span className="shrink-0">3.</span>
-                <span>
-                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
-                    Parallel Agents
-                  </code>{" "}
-                  — build multiple features at once
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Right spacer */}
-          <div className="shrink-0 w-6 lg:w-[calc((100vw-64rem)/2)]" />
-        </div>
-      </section>
-
-      <SectionDivider />
-
-      {/* ───── Testimonials ───── */}
-      <section id="testimonials" className="scroll-mt-24 px-6">
-        <div className="mx-auto max-w-5xl">
-          <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">
-            <StudentCounter />+ Students. Real Results.
-          </h2>
-          <TestimonialCarousel />
-          <div className="mt-10 text-center">
-            <CTAButton />
-          </div>
-        </div>
-      </section>
-
-      <SectionDivider />
-
-      {/* ───── About ───── */}
-      <section id="about" className="scroll-mt-24 px-6">
-        <div className="mx-auto max-w-4xl">
-          <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
-            Your Instructor
-          </h2>
-          <p className="mx-auto mb-12 max-w-xl text-center font-medium text-muted">
-            You&apos;re learning from a verified Cursor Ambassador and SaaS
-            Founder.
-          </p>
-          {/* ── About Image Carousel ── */}
-          <ImageCarousel />
-
-          <div className="mt-10 text-center">
-            <CTAButton />
-          </div>
         </div>
       </section>
 
@@ -763,6 +542,209 @@ export default function Home() {
               100% Satisfaction Guarantee
             </a>
           </p>
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ───── Curriculum ───── */}
+      <section id="curriculum" className="scroll-mt-24">
+        <div className="px-6">
+          <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
+            What You&apos;ll Learn
+          </h2>
+          <p className="mx-auto mb-2 max-w-xl text-center font-medium">
+            4 modules. Hands-on builds. No passive watching.
+          </p>
+          <p className="mx-auto mb-8 max-w-xl text-center text-sm font-medium text-muted">
+            Swipe to explore each module &rarr;
+          </p>
+        </div>
+
+        {/* Horizontal scroll container */}
+        <div className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory px-6 pb-6 -mx-0 scrollbar-hide">
+          {/* Left spacer for centering on large screens */}
+          <div className="hidden shrink-0 lg:block lg:w-[calc((100vw-64rem)/2)]" />
+
+          {/* Module 1 */}
+          <div className="neo-shadow bg-blue p-8 shrink-0 snap-center w-[85vw] max-w-md flex flex-col">
+            <span className="neo-shadow-sm inline-block self-start bg-foreground text-surface px-3 py-1 text-xs font-black uppercase mb-4">
+              Module 1
+            </span>
+            <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
+              Getting Started
+            </h3>
+            <ul className="space-y-3 text-sm font-medium">
+              <li className="flex gap-2">
+                <span className="shrink-0">1.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Cursor Agent
+                  </code>{" "}
+                  — turn ideas into step-by-step plans
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">2.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Cursor Tab
+                  </code>{" "}
+                  — let AI write the code for you
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">3.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Cursor Rules
+                  </code>{" "}
+                  — get features right on the first try
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">4.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Plan Mode
+                  </code>{" "}
+                  — plan before you build so AI doesn&apos;t go off the rails
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Module 2 */}
+          <div className="neo-shadow bg-green p-8 shrink-0 snap-center w-[85vw] max-w-md flex flex-col">
+            <span className="neo-shadow-sm inline-block self-start bg-foreground text-surface px-3 py-1 text-xs font-black uppercase mb-4">
+              Module 2
+            </span>
+            <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
+              Fix Bugs &amp; Stay Secure
+            </h3>
+            <ul className="space-y-3 text-sm font-medium">
+              <li className="flex gap-2">
+                <span className="shrink-0">1.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Debug Mode
+                  </code>{" "}
+                  — fix bugs without going in circles
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">2.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    MCP
+                  </code>{" "}
+                  — connect AI to your browser &amp; other tools
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">3.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    BugBot
+                  </code>{" "}
+                  — catch security holes before hackers do
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Module 3 */}
+          <div className="neo-shadow bg-pink p-8 shrink-0 snap-center w-[85vw] max-w-md flex flex-col">
+            <span className="neo-shadow-sm inline-block self-start bg-foreground text-surface px-3 py-1 text-xs font-black uppercase mb-4">
+              Module 3
+            </span>
+            <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
+              Make It Look Great
+            </h3>
+            <ul className="space-y-3 text-sm font-medium">
+              <li className="flex gap-2">
+                <span className="shrink-0">1.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Visual Browser
+                  </code>{" "}
+                  — tweak designs by clicking, not coding
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">2.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Figma to Code
+                  </code>{" "}
+                  — turn any design into a real app
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Module 4 */}
+          <div className="neo-shadow bg-purple p-8 shrink-0 snap-center w-[85vw] max-w-md flex flex-col">
+            <span className="neo-shadow-sm inline-block self-start bg-foreground text-surface px-3 py-1 text-xs font-black uppercase mb-4">
+              Module 4
+            </span>
+            <h3 className="mb-2 text-2xl font-black uppercase tracking-tight">
+              Build 10x Faster
+            </h3>
+            <ul className="space-y-3 text-sm font-medium">
+              <li className="flex gap-2">
+                <span className="shrink-0">1.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Agent Review
+                  </code>{" "}
+                  — automatically catch problems before your users do
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">2.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Background Agents
+                  </code>{" "}
+                  — AI builds features while you sleep
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0">3.</span>
+                <span>
+                  <code className="bg-surface border-2 border-foreground px-1.5 py-0.5 text-xs font-bold">
+                    Parallel Agents
+                  </code>{" "}
+                  — build multiple features at once
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Right spacer */}
+          <div className="shrink-0 w-6 lg:w-[calc((100vw-64rem)/2)]" />
+        </div>
+      </section>
+
+      <SectionDivider />
+
+      {/* ───── About ───── */}
+      <section id="about" className="scroll-mt-24 px-6">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
+            Your Instructor
+          </h2>
+          <p className="mx-auto mb-12 max-w-xl text-center font-medium text-muted">
+            You&apos;re learning from a verified Cursor Ambassador and SaaS
+            Founder.
+          </p>
+          {/* ── About Image Carousel ── */}
+          <ImageCarousel />
+
+          <div className="mt-10 text-center">
+            <CTAButton />
+          </div>
         </div>
       </section>
 
