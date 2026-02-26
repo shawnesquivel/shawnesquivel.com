@@ -3,6 +3,7 @@ import PainCard from "@/components/PainCard";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import ZoomableImage from "@/components/ZoomableImage";
 import StudentCounter from "@/components/StudentCounter";
+import SocialProof from "@/components/SocialProof";
 
 const COURSE_URL =
   "https://shawnesquivel.thinkific.com/enroll/3491521?price_id=4414098";
@@ -138,11 +139,8 @@ export default function Home() {
       </nav>
 
       {/* ───── Hero ───── */}
-      <section className="flex min-h-screen items-center justify-center px-6 pt-24">
+      <section className="flex min-h-[90vh] items-center justify-center px-6 pt-20">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="neo-shadow-sm mb-8 inline-block bg-pink px-4 py-2 text-sm font-black uppercase tracking-widest">
-            Build Apps With Cursor
-          </p>
           <h1 className="text-4xl font-black leading-tight uppercase tracking-tight sm:text-5xl md:text-7xl">
             Go From Idea
             <br />
@@ -152,18 +150,16 @@ export default function Home() {
               In One Weekend.
             </span>
           </h1>
-          <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed font-medium">
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed font-medium">
             The hands-on Cursor course that <StudentCounter />+ students have used to build and
             ship production-ready apps — without writing a single line of code.
           </p>
 
-          <div className="mt-10 flex flex-col items-center gap-3">
-            <p className="neo-shadow-sm inline-block bg-green px-4 py-2 text-xs font-black uppercase">
-              🔓 7-Day Free Trial · 30-day money-back guarantee
-            </p>
+          <div className="mt-6">
+            <SocialProof />
           </div>
 
-          <div className="mt-6 flex flex-col items-center gap-5 sm:flex-row sm:justify-center">
+          <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <CTAButton />
             <a
               href="#curriculum"
@@ -172,6 +168,9 @@ export default function Home() {
               See the Curriculum
             </a>
           </div>
+          <p className="mt-3 text-xs font-medium text-muted">
+            7-day free trial · 30-day money-back guarantee
+          </p>
         </div>
       </section>
 
