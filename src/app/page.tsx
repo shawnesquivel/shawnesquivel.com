@@ -2,6 +2,7 @@ import ImageCarousel from "@/components/ImageCarousel";
 import PainCard from "@/components/PainCard";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import ZoomableImage from "@/components/ZoomableImage";
+import StudentCounter from "@/components/StudentCounter";
 
 const COURSE_URL =
   "https://shawnesquivel.thinkific.com/enroll/3491521?price_id=4414098";
@@ -15,9 +16,7 @@ function SectionDivider() {
 function CTAButton({ className = "" }: { className?: string }) {
   return (
     <a
-      href={COURSE_URL}
-      target="_blank"
-      rel="noopener noreferrer"
+      href="#pricing"
       className={`inline-block rounded-full border-3 border-foreground bg-accent px-8 py-4 text-base font-black uppercase tracking-wide text-white shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_0_#1a1a1a] active:translate-x-1 active:translate-y-1 active:shadow-none ${className}`}
     >
       Start Free Trial
@@ -147,9 +146,7 @@ export default function Home() {
               FAQ
             </a>
             <a
-              href={COURSE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#pricing"
               className="rounded-full border-2 border-foreground bg-accent px-4 py-2 text-xs font-black uppercase tracking-wide text-white shadow-[2px_2px_0_0_#1a1a1a] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0_0_#1a1a1a]"
             >
               Start Free Trial
@@ -174,7 +171,7 @@ export default function Home() {
             </span>
           </h1>
           <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed font-medium">
-            The hands-on Cursor course that 300+ students have used to build and
+            The hands-on Cursor course that <StudentCounter />+ students have used to build and
             ship production-ready apps — without writing a single line of code.
           </p>
 
@@ -205,7 +202,7 @@ export default function Home() {
             Sound Familiar?
           </h2>
           <p className="mx-auto mb-12 max-w-2xl text-center font-medium text-muted">
-            After talking to 300+ vibe coders, the same 3 problems keep coming
+            After talking to <StudentCounter />+ vibe coders, the same 3 problems keep coming
             up:
           </p>
           <div className="space-y-8">
@@ -517,7 +514,7 @@ export default function Home() {
       <section id="testimonials" className="scroll-mt-24 px-6">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-12 text-center text-3xl font-black uppercase sm:text-5xl">
-            300+ Students. Real Results.
+            <StudentCounter />+ Students. Real Results.
           </h2>
           <TestimonialCarousel />
           <div className="mt-10 text-center">
@@ -656,83 +653,84 @@ export default function Home() {
 
       <SectionDivider />
 
-      {/* ───── How Pricing Works ───── */}
-      <section id="pricing" className="scroll-mt-24 px-6">
-        <div className="mx-auto max-w-3xl">
+      {/* ───── Pricing ───── */}
+      <section id="pricing" className="scroll-mt-24 px-6 flex min-h-[80vh] items-center py-12">
+        <div className="mx-auto w-full max-w-4xl">
           <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
-            How It Works
+            Choose Your Plan
           </h2>
-          <p className="mx-auto mb-12 max-w-lg text-center font-medium text-muted">
-            No risk. Try everything free, then decide.
+          <p className="mx-auto mb-10 max-w-lg text-center font-medium text-muted">
+            No risk. 30-day money-back guarantee.
           </p>
 
-          {/* Timeline */}
-          <div className="relative flex flex-col items-center">
-            {/* Step 1 */}
-            <div className="relative w-full max-w-md">
-              <div className="neo-shadow bg-green p-6 text-center">
-                <h3 className="mb-2 text-2xl font-black uppercase">
-                  7 Days Free
-                </h3>
-                <p className="text-sm font-medium">
-                  Full access. No charge.
-                </p>
-                <p className="mt-3 inline-block neo-shadow-sm bg-surface px-4 py-2 text-2xl font-black">
-                  $0
-                </p>
+          <div className="grid gap-8 md:grid-cols-2">
+            {/* Card 1: Monthly */}
+            <div className="neo-shadow relative flex flex-col bg-green p-8">
+              <div className="mb-4">
+                <h3 className="text-2xl font-black uppercase">Monthly Pass</h3>
+                <p className="text-sm font-bold text-foreground/80 mt-1">Start with a 7-day free trial.</p>
               </div>
+              
+              <div className="mb-6 flex items-baseline gap-1">
+                <span className="text-5xl font-black">$9.99</span>
+                <span className="text-sm font-bold text-muted">/mo</span>
+              </div>
+
+              <ul className="mb-8 flex flex-col gap-3 text-sm font-medium flex-grow">
+                <li className="flex items-center gap-2"><span>✅</span> Full course access</li>
+                <li className="flex items-center gap-2"><span>✅</span> All templates & rules</li>
+                <li className="flex items-center gap-2"><span>✅</span> Private community</li>
+                <li className="flex items-center gap-2"><span>✅</span> Cancel anytime</li>
+              </ul>
+
+              <a
+                href={COURSE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full rounded-full border-3 border-foreground bg-surface px-6 py-4 text-center text-sm font-black uppercase tracking-wide text-foreground shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_0_#1a1a1a] active:translate-x-1 active:translate-y-1 active:shadow-none"
+              >
+                Start Free Trial
+              </a>
             </div>
 
-            {/* Connector */}
-            <div className="flex flex-col items-center py-2">
-              <div className="h-8 w-1 bg-foreground" />
-              <div className="flex h-8 w-8 items-center justify-center rounded-full border-3 border-foreground bg-surface text-xs font-black">
-                ↓
+            {/* Card 2: Lifetime */}
+            <div className="neo-shadow relative flex flex-col bg-yellow p-8 border-4 border-foreground">
+              {/* Badge */}
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-foreground text-surface px-4 py-1 text-xs font-black uppercase tracking-widest whitespace-nowrap">
+                Best Value
               </div>
-              <div className="h-8 w-1 bg-foreground" />
-            </div>
 
-            {/* Step 2 */}
-            <div className="relative w-full max-w-md">
-              <div className="neo-shadow bg-blue p-6 text-center">
-                <h3 className="mb-2 text-2xl font-black uppercase">
-                  Love It? Stay.
-                </h3>
-                <p className="mt-3 inline-block neo-shadow-sm bg-surface px-4 py-2">
-                  <span className="text-2xl font-black">$9.99</span>
-                  <span className="text-sm font-bold text-muted">/month</span>
-                </p>
+              <div className="mb-4">
+                <h3 className="text-2xl font-black uppercase">Lifetime Deal</h3>
+                <p className="text-sm font-bold text-foreground/80 mt-1">Pay once. Build forever.</p>
               </div>
-            </div>
+              
+              <div className="mb-6 flex items-baseline gap-1">
+                <span className="text-5xl font-black">$49</span>
+                <span className="text-sm font-bold text-muted">one-time</span>
+              </div>
 
-            {/* Connector */}
-            <div className="flex flex-col items-center py-2">
-              <div className="h-8 w-1 bg-foreground" />
-              <div className="flex h-8 w-8 items-center justify-center rounded-full border-3 border-foreground bg-surface text-xs font-black">
-                ↓
-              </div>
-              <div className="h-8 w-1 bg-foreground" />
-            </div>
+              <ul className="mb-8 flex flex-col gap-3 text-sm font-medium flex-grow">
+                <li className="flex items-center gap-2"><span>✅</span> <strong>Everything in Monthly</strong></li>
+                <li className="flex items-center gap-2"><span>✅</span> 2 years of course updates</li>
+                <li className="flex items-center gap-2"><span>✅</span> No recurring fees</li>
+                <li className="flex items-center gap-2"><span>✅</span> Yours forever</li>
+              </ul>
 
-            {/* Cancel */}
-            <div className="relative w-full max-w-md">
-              <div className="neo-shadow bg-yellow p-6 text-center">
-                <h3 className="mb-2 text-2xl font-black uppercase">
-                  Cancel Anytime
-                </h3>
-                <p className="text-sm font-medium">
-                  30-day money-back guarantee. No questions asked.
-                </p>
-                <p className="mt-3 text-2xl">🔓</p>
-              </div>
+              <a
+                href="https://shawnesquivel.thinkific.com/enroll/3491521?price_id=4642056&coupon=30OFF" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full rounded-full border-3 border-foreground bg-accent px-6 py-4 text-center text-sm font-black uppercase tracking-wide text-white shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_0_#1a1a1a] active:translate-x-1 active:translate-y-1 active:shadow-none"
+              >
+                Get Lifetime Access
+              </a>
             </div>
           </div>
 
-          {/* Comparison nudge */}
-          <div className="mt-12 text-center">
-            <p className="text-sm font-medium text-muted">
-              ChatGPT Plus is $20/month.
-              This is <span className="font-black text-foreground">half the price</span> — with templates, community, and coaching.
+          <div className="mt-10 text-center">
+            <p className="text-sm font-medium text-muted flex items-center justify-center gap-2">
+              <span>🔓</span> Both plans are covered by a 30-day money-back guarantee.
             </p>
           </div>
         </div>
@@ -789,7 +787,7 @@ export default function Home() {
 
             <FAQItem id="guarantee" question="🔓 100% Satisfaction Guarantee">
               <p>
-                Hundreds of students have already built their first AI app with
+                <StudentCounter />+ students have already built their first AI app with
                 this course. If you feel it wasn&apos;t worth the money, you get
                 a <strong>100% Money Back Guarantee</strong>.
               </p>
