@@ -150,7 +150,7 @@ export default function Home() {
               href={COURSE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="neo-btn rounded-full bg-accent px-4 py-2 text-xs text-white"
+              className="rounded-full border-2 border-foreground bg-accent px-4 py-2 text-xs font-black uppercase tracking-wide text-white shadow-[2px_2px_0_0_#1a1a1a] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0_0_#1a1a1a]"
             >
               Start Free Trial
             </a>
@@ -671,15 +671,11 @@ export default function Home() {
             {/* Step 1 */}
             <div className="relative w-full max-w-md">
               <div className="neo-shadow bg-green p-6 text-center">
-                <p className="mb-1 text-xs font-black uppercase tracking-widest text-muted">
-                  Step 1
-                </p>
                 <h3 className="mb-2 text-2xl font-black uppercase">
-                  7-Day Free Trial
+                  7 Days Free
                 </h3>
-                <p className="text-sm font-medium leading-relaxed">
-                  Full access to every video, template, and the community.
-                  No credit card charge for 7 days.
+                <p className="text-sm font-medium">
+                  Full access. No charge.
                 </p>
                 <p className="mt-3 inline-block neo-shadow-sm bg-surface px-4 py-2 text-2xl font-black">
                   $0
@@ -699,18 +695,11 @@ export default function Home() {
             {/* Step 2 */}
             <div className="relative w-full max-w-md">
               <div className="neo-shadow bg-blue p-6 text-center">
-                <p className="mb-1 text-xs font-black uppercase tracking-widest text-muted">
-                  Step 2
-                </p>
                 <h3 className="mb-2 text-2xl font-black uppercase">
                   Love It? Stay.
                 </h3>
-                <p className="text-sm font-medium leading-relaxed">
-                  After 7 days, your membership continues at just $9/month.
-                  Keep building with templates, rules, and community support.
-                </p>
                 <p className="mt-3 inline-block neo-shadow-sm bg-surface px-4 py-2">
-                  <span className="text-2xl font-black">$9</span>
+                  <span className="text-2xl font-black">$9.99</span>
                   <span className="text-sm font-bold text-muted">/month</span>
                 </p>
               </div>
@@ -725,25 +714,14 @@ export default function Home() {
               <div className="h-8 w-1 bg-foreground" />
             </div>
 
-            {/* Step 3 */}
+            {/* Cancel */}
             <div className="relative w-full max-w-md">
               <div className="neo-shadow bg-yellow p-6 text-center">
-                <p className="mb-1 text-xs font-black uppercase tracking-widest text-muted">
-                  Anytime
-                </p>
                 <h3 className="mb-2 text-2xl font-black uppercase">
-                  Cancel Anytime. Zero Risk.
+                  Cancel Anytime
                 </h3>
-                <p className="text-sm font-medium leading-relaxed">
-                  Cancel during your trial and pay nothing.
-                  Cancel after and you&apos;re covered by a{" "}
-                  <a
-                    href="#guarantee"
-                    className="font-bold underline decoration-3 underline-offset-2 hover:bg-foreground hover:text-surface"
-                  >
-                    30-day money-back guarantee
-                  </a>
-                  . No questions asked.
+                <p className="text-sm font-medium">
+                  30-day money-back guarantee. No questions asked.
                 </p>
                 <p className="mt-3 text-2xl">🔓</p>
               </div>
@@ -753,9 +731,8 @@ export default function Home() {
           {/* Comparison nudge */}
           <div className="mt-12 text-center">
             <p className="text-sm font-medium text-muted">
-              For context: a single ChatGPT Plus subscription is $20/month.
-              <br />
-              This is <span className="font-black text-foreground">less than half that</span> — and you get templates, community, and coaching.
+              ChatGPT Plus is $20/month.
+              This is <span className="font-black text-foreground">half the price</span> — with templates, community, and coaching.
             </p>
           </div>
         </div>
@@ -777,7 +754,7 @@ export default function Home() {
           </p>
           <CTAButton />
           <p className="mt-4 text-xs font-medium text-muted">
-            Then $9/month. Cancel anytime.
+            Then $9.99/month. Cancel anytime.
           </p>
           <p className="mt-4 text-sm font-bold">
             🔓 You&apos;re covered by a{" "}
