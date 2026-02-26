@@ -92,3 +92,110 @@ body {
 .animate-marquee {
   animation: marquee 15s linear infinite;
 }
+
+/* Scroll reveal animations */
+.scroll-reveal-up,
+.scroll-reveal-left,
+.scroll-reveal-right,
+.scroll-reveal-scale {
+  opacity: 0;
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal-up {
+  transform: translateY(40px);
+}
+.scroll-reveal-left {
+  transform: translateX(-40px);
+}
+.scroll-reveal-right {
+  transform: translateX(40px);
+}
+.scroll-reveal-scale {
+  transform: scale(0.92);
+}
+
+.scroll-revealed {
+  opacity: 1 !important;
+  transform: translate(0) scale(1) !important;
+}
+
+/* Radial gradient hero background */
+@keyframes rays-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.hero-rays {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--color-yellow) 10deg,
+    transparent 20deg,
+    transparent 40deg,
+    var(--color-pink) 50deg,
+    transparent 60deg,
+    transparent 80deg,
+    var(--color-blue) 90deg,
+    transparent 100deg,
+    transparent 120deg,
+    var(--color-green) 130deg,
+    transparent 140deg,
+    transparent 160deg,
+    var(--color-purple) 170deg,
+    transparent 180deg,
+    transparent 200deg,
+    var(--color-orange) 210deg,
+    transparent 220deg,
+    transparent 240deg,
+    var(--color-yellow) 250deg,
+    transparent 260deg,
+    transparent 280deg,
+    var(--color-pink) 290deg,
+    transparent 300deg,
+    transparent 320deg,
+    var(--color-blue) 330deg,
+    transparent 340deg,
+    transparent 360deg
+  );
+  opacity: 0.15;
+  animation: rays-rotate 90s linear infinite;
+}
+
+/* Staggered video card entrance */
+@keyframes card-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Progress line animation */
+@keyframes grow-line {
+  0% {
+    transform: scaleY(0);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+/* Pulse dot */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}

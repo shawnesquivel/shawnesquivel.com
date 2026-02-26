@@ -1,12 +1,10 @@
 import ImageCarousel from "@/components/ImageCarousel";
-import CopyCode from "@/components/CopyCode";
-import CountdownTimer from "@/components/CountdownTimer";
 import PainCard from "@/components/PainCard";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import ZoomableImage from "@/components/ZoomableImage";
 
 const COURSE_URL =
-  "https://shawnesquivel.thinkific.com/enroll/3491521?price_id=4414098&coupon=save30";
+  "https://shawnesquivel.thinkific.com/enroll/3491521?price_id=4414098";
 
 function SectionDivider() {
   return (
@@ -22,7 +20,7 @@ function CTAButton({ className = "" }: { className?: string }) {
       rel="noopener noreferrer"
       className={`inline-block rounded-full border-3 border-foreground bg-accent px-8 py-4 text-base font-black uppercase tracking-wide text-white shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_0_#1a1a1a] active:translate-x-1 active:translate-y-1 active:shadow-none ${className}`}
     >
-      Enroll Now — Use Code SAVE30 for 30% Off
+      Start Free Trial
     </a>
   );
 }
@@ -107,6 +105,12 @@ export default function Home() {
           </span>
           <div className="flex items-center gap-5 text-sm font-bold uppercase">
             <a
+              href="/course"
+              className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
+            >
+              Free Course
+            </a>
+            <a
               href="#problems"
               className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
             >
@@ -131,6 +135,12 @@ export default function Home() {
               About
             </a>
             <a
+              href="#pricing"
+              className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
+            >
+              Pricing
+            </a>
+            <a
               href="#faq"
               className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
             >
@@ -142,7 +152,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="neo-btn rounded-full bg-accent px-4 py-2 text-xs text-white"
             >
-              Enroll Now
+              Start Free Trial
             </a>
           </div>
         </div>
@@ -170,10 +180,7 @@ export default function Home() {
 
           <div className="mt-10 flex flex-col items-center gap-3">
             <p className="neo-shadow-sm inline-block bg-green px-4 py-2 text-xs font-black uppercase">
-              🔓 100% Satisfaction Guarantee · 30-day refund policy
-            </p>
-            <p className="flex items-center gap-2 text-xs font-black uppercase">
-              30% off ends in <CountdownTimer variant="compact" />
+              🔓 7-Day Free Trial · 30-day money-back guarantee
             </p>
           </div>
 
@@ -649,6 +656,113 @@ export default function Home() {
 
       <SectionDivider />
 
+      {/* ───── How Pricing Works ───── */}
+      <section id="pricing" className="scroll-mt-24 px-6">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="mb-4 text-center text-3xl font-black uppercase sm:text-5xl">
+            How It Works
+          </h2>
+          <p className="mx-auto mb-12 max-w-lg text-center font-medium text-muted">
+            No risk. Try everything free, then decide.
+          </p>
+
+          {/* Timeline */}
+          <div className="relative flex flex-col items-center">
+            {/* Step 1 */}
+            <div className="relative w-full max-w-md">
+              <div className="neo-shadow bg-green p-6 text-center">
+                <p className="mb-1 text-xs font-black uppercase tracking-widest text-muted">
+                  Step 1
+                </p>
+                <h3 className="mb-2 text-2xl font-black uppercase">
+                  7-Day Free Trial
+                </h3>
+                <p className="text-sm font-medium leading-relaxed">
+                  Full access to every video, template, and the community.
+                  No credit card charge for 7 days.
+                </p>
+                <p className="mt-3 inline-block neo-shadow-sm bg-surface px-4 py-2 text-2xl font-black">
+                  $0
+                </p>
+              </div>
+            </div>
+
+            {/* Connector */}
+            <div className="flex flex-col items-center py-2">
+              <div className="h-8 w-1 bg-foreground" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full border-3 border-foreground bg-surface text-xs font-black">
+                ↓
+              </div>
+              <div className="h-8 w-1 bg-foreground" />
+            </div>
+
+            {/* Step 2 */}
+            <div className="relative w-full max-w-md">
+              <div className="neo-shadow bg-blue p-6 text-center">
+                <p className="mb-1 text-xs font-black uppercase tracking-widest text-muted">
+                  Step 2
+                </p>
+                <h3 className="mb-2 text-2xl font-black uppercase">
+                  Love It? Stay.
+                </h3>
+                <p className="text-sm font-medium leading-relaxed">
+                  After 7 days, your membership continues at just $9/month.
+                  Keep building with templates, rules, and community support.
+                </p>
+                <p className="mt-3 inline-block neo-shadow-sm bg-surface px-4 py-2">
+                  <span className="text-2xl font-black">$9</span>
+                  <span className="text-sm font-bold text-muted">/month</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Connector */}
+            <div className="flex flex-col items-center py-2">
+              <div className="h-8 w-1 bg-foreground" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full border-3 border-foreground bg-surface text-xs font-black">
+                ↓
+              </div>
+              <div className="h-8 w-1 bg-foreground" />
+            </div>
+
+            {/* Step 3 */}
+            <div className="relative w-full max-w-md">
+              <div className="neo-shadow bg-yellow p-6 text-center">
+                <p className="mb-1 text-xs font-black uppercase tracking-widest text-muted">
+                  Anytime
+                </p>
+                <h3 className="mb-2 text-2xl font-black uppercase">
+                  Cancel Anytime. Zero Risk.
+                </h3>
+                <p className="text-sm font-medium leading-relaxed">
+                  Cancel during your trial and pay nothing.
+                  Cancel after and you&apos;re covered by a{" "}
+                  <a
+                    href="#guarantee"
+                    className="font-bold underline decoration-3 underline-offset-2 hover:bg-foreground hover:text-surface"
+                  >
+                    30-day money-back guarantee
+                  </a>
+                  . No questions asked.
+                </p>
+                <p className="mt-3 text-2xl">🔓</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Comparison nudge */}
+          <div className="mt-12 text-center">
+            <p className="text-sm font-medium text-muted">
+              For context: a single ChatGPT Plus subscription is $20/month.
+              <br />
+              This is <span className="font-black text-foreground">less than half that</span> — and you get templates, community, and coaching.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <SectionDivider />
+
       {/* ───── CTA ───── */}
       <section className="px-6">
         <div className="mx-auto max-w-2xl neo-shadow-lg bg-yellow p-10 text-center">
@@ -656,21 +770,16 @@ export default function Home() {
             Start Building Today
           </h2>
           <p className="mb-4 text-lg font-bold">
-            🚀 Launch pricing — 30% off while the course is new.
+            🚀 Try the full course free for 7 days.
           </p>
           <p className="mb-6 text-base font-medium">
-            Use code <CopyCode code="SAVE30" /> at checkout.
-            <br />
-            Price goes up as new modules drop.
+            No risk. Cancel anytime during your trial.
           </p>
-          <div className="mb-6">
-            <p className="mb-3 text-xs font-black uppercase tracking-widest">
-              Offer expires in
-            </p>
-            <CountdownTimer />
-          </div>
           <CTAButton />
-          <p className="mt-8 text-sm font-bold">
+          <p className="mt-4 text-xs font-medium text-muted">
+            Then $9/month. Cancel anytime.
+          </p>
+          <p className="mt-4 text-sm font-bold">
             🔓 You&apos;re covered by a{" "}
             <a
               href="#guarantee"
