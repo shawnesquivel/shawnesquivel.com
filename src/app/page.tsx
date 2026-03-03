@@ -105,6 +105,12 @@ export default function Home() {
           </span>
           <div className="flex items-center gap-5 text-sm font-bold uppercase">
             <a
+              href="/blog"
+              className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
+            >
+              Blog
+            </a>
+            <a
               href="#curriculum"
               className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
             >
