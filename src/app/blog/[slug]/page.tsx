@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { marked } from "marked";
+import { Marked, marked, type Tokens } from "marked";
 import { getAllPosts, getPostBySlug } from "@/lib/blog";
 import type { Metadata } from "next";
 
@@ -30,12 +30,70 @@ function formatDate(dateStr: string) {
   });
 }
 
+interface TocHeading {
+  id: string;
+  text: string;
+  level: 2 | 3;
+}
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[`~!@#$%^&*()+=<>?,./:;"'|{}[\]\\]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function uniqueSlug(text: string, seen: Map<string, number>): string {
+  const base = slugify(text) || "section";
+  const count = seen.get(base) ?? 0;
+  seen.set(base, count + 1);
+  return count === 0 ? base : `${base}-${count + 1}`;
+}
+
+function getToc(content: string): TocHeading[] {
+  const tokens = marked.lexer(content);
+  const seen = new Map<string, number>();
+  const toc: TocHeading[] = [];
+
+  for (const token of tokens) {
+    if (token.type !== "heading") continue;
+    const heading = token as Tokens.Heading;
+    if (heading.depth !== 2 && heading.depth !== 3) continue;
+
+    toc.push({
+      id: uniqueSlug(heading.text, seen),
+      text: heading.text,
+      level: heading.depth,
+    });
+  }
+
+  return toc;
+}
+
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
-  const htmlContent = marked(post.content) as string;
+  const toc = getToc(post.content);
+  const headingSlugSeen = new Map<string, number>();
+  const parser = new Marked({
+    gfm: true,
+  });
+
+  parser.use({
+    renderer: {
+      heading(token) {
+        const id = uniqueSlug(token.text, headingSlugSeen);
+        return `<h${token.depth} id="${id}">${this.parser.parseInline(token.tokens)}</h${token.depth}>`;
+      },
+    },
+  });
+
+  const htmlContent = (await parser.parse(post.content)) as string;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -66,6 +124,20 @@ export default async function BlogPostPage({ params }: Props) {
         {/* NeoBrutalist post header */}
         <div className="border-b-3 border-foreground bg-yellow px-6 py-14">
           <div className="mx-auto max-w-2xl">
+            <div className="mb-4 flex flex-wrap items-center gap-2 text-xs font-black uppercase tracking-wide text-foreground/70">
+              <Link href="/" className="hover:underline decoration-2 underline-offset-4">
+                Home
+              </Link>
+              <span>/</span>
+              <Link
+                href="/blog"
+                className="hover:underline decoration-2 underline-offset-4"
+              >
+                Blog
+              </Link>
+              <span>/</span>
+              <span className="max-w-[16rem] truncate">{post.title}</span>
+            </div>
             <Link
               href="/blog"
               className="mb-6 inline-block text-sm font-black uppercase hover:underline decoration-2 underline-offset-4"
@@ -81,13 +153,39 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Clean readable article body */}
-        <article className="mx-auto max-w-2xl px-6 py-12">
-          <div
-            className="prose-blog"
-            dangerouslySetInnerHTML={{ __html: htmlContent }}
-          />
-        </article>
+        <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-12 lg:grid-cols-[minmax(0,1fr)_280px]">
+          {/* Clean readable article body */}
+          <article className="min-w-0 max-w-2xl">
+            <div
+              className="prose-blog"
+              dangerouslySetInnerHTML={{ __html: htmlContent }}
+            />
+          </article>
+
+          {toc.length > 0 ? (
+            <aside className="hidden lg:block">
+              <div className="sticky top-24 rounded-2xl border-2 border-foreground bg-surface p-5">
+                <p className="mb-3 text-xs font-black uppercase tracking-wide text-foreground/70">
+                  On This Page
+                </p>
+                <nav aria-label="Table of contents">
+                  <ul className="space-y-2">
+                    {toc.map((heading) => (
+                      <li key={heading.id}>
+                        <a
+                          href={`#${heading.id}`}
+                          className={`blog-toc-link ${heading.level === 3 ? "pl-3" : ""}`}
+                        >
+                          {heading.text}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
+            </aside>
+          ) : null}
+        </div>
 
         {/* CTA */}
         <div className="mx-auto max-w-2xl px-6 pb-20">
