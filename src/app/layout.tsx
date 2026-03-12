@@ -9,6 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://shawnesquivel.com"),
   title: "Build Apps with Cursor | Shawn Esquivel",
   description:
     "Learn to build production-ready apps with Cursor AI. 3+ hours of hands-on training, templates, prompt libraries, and more.",
