@@ -929,7 +929,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-5">
             <a
-              href="https://www.instagram.com/shawn.builds"
+              href="https://www.instagram.com/shawnbuilds"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-yellow"
