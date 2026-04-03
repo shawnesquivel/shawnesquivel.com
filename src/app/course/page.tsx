@@ -597,7 +597,7 @@ export default function CursorCrashCoursePage() {
               </svg>
             </a>
             <a
-              href="https://www.instagram.com/shawn.builds"
+              href="https://www.instagram.com/shawnbuilds"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-yellow"
