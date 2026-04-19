@@ -111,6 +111,12 @@ export default function Home() {
               Blog
             </a>
             <a
+              href="/portfolio"
+              className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
+            >
+              Portfolio
+            </a>
+            <a
               href="#curriculum"
               className="hidden hover:underline decoration-3 underline-offset-4 sm:inline"
             >
