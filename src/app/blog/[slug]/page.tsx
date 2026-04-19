@@ -111,6 +111,12 @@ export default async function BlogPostPage({ params }: Props) {
               Blog
             </Link>
             <Link
+              href="/portfolio"
+              className="hover:underline decoration-3 underline-offset-4"
+            >
+              Portfolio
+            </Link>
+            <Link
               href="/#pricing"
               className="rounded-full border-2 border-foreground bg-accent px-4 py-2 text-xs font-black uppercase tracking-wide text-white shadow-[2px_2px_0_0_#1a1a1a] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0_0_#1a1a1a]"
             >
