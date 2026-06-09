@@ -6,6 +6,7 @@
 import * as THREE from "three";
 import { terrainHeight, isOnRock } from "./world";
 import { clamp, lerp } from "./noise";
+import { makeDotTexture } from "./dot-texture";
 
 export type WormState =
   | "idle" // no worm in the area
@@ -57,16 +58,17 @@ export class SandWorm {
     this.group.visible = false;
     scene.add(this.group);
 
-    // --- the moving mound (wormsign)
+    // --- the moving mound (wormsign) — sand-colored so it reads as a
+    // cresting of sand, not a foreign object
     const moundGeo = new THREE.SphereGeometry(1, 24, 16);
-    const moundMat = new THREE.MeshStandardMaterial({ color: 0xc08b52, roughness: 1, flatShading: false });
+    const moundMat = new THREE.MeshStandardMaterial({ color: 0xd49d66, roughness: 1, flatShading: false });
     this.mound = new THREE.Mesh(moundGeo, moundMat);
-    this.mound.scale.set(13, 4.4, 30);
+    this.mound.scale.set(13, 3.8, 30);
     this.group.add(this.mound);
 
-    const wakeMat = new THREE.MeshStandardMaterial({ color: 0xb37f49, roughness: 1, transparent: true, opacity: 0.85 });
+    const wakeMat = new THREE.MeshStandardMaterial({ color: 0xcc965f, roughness: 1, transparent: true, opacity: 0.9 });
     this.wake = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 10), wakeMat);
-    this.wake.scale.set(8, 2.2, 46);
+    this.wake.scale.set(8, 1.9, 46);
     this.wake.position.z = -30;
     this.group.add(this.wake);
 
@@ -78,10 +80,11 @@ export class SandWorm {
     const dustGeo = new THREE.BufferGeometry();
     dustGeo.setAttribute("position", new THREE.BufferAttribute(this.dustPositions, 3));
     const dustMat = new THREE.PointsMaterial({
-      color: 0xd9b07a,
-      size: 1.6,
+      color: 0xd3a877,
+      size: 1.1,
+      map: makeDotTexture(),
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.4,
       depthWrite: false,
       sizeAttenuation: true,
     });
@@ -90,9 +93,9 @@ export class SandWorm {
 
     // --- breaching body: segmented trunk + maw of crystal teeth
     this.body = new THREE.Group();
-    const skin = new THREE.MeshStandardMaterial({ color: 0x8a6a4a, roughness: 0.95 });
-    const skinDark = new THREE.MeshStandardMaterial({ color: 0x6e5238, roughness: 1 });
-    const SEGMENTS = 9;
+    const skin = new THREE.MeshStandardMaterial({ color: 0xa1805c, roughness: 0.92 });
+    const skinDark = new THREE.MeshStandardMaterial({ color: 0x82654a, roughness: 1 });
+    const SEGMENTS = 14;
     for (let i = 0; i < SEGMENTS; i++) {
       const t = i / (SEGMENTS - 1);
       const r = lerp(10.5, 13.5, t);
@@ -133,11 +136,14 @@ export class SandWorm {
   /** Spawn over the horizon, approaching the given target point. */
   call(target: WormTarget, fromAngleHint: number | null = null): void {
     if (this.state === "breach") return;
-    if (this.state === "idle" || this.state === "leave") {
+    if (this.state === "idle") {
       const a = fromAngleHint ?? Math.random() * Math.PI * 2;
       this.pos.set(target.x + Math.cos(a) * SPAWN_DIST, target.z + Math.sin(a) * SPAWN_DIST);
       this.timesCalled++;
       this.group.visible = true;
+    } else if (this.state === "leave") {
+      // a departing worm turns back toward the new summons
+      this.timesCalled++;
     }
     this.target = { ...target };
     this.state = "approach";
@@ -209,7 +215,12 @@ export class SandWorm {
         } else {
           this.state = "breach";
           this.breachClock = 0;
-          this.breachAt.set(this.target.x, this.target.z);
+          // surface a bit short of the prey so the body towers in front of
+          // it (and the camera) instead of erupting through it
+          this.breachAt.set(
+            this.target.x - this.heading.x * 24,
+            this.target.z - this.heading.y * 24
+          );
           this.body.visible = true;
           this.mound.visible = false;
           this.wake.visible = false;
@@ -281,9 +292,12 @@ export class SandWorm {
     else rise = 1 - (t - 0.6) / 0.4;
     const h = terrainHeight(this.breachAt.x, this.breachAt.y);
     this.group.position.set(this.breachAt.x, h, this.breachAt.y);
-    this.body.position.y = lerp(-62, 30, rise);
-    this.body.rotation.z = Math.sin(t * Math.PI) * 0.12;
-    const lean = Math.sin(Math.min(1, t / 0.6) * Math.PI * 0.5) * 0.35;
+    // keep facing the prey (group +z points along the final heading)
+    this.group.rotation.y = Math.atan2(this.heading.x, this.heading.y);
+    this.body.position.y = lerp(-95, 26, rise);
+    this.body.rotation.z = Math.sin(t * Math.PI) * 0.1;
+    // loom: tip the maw forward over the prey so the teeth show
+    const lean = Math.sin(Math.min(1, t / 0.6) * Math.PI * 0.5) * 0.55;
     this.body.rotation.x = lean;
   }
 

@@ -20,6 +20,7 @@ import {
 } from "./world";
 import { fbm2, clamp, lerp } from "./noise";
 import { RhythmTracker, StepKind } from "./rhythm";
+import { makeDotTexture } from "./dot-texture";
 import { SandWorm, WormState, WORM_KILL_RADIUS } from "./worm";
 import { DuneAudio } from "./audio";
 
@@ -72,7 +73,7 @@ export class DuneGame {
   // player
   private pos = new THREE.Vector3(START.x, 0, START.z);
   private vel = new THREE.Vector3();
-  private yaw = Math.PI; // facing -z (toward the sietch)
+  private yaw = 0; // facing -z (toward the sietch)
   private pitch = 0;
   private keys = new Set<string>();
   private moveHeldTime = 0;
@@ -121,7 +122,7 @@ export class DuneGame {
     this.renderer.toneMappingExposure = 1.05;
 
     this.scene = new THREE.Scene();
-    this.scene.fog = new THREE.FogExp2(0xcf9a64, 0.00115);
+    this.scene.fog = new THREE.FogExp2(0xcf9a64, 0.00145);
 
     this.camera = new THREE.PerspectiveCamera(
       72,
@@ -229,7 +230,7 @@ export class DuneGame {
     sg.setAttribute("position", new THREE.BufferAttribute(sp, 3));
     const stars = new THREE.Points(
       sg,
-      new THREE.PointsMaterial({ color: 0xdde6ff, size: 3.2, sizeAttenuation: false, transparent: true, opacity: 0.75, fog: false, depthWrite: false })
+      new THREE.PointsMaterial({ color: 0xdde6ff, size: 2.4, sizeAttenuation: false, map: makeDotTexture(), transparent: true, opacity: 0.7, fog: false, depthWrite: false })
     );
     this.scene.add(stars);
 
@@ -300,7 +301,7 @@ export class DuneGame {
 
       // drum sand: paler, smoother, slightly grey — visibly taut
       const df = drumFactor(x, z);
-      if (df > 0) cBase.lerp(new THREE.Color(0.93, 0.88, 0.72), df * 0.85);
+      if (df > 0) cBase.lerp(new THREE.Color(0.97, 0.94, 0.82), df * 0.95);
 
       // spice: rust-cinnamon stain
       const sf = spiceFactor(x, z);
@@ -320,34 +321,46 @@ export class DuneGame {
     geo.computeVertexNormals();
     const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0 });
     this.scene.add(new THREE.Mesh(geo, mat));
+
+    // endless-erg illusion: a vast sand disc under and beyond the heightfield
+    const far = new THREE.Mesh(
+      new THREE.CircleGeometry(4200, 48),
+      new THREE.MeshStandardMaterial({ color: 0xc1854e, roughness: 1 })
+    );
+    far.rotation.x = -Math.PI / 2;
+    far.position.y = -7; // below the heightfield's lowest valley
+    this.scene.add(far);
   }
 
   private buildRocks(): void {
-    const rockMat = new THREE.MeshStandardMaterial({ color: 0x453a31, roughness: 0.95, flatShading: true });
-    const addBoulders = (cx: number, cz: number, r: number, count: number) => {
+    const rockMat = new THREE.MeshStandardMaterial({ color: 0x5d4e41, roughness: 0.95, flatShading: true });
+    const addBoulders = (cx: number, cz: number, r: number, count: number, keepExitClear: boolean) => {
       for (let i = 0; i < count; i++) {
         const a = Math.random() * Math.PI * 2;
-        const rr = r * (0.45 + Math.random() * 0.65);
+        // leave the southern exit (toward the sietch, -z) free of boulders
+        if (keepExitClear && Math.sin(a) < -0.25) continue;
+        const rr = r * (0.55 + Math.random() * 0.55);
         const x = cx + Math.cos(a) * rr;
         const z = cz + Math.sin(a) * rr;
-        const s = 0.8 + Math.random() * 2.6;
+        const s = 0.8 + Math.random() * 2.2;
         const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(s, 0), rockMat);
-        rock.position.set(x, terrainHeight(x, z) + s * 0.25, z);
+        rock.position.set(x, terrainHeight(x, z) + s * 0.2, z);
         rock.rotation.set(Math.random() * 3, Math.random() * 3, Math.random() * 3);
         rock.scale.y = 0.6 + Math.random() * 0.5;
         this.scene.add(rock);
       }
     };
-    addBoulders(START.x, START.z, START.r, 14);
-    for (const rf of REFUGES) addBoulders(rf.x, rf.z, rf.r, 9);
-    // jagged crags along the cliff top
-    for (let i = 0; i < 40; i++) {
-      const x = -640 + Math.random() * 1280;
-      const z = CLIFF_Z - 70 - Math.random() * 90;
-      const s = 8 + Math.random() * 26;
-      const crag = new THREE.Mesh(new THREE.ConeGeometry(s * 0.7, s * 2.4, 5), rockMat);
-      crag.position.set(x, terrainHeight(x, z) + s * 0.6, z);
+    addBoulders(START.x, START.z, START.r, 16, true);
+    for (const rf of REFUGES) addBoulders(rf.x, rf.z, rf.r, 8, true);
+    // a broad rocky massif above the cliff line — the sietch wall
+    for (let i = 0; i < 64; i++) {
+      const x = -700 + Math.random() * 1400;
+      const z = CLIFF_Z - 90 - Math.random() * 160;
+      const s = 16 + Math.random() * 42;
+      const crag = new THREE.Mesh(new THREE.ConeGeometry(s * (1.3 + Math.random() * 0.9), s * (1.4 + Math.random()), 6), rockMat);
+      crag.position.set(x, terrainHeight(x, z) + s * 0.35, z);
       crag.rotation.y = Math.random() * 3;
+      crag.scale.x = 1 + Math.random() * 1.4;
       this.scene.add(crag);
     }
   }
@@ -369,18 +382,18 @@ export class DuneGame {
   }
 
   private buildWind(): void {
-    const N = 800;
+    const N = 700;
     this.windData = new Float32Array(N * 3);
     for (let i = 0; i < N; i++) {
       this.windData[i * 3] = (Math.random() - 0.5) * 140;
-      this.windData[i * 3 + 1] = Math.random() * 26;
+      this.windData[i * 3 + 1] = Math.random() * 7; // skim low over the sand
       this.windData[i * 3 + 2] = (Math.random() - 0.5) * 140;
     }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.BufferAttribute(this.windData, 3));
     this.windPoints = new THREE.Points(
       geo,
-      new THREE.PointsMaterial({ color: 0xe2bb86, size: 0.45, transparent: true, opacity: 0.5, depthWrite: false })
+      new THREE.PointsMaterial({ color: 0xd9b486, size: 0.32, map: makeDotTexture(), transparent: true, opacity: 0.32, depthWrite: false })
     );
     this.scene.add(this.windPoints);
   }
@@ -496,8 +509,11 @@ export class DuneGame {
       this.vibration = 1;
       this.audio.drumBoom();
       this.shake = Math.max(this.shake, 0.8);
-      this.showMessage("DRUM SAND! The booming rolls across the basin. RUN!", "danger", 4);
+      this.stepLabelTtl = 0; // the boom drowns out any step judgement
+      this.hud.stepLabel = null;
+      this.wormsignAnnounced = true; // the boom says it all
       this.summonOrAlertWorm(3.5);
+      this.showMessage("DRUM SAND! The booming rolls across the basin. RUN!", "danger", 4);
       return;
     }
 
@@ -586,7 +602,7 @@ export class DuneGame {
   restart(): void {
     this.pos.set(START.x, 0, START.z);
     this.vel.set(0, 0, 0);
-    this.yaw = Math.PI;
+    this.yaw = 0;
     this.pitch = 0;
     this.vibration = 0;
     this.rhythm.reset();
@@ -653,7 +669,7 @@ export class DuneGame {
     }
 
     if (this.phase === "playing") {
-      this.updatePlayer(dt, t);
+      this.updatePlayer(dt);
       this.updateThumpers(dt);
       this.worm.update(dt, t, this.pos.x, this.pos.z);
 
@@ -668,7 +684,7 @@ export class DuneGame {
     this.updateAmbient(dt, t);
   }
 
-  private updatePlayer(dt: number, t: number): void {
+  private updatePlayer(dt: number): void {
     const dir = this.moveDir();
     const moving = dir.lengthSq() > 0;
     const running = this.keys.has("ShiftLeft") || this.keys.has("ShiftRight");
@@ -704,7 +720,7 @@ export class DuneGame {
 
     // vibration decay (faster on rock)
     const onRock = isOnRock(this.pos.x, this.pos.z);
-    this.vibration = clamp(this.vibration - dt * (onRock ? 0.16 : 0.065), 0, 1);
+    this.vibration = clamp(this.vibration - dt * (onRock ? 0.16 : 0.075), 0, 1);
 
     if (this.stepLabelTtl > 0) {
       this.stepLabelTtl -= dt;
@@ -788,8 +804,9 @@ export class DuneGame {
       if (x - cx < -70) x += 140;
       if (z - cz > 70) z -= 140;
       if (z - cz < -70) z += 140;
-      if (y > cy + 22) y = cy - 4;
-      if (y < cy - 8) y = cy + 18;
+      // drift low over the sand near the player
+      if (y > cy + 6) y = cy - 3;
+      if (y < cy - 4) y = cy + 5;
       this.windData[i * 3] = x;
       this.windData[i * 3 + 1] = y;
       this.windData[i * 3 + 2] = z;

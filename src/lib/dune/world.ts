@@ -53,8 +53,8 @@ export function duneHeight(x: number, z: number): number {
   const warp = fbm2(x * 0.004 + 11.3, z * 0.004 - 4.7, 3) * 120;
   // long crescent dune rows running roughly east-west, ~230m wavelength
   const ridge = Math.sin((z + warp) * 0.027 + fbm2(x * 0.012, z * 0.012, 3) * 2.2);
-  let h = Math.pow((ridge + 1) / 2, 1.6) * 9.5;
-  h += fbm2(x * 0.016 + 7.1, z * 0.016 - 3.4, 4) * 4.2;
+  let h = Math.pow((ridge + 1) / 2, 1.6) * 13.5;
+  h += fbm2(x * 0.016 + 7.1, z * 0.016 - 3.4, 4) * 5.5;
   h += fbm2(x * 0.085 + 1.7, z * 0.085 + 9.2, 2) * 0.55;
   return h;
 }

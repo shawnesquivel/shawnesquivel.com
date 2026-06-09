@@ -21,7 +21,7 @@ export interface StepJudgement {
 }
 
 const BASE_LOUDNESS: Record<StepKind, number> = {
-  step: 0.045, // a single deliberate footfall
+  step: 0.035, // a single deliberate footfall
   walk: 0.055, // continuous walking pace
   run: 0.115, // pounding run
 };
@@ -44,7 +44,8 @@ export class RhythmTracker {
     if (this.times.length > WINDOW) this.times.shift();
 
     const rhythm = this.measure(kind);
-    const loud = BASE_LOUDNESS[kind] * lerp(0.32, 3.4, rhythm);
+    // a true sandwalk reads as natural sand-shift: nearly silent
+    const loud = BASE_LOUDNESS[kind] * lerp(0.2, 3.4, rhythm);
     const label = rhythm < 0.34 ? "sandwalk" : rhythm < 0.62 ? "uneven" : "rhythmic";
     return { rhythm, loudness: loud, label };
   }
@@ -53,6 +54,13 @@ export class RhythmTracker {
   private measure(kind: StepKind): number {
     // Running is always pounding and loud regardless of timing.
     if (kind === "run") return 1;
+    // A continuous walking gait is inherently rhythmic — only deliberate
+    // single steps with broken timing can pass as natural sand-shift.
+    if (kind === "walk") return Math.max(0.8, this.measureTimings());
+    return this.measureTimings();
+  }
+
+  private measureTimings(): number {
     const n = this.times.length;
     if (n < 3) return 0.18; // too few footfalls to form a pattern
     const intervals: number[] = [];

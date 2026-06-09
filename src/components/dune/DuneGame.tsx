@@ -189,6 +189,9 @@ export default function DuneGame() {
               Begin the crossing
             </button>
             <div className="mt-3 text-[11px] text-amber-100/40">click the sand to lock the mouse · headphones recommended</div>
+            <div className="mt-2 hidden text-[11px] text-red-300/70 [@media(hover:none)]:block">
+              This crossing requires a keyboard — visit on a desktop browser.
+            </div>
           </div>
         </div>
       )}
