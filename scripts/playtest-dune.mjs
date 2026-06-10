@@ -8,7 +8,9 @@
 //   6. thumper diverts an approaching worm, worm devours it and leaves
 //   7. drum sand instantly maxes vibration
 //   8. refuge rock = safe; worm balks and circles
-//   9. crossing to the sietch cliffs -> win screen + stats
+//   9. crossing to Sietch Tabr -> win screen + stats + ornithopter unlock
+//  10. flight mode: take off, fly, land
+//  11. worm sandbox at /dune/sandbox: spawn, approach, eruption, reset
 //
 // Usage: node scripts/playtest-dune.mjs [baseURL]
 
@@ -77,6 +79,11 @@ s = await state();
 check("wormsign appears from rhythmic walking", s.worm.state === "approach", `worm=${s.worm.state}`);
 await page.getByTestId("wormsign").waitFor({ state: "visible", timeout: 5000 });
 check("wormsign HUD visible", await page.getByTestId("wormsign").isVisible());
+await page.getByTestId("worm-arrow").waitFor({ state: "visible", timeout: 5000 });
+const arrowTransform = await page.getByTestId("worm-arrow").evaluate((el) => el.style.transform);
+check("directional arrow renders with rotation", /rotate\(-?\d+(\.\d+)?deg\)/.test(arrowTransform), arrowTransform);
+check("bearing matches state", s.worm.bearing !== null, `bearing=${s.worm.bearing}`);
+check("minimap visible", await page.getByTestId("minimap").isVisible());
 await shot("04-wormsign");
 
 console.log("\n=== 4. The worm takes the rhythmic walker ===");
@@ -174,11 +181,58 @@ check("victory", s.phase === "won", `phase=${s.phase} z=${s.z.toFixed(1)}`);
 await page.getByTestId("win-screen").waitFor({ state: "visible", timeout: 5000 });
 check("win screen", await page.getByTestId("win-screen").isVisible());
 check("win stats steps > 0", s.steps > 0);
+check("ornithopter unlocked", s.flightUnlocked === true);
 await shot("09-victory");
 
-console.log("\n=== 10. Visual sanity: canvas actually renders ===");
+console.log("\n=== 10. Ornithopter flight ===");
+await page.getByTestId("fly-button").click();
+await page.waitForFunction(() => window.__DUNE__.getState().phase === "flight", null, { timeout: 5000 });
+await page.getByTestId("flight-alt").waitFor({ state: "visible", timeout: 5000 });
+const before = await state();
+await page.keyboard.down("KeyW"); // throttle up
+await page.keyboard.down("KeyR"); // climb
+await sleep(4000);
+await page.keyboard.up("KeyW");
+await page.keyboard.up("KeyR");
+s = await state();
+check("thopter moves", Math.hypot(s.x - before.x, s.z - before.z) > 40, `moved=${Math.hypot(s.x - before.x, s.z - before.z).toFixed(0)}m`);
+check("thopter climbs", s.altitude > before.altitude + 10, `alt ${before.altitude.toFixed(0)} -> ${s.altitude.toFixed(0)}`);
+// banked turn changes heading
+const yawBefore = await page.evaluate(() => window.__DUNE__.getState());
+await page.keyboard.down("KeyA");
+await sleep(1500);
+await page.keyboard.up("KeyA");
+s = await state();
+check("thopter turns", Math.hypot(s.x - yawBefore.x, s.z - yawBefore.z) > 5, "turned and kept flying");
+await shot("10-flight");
+await page.getByTestId("end-flight").click();
+await sleep(400);
+s = await state();
+check("landing returns to menu", s.phase === "intro");
+await page.getByTestId("intro-fly-button").waitFor({ state: "visible", timeout: 5000 });
+check("intro offers flight once unlocked", await page.getByTestId("intro-fly-button").isVisible());
+
+console.log("\n=== 11. Worm sandbox ===");
+await page.goto(`${BASE}/dune/sandbox`, { waitUntil: "networkidle" });
+await page.waitForFunction(() => window.__DUNE__ !== undefined, null, { timeout: 20000 });
+await sleep(1200);
+check("sandbox phase", (await state()).phase === "sandbox");
+await page.getByTestId("spawn-east").click();
+await page.waitForFunction(() => window.__DUNE__.getState().worm.state === "approach", null, { timeout: 8000 });
+check("sandbox spawn -> approach", true);
+await page.waitForFunction(() => window.__DUNE__.getState().worm.state === "breach", null, { timeout: 90000 });
+check("sandbox approach -> eruption", true);
+await sleep(900);
+await shot("11-sandbox-eruption");
+await page.waitForFunction(() => ["leave", "idle"].includes(window.__DUNE__.getState().worm.state), null, { timeout: 30000 });
+check("sandbox eruption -> departs", true);
+await page.getByTestId("sandbox-reset").click();
+await sleep(300);
+check("sandbox reset", (await state()).worm.state === "idle");
+
+console.log("\n=== 12. Visual sanity: canvas actually renders ===");
 // A black/blank 1280x720 frame compresses to a few KB; a rendered desert is far larger.
-for (const f of ["02-start", "04-wormsign", "07-drum-sand"]) {
+for (const f of ["02-start", "04-wormsign", "07-drum-sand", "10-flight", "11-sandbox-eruption"]) {
   const size = fs.statSync(`${SHOT_DIR}/${f}.png`).size;
   check(`screenshot ${f} is a real render`, size > 60000, `${size} bytes`);
 }
