@@ -16,6 +16,7 @@ export class DuneAudio {
   private hissGain: GainNode | null = null;
   private heartTimer = 0;
   private thumperTimer = 0;
+  private flapNodes: { src: AudioBufferSourceNode; lfo: OscillatorNode; out: GainNode } | null = null;
 
   get ready(): boolean {
     return this.ctx !== null;
@@ -147,6 +148,48 @@ export class DuneAudio {
     g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
     src.connect(f).connect(g).connect(this.master);
     src.start(ctx.currentTime, Math.random() * 1.2, dur + 0.05);
+  }
+
+  /** Ornithopter wing-beat: noise pulsed by a low-frequency oscillator. */
+  setFlight(active: boolean): void {
+    const ctx = this.ctx;
+    if (!ctx || !this.master || !this.noiseBuf) return;
+    if (active && !this.flapNodes) {
+      const src = ctx.createBufferSource();
+      src.buffer = this.noiseBuf;
+      src.loop = true;
+      const bp = ctx.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.frequency.value = 180;
+      bp.Q.value = 1.1;
+      const mod = ctx.createGain();
+      mod.gain.value = 0.12; // base whoosh
+      const lfo = ctx.createOscillator();
+      lfo.type = "sine";
+      lfo.frequency.value = 5.2; // wing beats per second
+      const depth = ctx.createGain();
+      depth.gain.value = 0.1;
+      lfo.connect(depth).connect(mod.gain);
+      const out = ctx.createGain();
+      out.gain.value = 0.0001;
+      src.connect(bp).connect(mod).connect(out).connect(this.master);
+      src.start();
+      lfo.start();
+      out.gain.exponentialRampToValueAtTime(1, ctx.currentTime + 1.2);
+      this.flapNodes = { src, lfo, out };
+    } else if (!active && this.flapNodes) {
+      const { src, lfo, out } = this.flapNodes;
+      this.flapNodes = null;
+      out.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.25);
+      setTimeout(() => {
+        try {
+          src.stop();
+          lfo.stop();
+        } catch {
+          // already stopped
+        }
+      }, 900);
+    }
   }
 
   footstep(kind: "step" | "walk" | "run" | "drag"): void {

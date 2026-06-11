@@ -1,18 +1,18 @@
 // Shai-Hulud. While travelling it shows only wormsign: "an elongated
 // mound-in-motion — a cresting of sand" trailing a dust hiss. When it reaches
-// rhythmic vibration on open sand it breaches: a vast round mouth ringed with
-// crystal teeth.
+// rhythmic vibration on open sand the desert itself erupts — a violent geyser
+// of sand and dust blasting skyward where the prey stood.
 
 import * as THREE from "three";
 import { terrainHeight, isOnRock } from "./world";
-import { clamp, lerp } from "./noise";
+import { clamp } from "./noise";
 import { makeDotTexture } from "./dot-texture";
 
 export type WormState =
   | "idle" // no worm in the area
   | "approach" // homing on a vibration source
   | "search" // lost the trail, casting about
-  | "breach" // surfacing attack animation
+  | "breach" // surfacing attack: the sand eruption
   | "leave"; // departing / sated
 
 export interface WormTarget {
@@ -26,8 +26,12 @@ const SPAWN_DIST = 620;
 const DESPAWN_DIST = 950;
 const SEARCH_TIME = 11;
 const BREACH_TRIGGER_DIST = 16;
-const BREACH_DURATION = 2.6;
+const BREACH_DURATION = 3.8;
 const KILL_RADIUS = 30;
+
+const ERUPT_N = 1400;
+const ERUPT_STAGGER = 1.4; // particles launch over this many seconds
+const GRAVITY = 24;
 
 export class SandWorm {
   state: WormState = "idle";
@@ -44,10 +48,17 @@ export class SandWorm {
   group: THREE.Group;
   private mound: THREE.Mesh;
   private wake: THREE.Mesh;
-  private body: THREE.Group;
   private dust: THREE.Points;
   private dustPositions: Float32Array;
   private dustSeeds: Float32Array;
+
+  // the eruption: a staggered ballistic sand geyser + rising dust billows
+  private erupt: THREE.Points;
+  private eruptMat: THREE.PointsMaterial;
+  private eruptPositions: Float32Array;
+  private eruptVel: Float32Array; // vx, vy, vz per particle
+  private eruptDelay: Float32Array;
+  private billows: THREE.Sprite[] = [];
 
   onBreachStart: ((x: number, z: number, kind: "player" | "thumper") => void) | null = null;
   onBreachHit: ((x: number, z: number, kind: "player" | "thumper", thumperId?: number) => void) | null = null;
@@ -61,7 +72,7 @@ export class SandWorm {
     // --- the moving mound (wormsign) — sand-colored so it reads as a
     // cresting of sand, not a foreign object
     const moundGeo = new THREE.SphereGeometry(1, 24, 16);
-    const moundMat = new THREE.MeshStandardMaterial({ color: 0xd49d66, roughness: 1, flatShading: false });
+    const moundMat = new THREE.MeshStandardMaterial({ color: 0xd49d66, roughness: 1 });
     this.mound = new THREE.Mesh(moundGeo, moundMat);
     this.mound.scale.set(13, 3.8, 30);
     this.group.add(this.mound);
@@ -91,46 +102,36 @@ export class SandWorm {
     this.dust = new THREE.Points(dustGeo, dustMat);
     this.group.add(this.dust);
 
-    // --- breaching body: segmented trunk + maw of crystal teeth
-    this.body = new THREE.Group();
-    const skin = new THREE.MeshStandardMaterial({ color: 0xa1805c, roughness: 0.92 });
-    const skinDark = new THREE.MeshStandardMaterial({ color: 0x82654a, roughness: 1 });
-    const SEGMENTS = 14;
-    for (let i = 0; i < SEGMENTS; i++) {
-      const t = i / (SEGMENTS - 1);
-      const r = lerp(10.5, 13.5, t);
-      const seg = new THREE.Mesh(new THREE.CylinderGeometry(r, r * 1.04, 6.4, 28), i % 2 ? skin : skinDark);
-      seg.position.y = -i * 6.1;
-      this.body.add(seg);
+    // --- eruption particles (world-space, independent of the group)
+    this.eruptPositions = new Float32Array(ERUPT_N * 3);
+    this.eruptVel = new Float32Array(ERUPT_N * 3);
+    this.eruptDelay = new Float32Array(ERUPT_N);
+    const eg = new THREE.BufferGeometry();
+    eg.setAttribute("position", new THREE.BufferAttribute(this.eruptPositions, 3));
+    this.eruptMat = new THREE.PointsMaterial({
+      color: 0xc59a63,
+      size: 4.4,
+      map: makeDotTexture(),
+      transparent: true,
+      opacity: 0.95,
+      depthWrite: false,
+      sizeAttenuation: true,
+    });
+    this.erupt = new THREE.Points(eg, this.eruptMat);
+    this.erupt.visible = false;
+    this.erupt.frustumCulled = false;
+    scene.add(this.erupt);
+
+    // --- big soft dust billows that swell out of the eruption
+    const billowTex = makeDotTexture();
+    for (let i = 0; i < 4; i++) {
+      const sp = new THREE.Sprite(
+        new THREE.SpriteMaterial({ map: billowTex, color: 0xc69a66, transparent: true, opacity: 0, depthWrite: false })
+      );
+      sp.visible = false;
+      scene.add(sp);
+      this.billows.push(sp);
     }
-    // the maw
-    const maw = new THREE.Group();
-    const throat = new THREE.Mesh(
-      new THREE.CylinderGeometry(8.2, 2.4, 10, 24),
-      new THREE.MeshBasicMaterial({ color: 0x140a06 })
-    );
-    throat.position.y = 1.0;
-    maw.add(throat);
-    const lip = new THREE.Mesh(new THREE.TorusGeometry(10.6, 2.6, 14, 30), skin);
-    lip.rotation.x = Math.PI / 2;
-    lip.position.y = 5.4;
-    maw.add(lip);
-    const toothMat = new THREE.MeshStandardMaterial({ color: 0xf2ead8, roughness: 0.35, metalness: 0.1 });
-    const TEETH = 26;
-    for (let ring = 0; ring < 2; ring++) {
-      const rr = ring === 0 ? 8.6 : 6.2;
-      for (let i = 0; i < TEETH; i++) {
-        const a = (i / TEETH) * Math.PI * 2 + ring * 0.12;
-        const tooth = new THREE.Mesh(new THREE.ConeGeometry(0.85, 4.4, 6), toothMat);
-        tooth.position.set(Math.cos(a) * rr, 4.6 - ring * 1.6, Math.sin(a) * rr);
-        tooth.lookAt(0, -4, 0);
-        maw.add(tooth);
-      }
-    }
-    maw.position.y = 6.0;
-    this.body.add(maw);
-    this.body.visible = false;
-    this.group.add(this.body);
   }
 
   /** Spawn over the horizon, approaching the given target point. */
@@ -168,16 +169,21 @@ export class SandWorm {
     return (x, z) => Math.hypot(this.pos.x - x, this.pos.y - z);
   }
 
+  /** Jump the worm to a given distance from its target (sandbox/testing). */
+  placeAt(dist: number, angle: number): void {
+    if (!this.target) return;
+    this.pos.set(this.target.x + Math.cos(angle) * dist, this.target.z + Math.sin(angle) * dist);
+  }
+
   update(dt: number, elapsed: number, playerX: number, playerZ: number): void {
     if (this.satedClock > 0) this.satedClock -= dt;
     if (this.state === "idle") return;
 
     if (this.state === "breach") {
       this.breachClock += dt;
-      const t = this.breachClock / BREACH_DURATION;
-      this.animateBreach(clamp(t, 0, 1));
+      this.updateEruption(this.breachClock);
       if (this.breachClock > 0.85 && this.breachClock - dt <= 0.85) {
-        // the strike lands
+        // the strike lands beneath the geyser
         this.onBreachHit?.(
           this.breachAt.x,
           this.breachAt.y,
@@ -185,10 +191,12 @@ export class SandWorm {
           this.target?.thumperId
         );
       }
-      if (t >= 1) {
-        this.body.visible = false;
+      if (this.breachClock >= BREACH_DURATION) {
+        this.erupt.visible = false;
+        for (const b of this.billows) b.visible = false;
         this.mound.visible = true;
         this.wake.visible = true;
+        this.group.visible = true;
         this.satedClock = 14;
         this.state = "leave";
         this.target = null;
@@ -213,18 +221,7 @@ export class SandWorm {
           this.state = "search";
           this.searchClock = 0;
         } else {
-          this.state = "breach";
-          this.breachClock = 0;
-          // surface a bit short of the prey so the body towers in front of
-          // it (and the camera) instead of erupting through it
-          this.breachAt.set(
-            this.target.x - this.heading.x * 24,
-            this.target.z - this.heading.y * 24
-          );
-          this.body.visible = true;
-          this.mound.visible = false;
-          this.wake.visible = false;
-          this.onBreachStart?.(this.target.x, this.target.z, this.target.kind);
+          this.startBreach();
         }
       }
     } else if (this.state === "search") {
@@ -260,45 +257,109 @@ export class SandWorm {
       this.pos.y = -230;
     }
 
-    // place wormsign on the terrain
+    // place wormsign on the terrain, pitched to follow the dune slope so the
+    // long mound never floats above a downhill face
     const h = terrainHeight(this.pos.x, this.pos.y);
-    this.group.position.set(this.pos.x, h - 1.5, this.pos.y);
+    const ahead = terrainHeight(this.pos.x + this.heading.x * 22, this.pos.y + this.heading.y * 22);
+    const behind = terrainHeight(this.pos.x - this.heading.x * 22, this.pos.y - this.heading.y * 22);
+    this.group.position.set(this.pos.x, Math.min(h, (ahead + behind) / 2) - 2.2, this.pos.y);
     const angle = Math.atan2(this.heading.x, this.heading.y);
     this.group.rotation.y = angle;
+    this.group.rotation.x = Math.atan2(behind - ahead, 44) * 0.8;
     // mound undulates as it swims
     const sway = Math.sin(elapsed * 3.1) * 0.5;
     this.mound.position.y = 1.4 + sway * 0.4;
     this.mound.position.x = sway;
 
-    // dust around the cresting head
+    // dust around the cresting head — sprays harder the closer it gets
+    const near = this.target
+      ? clamp(1 - this.distanceTo(this.target.x, this.target.z) / 260, 0, 1)
+      : 0;
     const pos = this.dustPositions;
     const n = this.dustSeeds.length;
+    const lift = 9 + near * 13;
     for (let i = 0; i < n; i++) {
       const s = this.dustSeeds[i];
       const life = (elapsed * (0.6 + s) + s * 7) % 1;
       pos[i * 3] = (s - 0.5) * 22 + Math.sin(s * 60 + elapsed) * 2;
-      pos[i * 3 + 1] = 2.5 + life * 9;
+      pos[i * 3 + 1] = 2.5 + life * lift;
       pos[i * 3 + 2] = 8 - life * 36;
     }
     this.dust.geometry.attributes.position.needsUpdate = true;
-    (this.dust.material as THREE.PointsMaterial).opacity = this.state === "breach" ? 0.8 : 0.5;
+    (this.dust.material as THREE.PointsMaterial).opacity = 0.45 + near * 0.3;
   }
 
-  private animateBreach(t: number): void {
-    // rise fast, hold, sink back
-    let rise: number;
-    if (t < 0.32) rise = (t / 0.32) * (t / 0.32); // accelerate up
-    else if (t < 0.6) rise = 1;
-    else rise = 1 - (t - 0.6) / 0.4;
-    const h = terrainHeight(this.breachAt.x, this.breachAt.y);
-    this.group.position.set(this.breachAt.x, h, this.breachAt.y);
-    // keep facing the prey (group +z points along the final heading)
-    this.group.rotation.y = Math.atan2(this.heading.x, this.heading.y);
-    this.body.position.y = lerp(-95, 26, rise);
-    this.body.rotation.z = Math.sin(t * Math.PI) * 0.1;
-    // loom: tip the maw forward over the prey so the teeth show
-    const lean = Math.sin(Math.min(1, t / 0.6) * Math.PI * 0.5) * 0.55;
-    this.body.rotation.x = lean;
+  private startBreach(): void {
+    if (!this.target) return;
+    this.state = "breach";
+    this.breachClock = 0;
+    this.breachAt.set(this.target.x, this.target.z);
+    this.group.visible = false; // the mound vanishes — then the sand explodes
+
+    // seed the geyser
+    const gy = terrainHeight(this.breachAt.x, this.breachAt.y);
+    for (let i = 0; i < ERUPT_N; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const r = Math.sqrt(Math.random()) * 7;
+      this.eruptPositions[i * 3] = this.breachAt.x + Math.cos(a) * r;
+      this.eruptPositions[i * 3 + 1] = gy - 6; // hidden under the sand until launch
+      this.eruptPositions[i * 3 + 2] = this.breachAt.y + Math.sin(a) * r;
+      const ha = Math.random() * Math.PI * 2;
+      const hm = 3 + Math.random() * 14; // outward scatter
+      this.eruptVel[i * 3] = Math.cos(ha) * hm;
+      this.eruptVel[i * 3 + 1] = 26 + Math.random() * 34; // skyward blast
+      this.eruptVel[i * 3 + 2] = Math.sin(ha) * hm;
+      this.eruptDelay[i] = Math.random() * ERUPT_STAGGER;
+    }
+    this.erupt.visible = true;
+    this.eruptMat.opacity = 0.95;
+
+    for (let b = 0; b < this.billows.length; b++) {
+      const sp = this.billows[b];
+      sp.visible = true;
+      sp.material.opacity = 0;
+      sp.position.set(
+        this.breachAt.x + (Math.random() - 0.5) * 10,
+        gy + 2,
+        this.breachAt.y + (Math.random() - 0.5) * 10
+      );
+      sp.scale.set(4, 4, 1);
+    }
+
+    this.onBreachStart?.(this.breachAt.x, this.breachAt.y, this.target.kind);
+  }
+
+  private updateEruption(t: number): void {
+    const gy = terrainHeight(this.breachAt.x, this.breachAt.y);
+    const fade = t > BREACH_DURATION - 0.7 ? (BREACH_DURATION - t) / 0.7 : 1;
+    this.eruptMat.opacity = 0.95 * clamp(fade, 0, 1);
+    for (let i = 0; i < ERUPT_N; i++) {
+      const life = t - this.eruptDelay[i];
+      if (life <= 0) continue;
+      const a = Math.atan2(
+        this.eruptPositions[i * 3 + 2] - this.breachAt.y,
+        this.eruptPositions[i * 3] - this.breachAt.x
+      );
+      const r = Math.hypot(
+        this.eruptPositions[i * 3] - this.breachAt.x,
+        this.eruptPositions[i * 3 + 2] - this.breachAt.y
+      );
+      const y = gy + this.eruptVel[i * 3 + 1] * life - 0.5 * GRAVITY * life * life;
+      this.eruptPositions[i * 3] = this.breachAt.x + Math.cos(a) * r + this.eruptVel[i * 3] * life * 0.18;
+      this.eruptPositions[i * 3 + 2] = this.breachAt.y + Math.sin(a) * r + this.eruptVel[i * 3 + 2] * life * 0.18;
+      this.eruptPositions[i * 3 + 1] = Math.max(y, gy - 6);
+    }
+    this.erupt.geometry.attributes.position.needsUpdate = true;
+
+    // dust billows swell and linger
+    for (let b = 0; b < this.billows.length; b++) {
+      const sp = this.billows[b];
+      const phase = clamp((t - b * 0.22) / (BREACH_DURATION - 0.3), 0, 1);
+      const grow = 8 + phase * (42 + b * 9);
+      sp.scale.set(grow, grow * 0.85, 1);
+      sp.position.y = gy + 5 + phase * (20 + b * 5);
+      sp.material.opacity = Math.sin(phase * Math.PI) * 0.55;
+    }
   }
 
   reset(): void {
@@ -307,7 +368,8 @@ export class SandWorm {
     this.satedClock = 0;
     this.timesCalled = 0;
     this.group.visible = false;
-    this.body.visible = false;
+    this.erupt.visible = false;
+    for (const b of this.billows) b.visible = false;
     this.mound.visible = true;
     this.wake.visible = true;
   }

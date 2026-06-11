@@ -2,6 +2,7 @@
 // (sandwalk mechanics), the worm, thumpers, ambience and the HUD feed.
 
 import * as THREE from "three";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import {
   WORLD_SIZE,
   START,
@@ -24,7 +25,7 @@ import { makeDotTexture } from "./dot-texture";
 import { SandWorm, WormState, WORM_KILL_RADIUS } from "./worm";
 import { DuneAudio } from "./audio";
 
-export type Phase = "intro" | "playing" | "dead" | "won";
+export type Phase = "intro" | "playing" | "dead" | "won" | "flight" | "sandbox";
 
 export interface HudState {
   phase: Phase;
@@ -32,12 +33,25 @@ export interface HudState {
   stepLabel: "sandwalk" | "uneven" | "rhythmic" | null;
   wormState: WormState;
   wormDistance: number | null;
+  /** angle of the worm relative to where the player faces; 0 = dead ahead, +cw */
+  wormBearing: number | null;
   distanceToGoal: number;
   thumpers: number;
   onRock: boolean;
   onSpice: boolean;
   message: string | null;
   messageTone: "info" | "danger" | "good";
+  // minimap feed
+  px: number;
+  pz: number;
+  yaw: number;
+  wormX: number | null;
+  wormZ: number | null;
+  thumperPos: { x: number; z: number }[];
+  // ornithopter
+  flightUnlocked: boolean;
+  altitude: number;
+  airspeed: number;
   stats: {
     time: number;
     steps: number;
@@ -57,9 +71,28 @@ interface Thumper {
   tick: number;
 }
 
+/** True when WebGL falls back to a software rasterizer (SwiftShader etc.). */
+function isSoftwareGL(): boolean {
+  try {
+    const c = document.createElement("canvas");
+    const gl = c.getContext("webgl2") ?? c.getContext("webgl");
+    if (!gl) return true;
+    const ext = gl.getExtension("WEBGL_debug_renderer_info");
+    const name = String(
+      ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)
+    ).toLowerCase();
+    return /swiftshader|software|llvmpipe|softpipe/.test(name);
+  } catch {
+    return false;
+  }
+}
+
 const PLAYER_EYE = 1.7;
 const FRICTION = 5.5;
 const VIBRATION_TRIGGER = 0.55;
+const UNLOCK_KEY = "dune_ornithopter_unlocked";
+/** open-sand vantage used by the worm sandbox */
+const SANDBOX_POINT = { x: 0, z: 60 };
 
 export class DuneGame {
   private renderer: THREE.WebGLRenderer;
@@ -98,8 +131,15 @@ export class DuneGame {
   private spicePoints!: THREE.Points;
   private skyMat!: THREE.ShaderMaterial;
 
+  // ornithopter flight
+  private flightSpeed = 32;
+  private flightY = 0;
+  private bank = 0;
+  private flightUnlocked = false;
+
   // state
   phase: Phase = "intro";
+  private sandboxMode = false;
   private startTime = 0;
   private steps = 0;
   private sandwalkSteps = 0;
@@ -113,10 +153,25 @@ export class DuneGame {
   hud: HudState;
   onHud: (h: HudState) => void;
 
-  constructor(canvas: HTMLCanvasElement, onHud: (h: HudState) => void) {
+  constructor(canvas: HTMLCanvasElement, onHud: (h: HudState) => void, opts?: { sandbox?: boolean }) {
     this.onHud = onHud;
-    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.sandboxMode = opts?.sandbox ?? false;
+    if (this.sandboxMode) this.phase = "sandbox";
+    try {
+      this.flightUnlocked = localStorage.getItem(UNLOCK_KEY) === "1";
+    } catch {
+      this.flightUnlocked = false;
+    }
+    // MSAA only on low-dpi displays with real GPUs: high-dpi supersampling
+    // already smooths edges, and software rasterizers pay dearly for MSAA.
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: dpr < 1.5 && !isSoftwareGL(),
+      powerPreference: "high-performance",
+      stencil: false,
+    });
+    this.renderer.setPixelRatio(dpr);
     this.renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.05;
@@ -141,12 +196,12 @@ export class DuneGame {
 
     this.worm = new SandWorm(this.scene);
     this.worm.onBreachStart = (x, z, kind) => {
-      this.shake = Math.max(this.shake, kind === "player" ? 1.4 : 0.7);
+      this.shake = Math.max(this.shake, kind === "player" ? 1.6 : 0.7);
       this.audio.wormBreach();
       if (kind === "player") {
-        this.showMessage("Shai-Hulud rises — a gaping round mouth, crystal teeth glinting!", "danger", 4);
+        this.showMessage("THE SAND ERUPTS — Shai-Hulud strikes from below!", "danger", 4);
       } else {
-        this.showMessage("The Maker breaches and takes the thumper.", "info", 4);
+        this.showMessage("Sand geysers skyward — the Maker takes the thumper.", "info", 4);
       }
     };
     this.worm.onBreachHit = (x, z, kind, thumperId) => {
@@ -301,7 +356,7 @@ export class DuneGame {
 
       // drum sand: paler, smoother, slightly grey — visibly taut
       const df = drumFactor(x, z);
-      if (df > 0) cBase.lerp(new THREE.Color(0.97, 0.94, 0.82), df * 0.95);
+      if (df > 0) cBase.lerp(new THREE.Color(0.95, 0.9, 0.74), df * 0.92);
 
       // spice: rust-cinnamon stain
       const sf = spiceFactor(x, z);
@@ -322,18 +377,31 @@ export class DuneGame {
     const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0 });
     this.scene.add(new THREE.Mesh(geo, mat));
 
-    // endless-erg illusion: a vast sand disc under and beyond the heightfield
+    // endless-erg illusion: a sand annulus from the heightfield edge outward
+    // (a ring, not a disc, so it never overdraws the detailed terrain)
     const far = new THREE.Mesh(
-      new THREE.CircleGeometry(4200, 48),
-      new THREE.MeshStandardMaterial({ color: 0xc1854e, roughness: 1 })
+      new THREE.RingGeometry(WORLD_SIZE / 2 - 60, 4200, 48, 1),
+      new THREE.MeshStandardMaterial({ color: 0xcc9158, roughness: 1 })
     );
     far.rotation.x = -Math.PI / 2;
-    far.position.y = -7; // below the heightfield's lowest valley
+    far.position.y = -5;
     this.scene.add(far);
   }
 
   private buildRocks(): void {
+    // every boulder and crag baked into ONE geometry -> a single draw call
     const rockMat = new THREE.MeshStandardMaterial({ color: 0x5d4e41, roughness: 0.95, flatShading: true });
+    const parts: THREE.BufferGeometry[] = [];
+    const bake = (geo: THREE.BufferGeometry, m: THREE.Matrix4) => {
+      const g = geo.toNonIndexed();
+      g.applyMatrix4(m);
+      parts.push(g);
+      geo.dispose();
+    };
+    const tmp = new THREE.Matrix4();
+    const q = new THREE.Quaternion();
+    const e = new THREE.Euler();
+
     const addBoulders = (cx: number, cz: number, r: number, count: number, keepExitClear: boolean) => {
       for (let i = 0; i < count; i++) {
         const a = Math.random() * Math.PI * 2;
@@ -343,11 +411,13 @@ export class DuneGame {
         const x = cx + Math.cos(a) * rr;
         const z = cz + Math.sin(a) * rr;
         const s = 0.8 + Math.random() * 2.2;
-        const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(s, 0), rockMat);
-        rock.position.set(x, terrainHeight(x, z) + s * 0.2, z);
-        rock.rotation.set(Math.random() * 3, Math.random() * 3, Math.random() * 3);
-        rock.scale.y = 0.6 + Math.random() * 0.5;
-        this.scene.add(rock);
+        q.setFromEuler(e.set(Math.random() * 3, Math.random() * 3, Math.random() * 3));
+        tmp.compose(
+          new THREE.Vector3(x, terrainHeight(x, z) + s * 0.2, z),
+          q,
+          new THREE.Vector3(1, 0.6 + Math.random() * 0.5, 1)
+        );
+        bake(new THREE.DodecahedronGeometry(s, 0), tmp);
       }
     };
     addBoulders(START.x, START.z, START.r, 16, true);
@@ -357,12 +427,17 @@ export class DuneGame {
       const x = -700 + Math.random() * 1400;
       const z = CLIFF_Z - 90 - Math.random() * 160;
       const s = 16 + Math.random() * 42;
-      const crag = new THREE.Mesh(new THREE.ConeGeometry(s * (1.3 + Math.random() * 0.9), s * (1.4 + Math.random()), 6), rockMat);
-      crag.position.set(x, terrainHeight(x, z) + s * 0.35, z);
-      crag.rotation.y = Math.random() * 3;
-      crag.scale.x = 1 + Math.random() * 1.4;
-      this.scene.add(crag);
+      q.setFromEuler(e.set(0, Math.random() * 3, 0));
+      tmp.compose(
+        new THREE.Vector3(x, terrainHeight(x, z) + s * 0.35, z),
+        q,
+        new THREE.Vector3(1 + Math.random() * 1.4, 1, 1)
+      );
+      bake(new THREE.ConeGeometry(s * (1.3 + Math.random() * 0.9), s * (1.4 + Math.random()), 6), tmp);
     }
+    const merged = mergeGeometries(parts);
+    merged.computeVertexNormals();
+    this.scene.add(new THREE.Mesh(merged, rockMat));
   }
 
   private buildSietchGlow(): void {
@@ -454,7 +529,7 @@ export class DuneGame {
   }
 
   private onCanvasClick = (): void => {
-    if (this.phase !== "playing") return;
+    if (this.phase !== "playing" && this.phase !== "flight") return;
     const canvas = this.renderer.domElement;
     if (document.pointerLockElement !== canvas) {
       canvas.requestPointerLock?.()?.catch?.(() => {});
@@ -491,7 +566,7 @@ export class DuneGame {
     this.hud.stepLabel = judge.label;
 
     // movement impulse in look direction
-    const impulse = kind === "run" ? 9.2 : kind === "walk" ? 6.6 : 7.6;
+    const impulse = kind === "run" ? 9.6 : kind === "walk" ? 6.8 : 8.4;
     const sin = Math.sin(this.yaw);
     const cos = Math.cos(this.yaw);
     const wx = dir.x * cos + dir.y * sin;
@@ -593,9 +668,9 @@ export class DuneGame {
     this.phase = "playing";
     this.startTime = this.elapsed;
     this.showMessage(
-      "Cross the open sand. Tap to step — keep your timing broken, like wind-shifted sand.",
+      "OBJECTIVE: reach Sietch Tabr — the cliffs marked on your minimap. Tap to step; keep your timing broken.",
       "info",
-      6
+      7
     );
   }
 
@@ -634,6 +709,80 @@ export class DuneGame {
     this.phase = "won";
     this.audio.win();
     document.exitPointerLock?.();
+    // Sietch Tabr grants its prize: the ornithopter
+    this.flightUnlocked = true;
+    try {
+      localStorage.setItem(UNLOCK_KEY, "1");
+    } catch {
+      // private browsing: unlock lasts for this session only
+    }
+  }
+
+  // ------------------------------------------------------------- flight
+
+  startFlight(): void {
+    if (!this.flightUnlocked) return;
+    this.audio.init();
+    this.phase = "flight";
+    this.pos.set(0, 0, GOAL_Z - 30);
+    this.flightY = terrainHeight(this.pos.x, this.pos.z) + 34;
+    this.flightSpeed = 32;
+    this.bank = 0;
+    this.yaw = Math.PI; // lift off facing back over the open erg
+    this.pitch = 0;
+    this.worm.reset();
+    this.audio.setFlight(true);
+    this.showMessage("Wings hammer the dawn air — Arrakis unrolls beneath you.", "good", 6);
+  }
+
+  endFlight(): void {
+    if (this.phase !== "flight") return;
+    this.audio.setFlight(false);
+    this.phase = "intro";
+    document.exitPointerLock?.();
+  }
+
+  private updateFlight(dt: number, t: number): void {
+    const has = (...ks: string[]) => ks.some((k) => this.keys.has(k));
+    // throttle
+    if (has("KeyW", "ArrowUp")) this.flightSpeed += 32 * dt;
+    if (has("KeyS", "ArrowDown")) this.flightSpeed -= 36 * dt;
+    this.flightSpeed = clamp(this.flightSpeed, 14, 96);
+    // banking turns
+    let bankTarget = 0;
+    if (has("KeyA", "ArrowLeft", "KeyQ")) {
+      this.yaw += 1.35 * dt;
+      bankTarget = 0.42;
+    }
+    if (has("KeyD", "ArrowRight", "KeyE")) {
+      this.yaw -= 1.35 * dt;
+      bankTarget = -0.42;
+    }
+    this.bank = lerp(this.bank, bankTarget, 1 - Math.exp(-4.5 * dt));
+    // climb / dive: pitch from the mouse plus direct lift keys
+    let vy = Math.sin(this.pitch) * this.flightSpeed;
+    if (has("KeyR", "Space")) vy += 22;
+    if (has("KeyF", "ShiftLeft", "ShiftRight")) vy -= 22;
+
+    const fx = -Math.sin(this.yaw) * Math.cos(this.pitch);
+    const fz = -Math.cos(this.yaw) * Math.cos(this.pitch);
+    this.pos.x += fx * this.flightSpeed * dt;
+    this.pos.z += fz * this.flightSpeed * dt;
+    this.flightY += vy * dt;
+    // keep over the rendered erg, above the dunes, below the haze ceiling
+    this.pos.x = clamp(this.pos.x, -1700, 1700);
+    this.pos.z = clamp(this.pos.z, -1700, 1700);
+    const minY = terrainHeight(this.pos.x, this.pos.z) + 7;
+    this.flightY = clamp(this.flightY, minY, 420);
+
+    // wing-beat bob + bank roll
+    const flap = Math.sin(t * 10.5) * 0.3;
+    this.camera.position.set(this.pos.x, this.flightY + flap, this.pos.z);
+    const lookX = this.pos.x - Math.sin(this.yaw) * Math.cos(this.pitch);
+    const lookY = this.camera.position.y + Math.sin(this.pitch);
+    const lookZ = this.pos.z - Math.cos(this.yaw) * Math.cos(this.pitch);
+    this.camera.lookAt(lookX, lookY, lookZ);
+    this.camera.rotateZ(this.bank);
   }
 
   private showMessage(text: string, tone: "info" | "danger" | "good", dur: number): void {
@@ -642,12 +791,24 @@ export class DuneGame {
     this.messageTtl = dur;
   }
 
+  private decayTimers(dt: number): void {
+    if (this.stepLabelTtl > 0) {
+      this.stepLabelTtl -= dt;
+      if (this.stepLabelTtl <= 0) this.hud.stepLabel = null;
+    }
+    if (this.messageTtl > 0) {
+      this.messageTtl -= dt;
+      if (this.messageTtl <= 0) this.message = null;
+    }
+  }
+
   // ---------------------------------------------------------------- loop
 
   private loop = (): void => {
     if (this.disposed) return;
     this.raf = requestAnimationFrame(this.loop);
-    const dt = Math.min(0.05, this.clock.getDelta());
+    // generous clamp: even at ~10fps the game runs at real-time speed
+    const dt = Math.min(0.1, this.clock.getDelta());
     this.elapsed += dt;
     this.update(dt);
     this.renderer.render(this.scene, this.camera);
@@ -664,6 +825,26 @@ export class DuneGame {
       const cz = START.z - 60 + Math.cos(a * 0.7) * 30;
       this.camera.position.set(cx, terrainHeight(cx, cz) + 16, cz);
       this.camera.lookAt(0, 8, GOAL_Z);
+      this.updateAmbient(dt, t);
+      return;
+    }
+
+    if (this.phase === "sandbox") {
+      // slow orbit around the proving ground so the worm can be inspected
+      const a = t * 0.1;
+      const cx = SANDBOX_POINT.x + Math.sin(a) * 95;
+      const cz = SANDBOX_POINT.z + Math.cos(a) * 95;
+      this.camera.position.set(cx, terrainHeight(cx, cz) + 26, cz);
+      this.camera.lookAt(SANDBOX_POINT.x, terrainHeight(SANDBOX_POINT.x, SANDBOX_POINT.z) + 5, SANDBOX_POINT.z);
+      this.worm.update(dt, t, SANDBOX_POINT.x, SANDBOX_POINT.z);
+      this.decayTimers(dt);
+      this.updateAmbient(dt, t);
+      return;
+    }
+
+    if (this.phase === "flight") {
+      this.updateFlight(dt, t);
+      this.decayTimers(dt);
       this.updateAmbient(dt, t);
       return;
     }
@@ -722,14 +903,7 @@ export class DuneGame {
     const onRock = isOnRock(this.pos.x, this.pos.z);
     this.vibration = clamp(this.vibration - dt * (onRock ? 0.16 : 0.075), 0, 1);
 
-    if (this.stepLabelTtl > 0) {
-      this.stepLabelTtl -= dt;
-      if (this.stepLabelTtl <= 0) this.hud.stepLabel = null;
-    }
-    if (this.messageTtl > 0) {
-      this.messageTtl -= dt;
-      if (this.messageTtl <= 0) this.message = null;
-    }
+    this.decayTimers(dt);
 
     // spice flavor
     if (isOnSpice(this.pos.x, this.pos.z)) {
@@ -830,6 +1004,17 @@ export class DuneGame {
 
   // ---------------------------------------------------------------- hud
 
+  /** Worm direction relative to facing: 0 = ahead, +cw (right), ±PI = behind. */
+  private wormBearing(): number | null {
+    if (this.worm.state === "idle" || this.worm.state === "breach") return null;
+    const dx = this.worm.pos.x - this.pos.x;
+    const dz = this.worm.pos.y - this.pos.z;
+    let b = this.yaw + Math.PI - Math.atan2(dx, dz);
+    while (b > Math.PI) b -= Math.PI * 2;
+    while (b < -Math.PI) b += Math.PI * 2;
+    return b;
+  }
+
   private makeHud(): HudState {
     const wormActive = this.worm.state !== "idle";
     return {
@@ -838,12 +1023,22 @@ export class DuneGame {
       stepLabel: this.stepLabelTtl > 0 ? this.hud?.stepLabel ?? null : null,
       wormState: this.worm.state,
       wormDistance: wormActive ? this.worm.distanceTo(this.pos.x, this.pos.z) : null,
+      wormBearing: this.wormBearing(),
       distanceToGoal: Math.max(0, this.pos.z - (GOAL_Z + 5)),
       thumpers: this.thumperInventory,
       onRock: isOnRock(this.pos.x, this.pos.z),
       onSpice: isOnSpice(this.pos.x, this.pos.z),
       message: this.message,
       messageTone: this.messageTone,
+      px: this.pos.x,
+      pz: this.pos.z,
+      yaw: this.yaw,
+      wormX: wormActive ? this.worm.pos.x : null,
+      wormZ: wormActive ? this.worm.pos.y : null,
+      thumperPos: this.thumpers.map((th) => ({ x: th.x, z: th.z })),
+      flightUnlocked: this.flightUnlocked,
+      altitude: this.phase === "flight" ? this.flightY - terrainHeight(this.pos.x, this.pos.z) : 0,
+      airspeed: this.phase === "flight" ? this.flightSpeed : 0,
       stats: {
         time: this.phase === "intro" ? 0 : this.elapsed - this.startTime,
         steps: this.steps,
@@ -868,6 +1063,7 @@ export class DuneGame {
           x: this.worm.pos.x,
           z: this.worm.pos.y,
           dist: this.worm.state !== "idle" ? this.worm.distanceTo(this.pos.x, this.pos.z) : null,
+          bearing: this.wormBearing(),
           timesCalled: this.worm.timesCalled,
         },
         thumpers: this.thumperInventory,
@@ -876,9 +1072,18 @@ export class DuneGame {
         steps: this.steps,
         sandwalkSteps: this.sandwalkSteps,
         message: this.message,
+        flightUnlocked: this.flightUnlocked,
+        altitude: this.phase === "flight" ? this.flightY - terrainHeight(this.pos.x, this.pos.z) : 0,
+        airspeed: this.flightSpeed,
+        flightY: this.flightY,
       }),
       start: () => this.start(),
       restart: () => this.restart(),
+      startFlight: () => this.startFlight(),
+      endFlight: () => this.endFlight(),
+      unlockFlight: () => {
+        this.flightUnlocked = true;
+      },
       teleport: (x: number, z: number) => {
         this.pos.set(x, 0, z);
         this.vel.set(0, 0, 0);
@@ -890,6 +1095,24 @@ export class DuneGame {
         this.vibration = clamp(v, 0, 1);
       },
       plantThumper: () => this.plantThumper(),
+      sandbox: {
+        /** summon a worm that approaches the proving point from a compass angle */
+        spawn: (angleDeg: number, dist = 320) => {
+          this.worm.reset();
+          this.worm.call(
+            { x: SANDBOX_POINT.x, z: SANDBOX_POINT.z, kind: "player" },
+            (angleDeg * Math.PI) / 180
+          );
+          this.worm.placeAt(dist, (angleDeg * Math.PI) / 180);
+        },
+        /** drop the worm right next to the point for an instant eruption */
+        breach: () => {
+          this.worm.reset();
+          this.worm.call({ x: SANDBOX_POINT.x, z: SANDBOX_POINT.z, kind: "player" }, 0);
+          this.worm.placeAt(20, 0);
+        },
+        reset: () => this.worm.reset(),
+      },
     };
     (window as unknown as Record<string, unknown>).__DUNE__ = api;
   }
