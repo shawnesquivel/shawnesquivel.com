@@ -1,0 +1,2532 @@
+{
+  "generatedAt": "2026-06-11T23:37:09.060Z",
+  "totalRecords": 2592,
+  "errorCount": 0,
+  "taskCount": 18,
+  "levels": [
+    {
+      "level": 0,
+      "key": "pristine",
+      "label": "Pristine",
+      "desc": "Original prompt, capitalized and punctuated."
+    },
+    {
+      "level": 1,
+      "key": "no-shift",
+      "label": "No Shift Key",
+      "desc": "all lowercase, punctuation stripped"
+    },
+    {
+      "level": 2,
+      "key": "fat-fingers",
+      "label": "Fat Fingers",
+      "desc": "lowercase + ~15% of words have a typo"
+    },
+    {
+      "level": 3,
+      "key": "run-on",
+      "label": "Stream of Consciousness",
+      "desc": "~30% typos plus filler words and run-ons"
+    },
+    {
+      "level": 4,
+      "key": "txt-spk",
+      "label": "Txt Spk",
+      "desc": "abbreviations + dropped vowels, 2007 flip-phone style"
+    },
+    {
+      "level": 5,
+      "key": "keyboard-smash",
+      "label": "Keyboard Smash",
+      "desc": "~60% typos, shuffled letters, missing spaces"
+    }
+  ],
+  "models": [
+    {
+      "id": "gpt-4o-mini",
+      "provider": "openai",
+      "label": "GPT-4o Mini",
+      "era": "2024",
+      "tier": "legacy",
+      "perLevel": [
+        {
+          "level": 0,
+          "n": 54,
+          "accuracy": 0.8888888888888888,
+          "meanLatencyMs": 1931,
+          "meanOutputTokens": 107,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 1,
+          "n": 54,
+          "accuracy": 0.8888888888888888,
+          "meanLatencyMs": 1945,
+          "meanOutputTokens": 85,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 2,
+          "n": 54,
+          "accuracy": 0.9259259259259259,
+          "meanLatencyMs": 1775,
+          "meanOutputTokens": 89,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 3,
+          "n": 54,
+          "accuracy": 0.9444444444444444,
+          "meanLatencyMs": 1944,
+          "meanOutputTokens": 88,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 4,
+          "n": 54,
+          "accuracy": 0.9259259259259259,
+          "meanLatencyMs": 2215,
+          "meanOutputTokens": 96,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 5,
+          "n": 54,
+          "accuracy": 0.8333333333333334,
+          "meanLatencyMs": 1656,
+          "meanOutputTokens": 85,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        }
+      ],
+      "cleanAccuracy": 0.8888888888888888,
+      "corruptedAccuracy": 0.9037037037037037,
+      "cleanCI": {
+        "lo": 0.7780505106792327,
+        "hi": 0.9480704818244324
+      },
+      "corruptedCI": {
+        "lo": 0.8626442164005805,
+        "hi": 0.9334364375249005
+      },
+      "medianTokensClean": 103,
+      "medianTokensCorrupted": 82,
+      "gibberishIndex": 102,
+      "latencyTax": 1,
+      "tokenTax": 0.85,
+      "totalRuns": 324
+    },
+    {
+      "id": "claude-haiku-4-5-20251001",
+      "provider": "anthropic",
+      "label": "Claude Haiku 4.5",
+      "era": "2025",
+      "tier": "mini",
+      "perLevel": [
+        {
+          "level": 0,
+          "n": 54,
+          "accuracy": 0.9814814814814815,
+          "meanLatencyMs": 2016,
+          "meanOutputTokens": 146,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 1,
+          "n": 54,
+          "accuracy": 0.9814814814814815,
+          "meanLatencyMs": 1926,
+          "meanOutputTokens": 139,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 2,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 2231,
+          "meanOutputTokens": 129,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 3,
+          "n": 54,
+          "accuracy": 0.9629629629629629,
+          "meanLatencyMs": 2567,
+          "meanOutputTokens": 126,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 4,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 2353,
+          "meanOutputTokens": 132,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 5,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 2264,
+          "meanOutputTokens": 142,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        }
+      ],
+      "cleanAccuracy": 0.9814814814814815,
+      "corruptedAccuracy": 0.9888888888888889,
+      "cleanCI": {
+        "lo": 0.902283346415128,
+        "hi": 0.996723596684648
+      },
+      "corruptedCI": {
+        "lo": 0.9678467469452553,
+        "hi": 0.9962142284507401
+      },
+      "medianTokensClean": 138.5,
+      "medianTokensCorrupted": 120,
+      "gibberishIndex": 101,
+      "latencyTax": 1.15,
+      "tokenTax": 0.94,
+      "totalRuns": 324
+    },
+    {
+      "id": "gpt-5.5",
+      "provider": "openai",
+      "label": "GPT-5.5",
+      "era": "2026",
+      "tier": "frontier",
+      "perLevel": [
+        {
+          "level": 0,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 2829,
+          "meanOutputTokens": 100,
+          "meanReasoningTokens": 62,
+          "parseFails": 0
+        },
+        {
+          "level": 1,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 2819,
+          "meanOutputTokens": 102,
+          "meanReasoningTokens": 65,
+          "parseFails": 0
+        },
+        {
+          "level": 2,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 2818,
+          "meanOutputTokens": 107,
+          "meanReasoningTokens": 70,
+          "parseFails": 0
+        },
+        {
+          "level": 3,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 2918,
+          "meanOutputTokens": 115,
+          "meanReasoningTokens": 77,
+          "parseFails": 0
+        },
+        {
+          "level": 4,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 2953,
+          "meanOutputTokens": 116,
+          "meanReasoningTokens": 78,
+          "parseFails": 0
+        },
+        {
+          "level": 5,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 3171,
+          "meanOutputTokens": 129,
+          "meanReasoningTokens": 91,
+          "parseFails": 0
+        }
+      ],
+      "cleanAccuracy": 1,
+      "corruptedAccuracy": 1,
+      "cleanCI": {
+        "lo": 0.9335841332189981,
+        "hi": 1
+      },
+      "corruptedCI": {
+        "lo": 0.9859714521095407,
+        "hi": 1
+      },
+      "medianTokensClean": 125,
+      "medianTokensCorrupted": 150,
+      "gibberishIndex": 100,
+      "latencyTax": 1.08,
+      "tokenTax": 1.28,
+      "totalRuns": 324
+    },
+    {
+      "id": "claude-fable-5",
+      "provider": "anthropic",
+      "label": "Claude Fable 5",
+      "era": "2026",
+      "tier": "frontier",
+      "perLevel": [
+        {
+          "level": 0,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 4672,
+          "meanOutputTokens": 119,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 1,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 4965,
+          "meanOutputTokens": 131,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 2,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 4707,
+          "meanOutputTokens": 132,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 3,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 4780,
+          "meanOutputTokens": 136,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 4,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 4786,
+          "meanOutputTokens": 140,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 5,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 4970,
+          "meanOutputTokens": 160,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        }
+      ],
+      "cleanAccuracy": 1,
+      "corruptedAccuracy": 1,
+      "cleanCI": {
+        "lo": 0.9335841332189981,
+        "hi": 1
+      },
+      "corruptedCI": {
+        "lo": 0.9859714521095407,
+        "hi": 1
+      },
+      "medianTokensClean": 98,
+      "medianTokensCorrupted": 110,
+      "gibberishIndex": 100,
+      "latencyTax": 1.04,
+      "tokenTax": 1.26,
+      "totalRuns": 324
+    },
+    {
+      "id": "gemini-flash-lite-latest",
+      "provider": "gemini",
+      "label": "Gemini Flash Lite",
+      "era": "2025",
+      "tier": "mini",
+      "perLevel": [
+        {
+          "level": 0,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 1187,
+          "meanOutputTokens": 126,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 1,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 1225,
+          "meanOutputTokens": 119,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 2,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 1003,
+          "meanOutputTokens": 119,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 3,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 1386,
+          "meanOutputTokens": 114,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 4,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 1208,
+          "meanOutputTokens": 118,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 5,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 952,
+          "meanOutputTokens": 121,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        }
+      ],
+      "cleanAccuracy": 1,
+      "corruptedAccuracy": 1,
+      "cleanCI": {
+        "lo": 0.9335841332189981,
+        "hi": 1
+      },
+      "corruptedCI": {
+        "lo": 0.9859714521095407,
+        "hi": 1
+      },
+      "medianTokensClean": 119.5,
+      "medianTokensCorrupted": 118,
+      "gibberishIndex": 100,
+      "latencyTax": 0.91,
+      "tokenTax": 0.95,
+      "totalRuns": 324
+    },
+    {
+      "id": "gpt-5.4-nano",
+      "provider": "openai",
+      "label": "GPT-5.4 Nano",
+      "era": "2026",
+      "tier": "nano",
+      "perLevel": [
+        {
+          "level": 0,
+          "n": 54,
+          "accuracy": 0.9074074074074074,
+          "meanLatencyMs": 919,
+          "meanOutputTokens": 42,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 1,
+          "n": 54,
+          "accuracy": 0.9259259259259259,
+          "meanLatencyMs": 925,
+          "meanOutputTokens": 42,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 2,
+          "n": 54,
+          "accuracy": 0.9629629629629629,
+          "meanLatencyMs": 935,
+          "meanOutputTokens": 44,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 3,
+          "n": 54,
+          "accuracy": 0.8888888888888888,
+          "meanLatencyMs": 1120,
+          "meanOutputTokens": 51,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 4,
+          "n": 54,
+          "accuracy": 0.8703703703703703,
+          "meanLatencyMs": 964,
+          "meanOutputTokens": 45,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 5,
+          "n": 54,
+          "accuracy": 0.7592592592592593,
+          "meanLatencyMs": 927,
+          "meanOutputTokens": 48,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        }
+      ],
+      "cleanAccuracy": 0.9074074074074074,
+      "corruptedAccuracy": 0.8814814814814815,
+      "cleanCI": {
+        "lo": 0.8008987246934547,
+        "hi": 0.9597994579294327
+      },
+      "corruptedCI": {
+        "lo": 0.837474595514217,
+        "hi": 0.9147851049841734
+      },
+      "medianTokensClean": 44.5,
+      "medianTokensCorrupted": 44.5,
+      "gibberishIndex": 97,
+      "latencyTax": 1.03,
+      "tokenTax": 1.11,
+      "totalRuns": 324
+    },
+    {
+      "id": "gpt-3.5-turbo",
+      "provider": "openai",
+      "label": "GPT-3.5 Turbo",
+      "era": "2023",
+      "tier": "legacy",
+      "perLevel": [
+        {
+          "level": 0,
+          "n": 54,
+          "accuracy": 0.6481481481481481,
+          "meanLatencyMs": 979,
+          "meanOutputTokens": 47,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 1,
+          "n": 54,
+          "accuracy": 0.6296296296296297,
+          "meanLatencyMs": 945,
+          "meanOutputTokens": 48,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 2,
+          "n": 54,
+          "accuracy": 0.6666666666666666,
+          "meanLatencyMs": 1125,
+          "meanOutputTokens": 45,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 3,
+          "n": 54,
+          "accuracy": 0.5555555555555556,
+          "meanLatencyMs": 943,
+          "meanOutputTokens": 45,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 4,
+          "n": 54,
+          "accuracy": 0.5925925925925926,
+          "meanLatencyMs": 1164,
+          "meanOutputTokens": 48,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 5,
+          "n": 54,
+          "accuracy": 0.7037037037037037,
+          "meanLatencyMs": 1041,
+          "meanOutputTokens": 47,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        }
+      ],
+      "cleanAccuracy": 0.6481481481481481,
+      "corruptedAccuracy": 0.6296296296296297,
+      "cleanCI": {
+        "lo": 0.5148458381779774,
+        "hi": 0.7617716827757998
+      },
+      "corruptedCI": {
+        "lo": 0.5705860280145746,
+        "hi": 0.6850362003101212
+      },
+      "medianTokensClean": 37,
+      "medianTokensCorrupted": 33,
+      "gibberishIndex": 97,
+      "latencyTax": 1.13,
+      "tokenTax": 1.01,
+      "totalRuns": 324
+    },
+    {
+      "id": "gpt-5.4-mini",
+      "provider": "openai",
+      "label": "GPT-5.4 Mini",
+      "era": "2026",
+      "tier": "mini",
+      "perLevel": [
+        {
+          "level": 0,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 888,
+          "meanOutputTokens": 34,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 1,
+          "n": 54,
+          "accuracy": 0.9444444444444444,
+          "meanLatencyMs": 922,
+          "meanOutputTokens": 36,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 2,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 857,
+          "meanOutputTokens": 36,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 3,
+          "n": 54,
+          "accuracy": 0.9814814814814815,
+          "meanLatencyMs": 861,
+          "meanOutputTokens": 35,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 4,
+          "n": 54,
+          "accuracy": 1,
+          "meanLatencyMs": 857,
+          "meanOutputTokens": 33,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        },
+        {
+          "level": 5,
+          "n": 54,
+          "accuracy": 0.8888888888888888,
+          "meanLatencyMs": 914,
+          "meanOutputTokens": 36,
+          "meanReasoningTokens": 0,
+          "parseFails": 0
+        }
+      ],
+      "cleanAccuracy": 1,
+      "corruptedAccuracy": 0.9629629629629629,
+      "cleanCI": {
+        "lo": 0.9335841332189981,
+        "hi": 1
+      },
+      "corruptedCI": {
+        "lo": 0.9331763477857064,
+        "hi": 0.9797601819453498
+      },
+      "medianTokensClean": 30.5,
+      "medianTokensCorrupted": 31,
+      "gibberishIndex": 96,
+      "latencyTax": 1,
+      "tokenTax": 1.01,
+      "totalRuns": 324
+    }
+  ],
+  "tasks": [
+    {
+      "taskId": "letter-count",
+      "category": "string",
+      "accuracy": 0.7152777777777778,
+      "byLevel": [
+        0.75,
+        0.75,
+        0.75,
+        0.625,
+        0.7083333333333334,
+        0.7083333333333334
+      ]
+    },
+    {
+      "taskId": "maya-age",
+      "category": "algebra",
+      "accuracy": 0.7847222222222222,
+      "byLevel": [
+        0.875,
+        0.8333333333333334,
+        0.875,
+        0.8333333333333334,
+        0.7916666666666666,
+        0.5
+      ]
+    },
+    {
+      "taskId": "height-logic",
+      "category": "logic",
+      "accuracy": 0.8125,
+      "byLevel": [
+        0.8333333333333334,
+        0.8333333333333334,
+        0.8333333333333334,
+        0.9166666666666666,
+        0.7916666666666666,
+        0.6666666666666666
+      ]
+    },
+    {
+      "taskId": "fourth-word",
+      "category": "instruction",
+      "accuracy": 0.8263888888888888,
+      "byLevel": [
+        0.7916666666666666,
+        0.7916666666666666,
+        0.9166666666666666,
+        0.7916666666666666,
+        0.875,
+        0.7916666666666666
+      ]
+    },
+    {
+      "taskId": "deadline-day",
+      "category": "calendar",
+      "accuracy": 0.8472222222222222,
+      "byLevel": [
+        0.8333333333333334,
+        0.9166666666666666,
+        0.9166666666666666,
+        0.7916666666666666,
+        0.875,
+        0.75
+      ]
+    },
+    {
+      "taskId": "python-print",
+      "category": "code",
+      "accuracy": 0.8888888888888888,
+      "byLevel": [
+        0.9166666666666666,
+        0.875,
+        0.875,
+        0.875,
+        0.9166666666666666,
+        0.875
+      ]
+    },
+    {
+      "taskId": "sisters-brother",
+      "category": "logic",
+      "accuracy": 0.9166666666666666,
+      "byLevel": [
+        0.9583333333333334,
+        0.7916666666666666,
+        0.9166666666666666,
+        0.9583333333333334,
+        0.875,
+        1
+      ]
+    },
+    {
+      "taskId": "flour-containers",
+      "category": "arithmetic",
+      "accuracy": 0.9305555555555556,
+      "byLevel": [
+        0.875,
+        0.9583333333333334,
+        1,
+        0.9166666666666666,
+        0.875,
+        0.9583333333333334
+      ]
+    },
+    {
+      "taskId": "train-minutes",
+      "category": "arithmetic",
+      "accuracy": 0.9305555555555556,
+      "byLevel": [
+        0.875,
+        0.875,
+        1,
+        0.9166666666666666,
+        0.9166666666666666,
+        1
+      ]
+    },
+    {
+      "taskId": "eggs-change",
+      "category": "arithmetic",
+      "accuracy": 0.9791666666666666,
+      "byLevel": [
+        1,
+        1,
+        0.9166666666666666,
+        1,
+        1,
+        0.9583333333333334
+      ]
+    },
+    {
+      "taskId": "negation",
+      "category": "logic",
+      "accuracy": 0.9861111111111112,
+      "byLevel": [
+        1,
+        0.9583333333333334,
+        1,
+        1,
+        1,
+        0.9583333333333334
+      ]
+    },
+    {
+      "taskId": "fact-extract",
+      "category": "extraction",
+      "accuracy": 0.9930555555555556,
+      "byLevel": [
+        1,
+        1,
+        1,
+        0.9583333333333334,
+        1,
+        1
+      ]
+    },
+    {
+      "taskId": "jacket-price",
+      "category": "arithmetic",
+      "accuracy": 0.9930555555555556,
+      "byLevel": [
+        1,
+        1,
+        1,
+        0.9583333333333334,
+        1,
+        1
+      ]
+    },
+    {
+      "taskId": "tip-split",
+      "category": "arithmetic",
+      "accuracy": 0.9930555555555556,
+      "byLevel": [
+        1,
+        1,
+        1,
+        0.9583333333333334,
+        1,
+        1
+      ]
+    },
+    {
+      "taskId": "meeting-overlap",
+      "category": "scheduling",
+      "accuracy": 1,
+      "byLevel": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "taskId": "seq-next",
+      "category": "pattern",
+      "accuracy": 1,
+      "byLevel": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "taskId": "sort-third",
+      "category": "instruction",
+      "accuracy": 1,
+      "byLevel": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "taskId": "cookie-remainder",
+      "category": "arithmetic",
+      "accuracy": 1,
+      "byLevel": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "model": "gpt-5.4-mini",
+      "taskId": "height-logic",
+      "level": 5,
+      "parsed": "Priya",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-5.4-mini",
+      "taskId": "flour-containers",
+      "level": 5,
+      "parsed": "15",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-5.4-mini",
+      "taskId": "maya-age",
+      "level": 3,
+      "parsed": "28",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-5.4-mini",
+      "taskId": "maya-age",
+      "level": 5,
+      "parsed": "28",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "deadline-day",
+      "level": 5,
+      "parsed": "April 17, 2026",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fact-extract",
+      "level": 3,
+      "parsed": "14,804 orbits",
+      "parseFail": false,
+      "expected": "11402"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "height-logic",
+      "level": 5,
+      "parsed": "Priya",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "height-logic",
+      "level": 4,
+      "parsed": "Dana",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "letter-count",
+      "level": 3,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "letter-count",
+      "level": 5,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fourth-word",
+      "level": 2,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fourth-word",
+      "level": 1,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fourth-word",
+      "level": 3,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fourth-word",
+      "level": 4,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fourth-word",
+      "level": 5,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "maya-age",
+      "level": 5,
+      "parsed": "22",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 0,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 2,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 1,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 3,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 4,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "height-logic",
+      "level": 4,
+      "parsed": "Priya",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 5,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "fourth-word",
+      "level": 0,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "fourth-word",
+      "level": 1,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "fourth-word",
+      "level": 5,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "maya-age",
+      "level": 5,
+      "parsed": "22",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 1,
+      "parsed": "Sunday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 3,
+      "parsed": "Sunday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 2,
+      "parsed": "Thursday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 5,
+      "parsed": "Saturday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 1,
+      "parsed": "6.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 4,
+      "parsed": "Saturday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 3,
+      "parsed": "4",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 0,
+      "parsed": "6.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 2,
+      "parsed": "6.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 4,
+      "parsed": "6.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 5,
+      "parsed": "14.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 0,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 1,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 2,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 5,
+      "parsed": "Lena",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 4,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 3,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 0,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 2,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 3,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 1,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 4,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 5,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "claude-haiku-4-5-20251001",
+      "taskId": "deadline-day",
+      "level": 3,
+      "parsed": "Friday (April 17, 2026)",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "flour-containers",
+      "level": 0,
+      "parsed": "5.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "flour-containers",
+      "level": 3,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "flour-containers",
+      "level": 4,
+      "parsed": "3.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "fourth-word",
+      "level": 3,
+      "parsed": "quick.",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "jacket-price",
+      "level": 3,
+      "parsed": "$54.00.",
+      "parseFail": false,
+      "expected": "55"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 0,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 4,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 2,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 3,
+      "parsed": "16.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 5,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 1,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "claude-haiku-4-5-20251001",
+      "taskId": "flour-containers",
+      "level": 1,
+      "parsed": "5",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-5.4-mini",
+      "taskId": "sisters-brother",
+      "level": 1,
+      "parsed": "5",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "tip-split",
+      "level": 3,
+      "parsed": "$27.45",
+      "parseFail": false,
+      "expected": "29.40"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "sisters-brother",
+      "level": 2,
+      "parsed": "5.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "sisters-brother",
+      "level": 1,
+      "parsed": "5.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "sisters-brother",
+      "level": 4,
+      "parsed": "5.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "train-minutes",
+      "level": 0,
+      "parsed": "100 minutes.",
+      "parseFail": false,
+      "expected": "50"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "train-minutes",
+      "level": 1,
+      "parsed": "100 minutes.",
+      "parseFail": false,
+      "expected": "50"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "train-minutes",
+      "level": 3,
+      "parsed": "20 minutes.",
+      "parseFail": false,
+      "expected": "50"
+    },
+    {
+      "model": "claude-haiku-4-5-20251001",
+      "taskId": "deadline-day",
+      "level": 0,
+      "parsed": "Saturday",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "claude-haiku-4-5-20251001",
+      "taskId": "deadline-day",
+      "level": 3,
+      "parsed": "Friday, April 17, 2026",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-5.4-mini",
+      "taskId": "height-logic",
+      "level": 1,
+      "parsed": "Lena",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-5.4-mini",
+      "taskId": "height-logic",
+      "level": 5,
+      "parsed": "Priya",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-5.4-mini",
+      "taskId": "maya-age",
+      "level": 5,
+      "parsed": "24",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-5.4-mini",
+      "taskId": "maya-age",
+      "level": 5,
+      "parsed": "28",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-5.4-mini",
+      "taskId": "sisters-brother",
+      "level": 1,
+      "parsed": "5",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "deadline-day",
+      "level": 0,
+      "parsed": "Saturday",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "deadline-day",
+      "level": 5,
+      "parsed": "April 17, 2026",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "deadline-day",
+      "level": 5,
+      "parsed": "April 17, 2026",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "height-logic",
+      "level": 0,
+      "parsed": "Priya",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "height-logic",
+      "level": 2,
+      "parsed": "Lena",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "height-logic",
+      "level": 5,
+      "parsed": "Priya",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "height-logic",
+      "level": 5,
+      "parsed": "Priya",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "letter-count",
+      "level": 3,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "letter-count",
+      "level": 4,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "letter-count",
+      "level": 3,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fourth-word",
+      "level": 0,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fourth-word",
+      "level": 0,
+      "parsed": "brown",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fourth-word",
+      "level": 1,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fourth-word",
+      "level": 4,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fourth-word",
+      "level": 5,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fourth-word",
+      "level": 3,
+      "parsed": "brown",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "fourth-word",
+      "level": 4,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "negation",
+      "level": 1,
+      "parsed": "Python",
+      "parseFail": false,
+      "expected": "rust"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "negation",
+      "level": 5,
+      "parsed": "Go",
+      "parseFail": false,
+      "expected": "rust"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "maya-age",
+      "level": 1,
+      "parsed": "22",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "maya-age",
+      "level": 4,
+      "parsed": "24",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "maya-age",
+      "level": 4,
+      "parsed": "22",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "maya-age",
+      "level": 5,
+      "parsed": "24",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "maya-age",
+      "level": 5,
+      "parsed": "24",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-5.4-nano",
+      "taskId": "sisters-brother",
+      "level": 0,
+      "parsed": "6",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 0,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 0,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 1,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 2,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 1,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 2,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 3,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 3,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 4,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 5,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 4,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "letter-count",
+      "level": 5,
+      "parsed": "2",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "fourth-word",
+      "level": 0,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "fourth-word",
+      "level": 1,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "fourth-word",
+      "level": 0,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "fourth-word",
+      "level": 1,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "fourth-word",
+      "level": 2,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "fourth-word",
+      "level": 5,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "fourth-word",
+      "level": 5,
+      "parsed": "jumps",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "maya-age",
+      "level": 5,
+      "parsed": "24",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-4o-mini",
+      "taskId": "maya-age",
+      "level": 5,
+      "parsed": "22",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "eggs-change",
+      "level": 2,
+      "parsed": "$6.25.",
+      "parseFail": false,
+      "expected": "3.25"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "eggs-change",
+      "level": 2,
+      "parsed": "$6.25.",
+      "parseFail": false,
+      "expected": "3.25"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "eggs-change",
+      "level": 5,
+      "parsed": "$6.25.",
+      "parseFail": false,
+      "expected": "3.25"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 0,
+      "parsed": "Saturday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 1,
+      "parsed": "Saturday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 0,
+      "parsed": "Saturday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 2,
+      "parsed": "Sunday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 3,
+      "parsed": "Sunday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 5,
+      "parsed": "Sunday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 3,
+      "parsed": "Sunday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 4,
+      "parsed": "Saturday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 4,
+      "parsed": "Saturday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "deadline-day",
+      "level": 5,
+      "parsed": "Saturday.",
+      "parseFail": false,
+      "expected": "friday"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 0,
+      "parsed": "6.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 1,
+      "parsed": "6.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 1,
+      "parsed": "6.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 2,
+      "parsed": "6.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 2,
+      "parsed": "6.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 3,
+      "parsed": "4.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 3,
+      "parsed": "4.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 5,
+      "parsed": "14.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 4,
+      "parsed": "6.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "python-print",
+      "level": 5,
+      "parsed": "14.",
+      "parseFail": false,
+      "expected": "12"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 1,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 1,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 0,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 2,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 2,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 0,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 4,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 3,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 5,
+      "parsed": "Lena",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 0,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 4,
+      "parsed": "Priya.",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "height-logic",
+      "level": 5,
+      "parsed": "Lena",
+      "parseFail": false,
+      "expected": "marcus"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 1,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 0,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 3,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 2,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 2,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 3,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 1,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 5,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 4,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 4,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "flour-containers",
+      "level": 0,
+      "parsed": "5.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "flour-containers",
+      "level": 0,
+      "parsed": "5.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "letter-count",
+      "level": 5,
+      "parsed": "2.",
+      "parseFail": false,
+      "expected": "3"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "flour-containers",
+      "level": 4,
+      "parsed": "3.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "flour-containers",
+      "level": 3,
+      "parsed": "3.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "flour-containers",
+      "level": 4,
+      "parsed": "3.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "fourth-word",
+      "level": 3,
+      "parsed": "quick.",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "fourth-word",
+      "level": 3,
+      "parsed": "quick.",
+      "parseFail": false,
+      "expected": "fox"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 0,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 0,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 1,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 1,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 2,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 2,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 3,
+      "parsed": "16.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 4,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 3,
+      "parsed": "16.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 4,
+      "parsed": "28",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 5,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "maya-age",
+      "level": 5,
+      "parsed": "28.",
+      "parseFail": false,
+      "expected": "20"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "sisters-brother",
+      "level": 1,
+      "parsed": "5.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "sisters-brother",
+      "level": 1,
+      "parsed": "5.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "sisters-brother",
+      "level": 3,
+      "parsed": "5.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "sisters-brother",
+      "level": 2,
+      "parsed": "5.",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "sisters-brother",
+      "level": 4,
+      "parsed": "5",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "sisters-brother",
+      "level": 4,
+      "parsed": "5",
+      "parseFail": false,
+      "expected": "4"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "train-minutes",
+      "level": 0,
+      "parsed": "100 minutes.",
+      "parseFail": false,
+      "expected": "50"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "train-minutes",
+      "level": 0,
+      "parsed": "100 minutes.",
+      "parseFail": false,
+      "expected": "50"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "train-minutes",
+      "level": 1,
+      "parsed": "100 minutes.",
+      "parseFail": false,
+      "expected": "50"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "train-minutes",
+      "level": 1,
+      "parsed": "100 minutes.",
+      "parseFail": false,
+      "expected": "50"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "train-minutes",
+      "level": 3,
+      "parsed": "20 minutes.",
+      "parseFail": false,
+      "expected": "50"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "train-minutes",
+      "level": 4,
+      "parsed": "100 minutes.",
+      "parseFail": false,
+      "expected": "50"
+    },
+    {
+      "model": "gpt-3.5-turbo",
+      "taskId": "train-minutes",
+      "level": 4,
+      "parsed": "100 minutes.",
+      "parseFail": false,
+      "expected": "50"
+    }
+  ]
+}

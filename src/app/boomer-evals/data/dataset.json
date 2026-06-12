@@ -1,0 +1,1611 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-11T22:14:42.128Z",
+  "systemPrompt": "Solve the user's question. The user's message may contain typos or sloppy writing; interpret it charitably. End your reply with a final line in exactly this format: ANSWER: <your final answer>. Keep the final answer as short as possible (a single number, word, or name).",
+  "levels": [
+    {
+      "level": 0,
+      "key": "pristine",
+      "label": "Pristine",
+      "desc": "Original prompt, capitalized and punctuated."
+    },
+    {
+      "level": 1,
+      "key": "no-shift",
+      "label": "No Shift Key",
+      "desc": "all lowercase, punctuation stripped"
+    },
+    {
+      "level": 2,
+      "key": "fat-fingers",
+      "label": "Fat Fingers",
+      "desc": "lowercase + ~15% of words have a typo"
+    },
+    {
+      "level": 3,
+      "key": "run-on",
+      "label": "Stream of Consciousness",
+      "desc": "~30% typos plus filler words and run-ons"
+    },
+    {
+      "level": 4,
+      "key": "txt-spk",
+      "label": "Txt Spk",
+      "desc": "abbreviations + dropped vowels, 2007 flip-phone style"
+    },
+    {
+      "level": 5,
+      "key": "keyboard-smash",
+      "label": "Keyboard Smash",
+      "desc": "~60% typos, shuffled letters, missing spaces"
+    }
+  ],
+  "items": [
+    {
+      "id": "eggs-change::L0",
+      "taskId": "eggs-change",
+      "category": "arithmetic",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "I bought 3 cartons of eggs at $4.50 per carton, and a loaf of bread for $3.25. I paid with a $20 bill. How much change did I get back?",
+      "answer": "3.25",
+      "accept": [
+        "3.25",
+        "$3.25",
+        "3.25 dollars",
+        "3 dollars and 25 cents"
+      ]
+    },
+    {
+      "id": "eggs-change::L1",
+      "taskId": "eggs-change",
+      "category": "arithmetic",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "i bought 3 cartons of eggs at $4.50 per carton and a loaf of bread for $3.25 i paid with a $20 bill how much change did i get back",
+      "answer": "3.25",
+      "accept": [
+        "3.25",
+        "$3.25",
+        "3.25 dollars",
+        "3 dollars and 25 cents"
+      ]
+    },
+    {
+      "id": "eggs-change::L2",
+      "taskId": "eggs-change",
+      "category": "arithmetic",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "i bought 3 cartonns of egggs at $4.50 per carton ahd a loaf of bread for $3.25 i paid with a $20 bill how much change did i gwt back",
+      "answer": "3.25",
+      "accept": [
+        "3.25",
+        "$3.25",
+        "3.25 dollars",
+        "3 dollars and 25 cents"
+      ]
+    },
+    {
+      "id": "eggs-change::L3",
+      "taskId": "eggs-change",
+      "category": "arithmetic",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so i buoght 3 cartos of eggs like at $4.50 per carton and real quick a loaf of bread u know fr $3.25 i paid with a lol $20 bill hoow much change did i get back",
+      "answer": "3.25",
+      "accept": [
+        "3.25",
+        "$3.25",
+        "3.25 dollars",
+        "3 dollars and 25 cents"
+      ]
+    },
+    {
+      "id": "eggs-change::L4",
+      "taskId": "eggs-change",
+      "category": "arithmetic",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "i bght 3 crtons of eggs at $4.50 per carton and a loaf of bread 4 $3.25 i paid w a $20 bill how mych change dod i get baxk",
+      "answer": "3.25",
+      "accept": [
+        "3.25",
+        "$3.25",
+        "3.25 dollars",
+        "3 dollars and 25 cents"
+      ]
+    },
+    {
+      "id": "eggs-change::L5",
+      "taskId": "eggs-change",
+      "category": "arithmetic",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "i bought 3 cnatros of eggs at $4.50 per carton and a looaf of breadfor $3.25 i piad wih a $20 bilhoow mcuh channge did i getbaxk",
+      "answer": "3.25",
+      "accept": [
+        "3.25",
+        "$3.25",
+        "3.25 dollars",
+        "3 dollars and 25 cents"
+      ]
+    },
+    {
+      "id": "deadline-day::L0",
+      "taskId": "deadline-day",
+      "category": "calendar",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "Our project kickoff was on March 3, 2026. The contract gives us exactly 45 days from kickoff to deliver. What day of the week is the deadline?",
+      "answer": "friday",
+      "accept": [
+        "friday",
+        "fri"
+      ]
+    },
+    {
+      "id": "deadline-day::L1",
+      "taskId": "deadline-day",
+      "category": "calendar",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "our project kickoff was on March 3, 2026. the contract gives us exactly 45 days from kickoff to deliver what day of the week is the deadline",
+      "answer": "friday",
+      "accept": [
+        "friday",
+        "fri"
+      ]
+    },
+    {
+      "id": "deadline-day::L2",
+      "taskId": "deadline-day",
+      "category": "calendar",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "our project kickoff was on March 3, 2026. the contract gves us exactly 45 days from kickoff to deliver what day of the week is the deadline",
+      "answer": "friday",
+      "accept": [
+        "friday",
+        "fri"
+      ]
+    },
+    {
+      "id": "deadline-day::L3",
+      "taskId": "deadline-day",
+      "category": "calendar",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so our project kickkoff was on March 3, 2026. the contract gives us eaxctly ok so 45 days from like kiickoff to deliver what ady of tne weeek basically is the deadline",
+      "answer": "friday",
+      "accept": [
+        "friday",
+        "fri"
+      ]
+    },
+    {
+      "id": "deadline-day::L4",
+      "taskId": "deadline-day",
+      "category": "calendar",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "our project kckff was on March 3, 2026. the contract gves us exactly 45 days from kickoff to dlivr wat day of the week is the deadline",
+      "answer": "friday",
+      "accept": [
+        "friday",
+        "fri"
+      ]
+    },
+    {
+      "id": "deadline-day::L5",
+      "taskId": "deadline-day",
+      "category": "calendar",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "our perjoct kicfkof was on March 3, 2026. the contract gies us exactly 45 days from kfckiof to edliverwaht day of thhe wek is tye deadline",
+      "answer": "friday",
+      "accept": [
+        "friday",
+        "fri"
+      ]
+    },
+    {
+      "id": "python-print::L0",
+      "taskId": "python-print",
+      "category": "code",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "What does this Python script print when I run it?\n\n```python\nx = [1, 2, 3, 4]\ny = [n * 2 for n in x if n % 2 == 0]\nprint(sum(y))\n```",
+      "answer": "12",
+      "accept": [
+        "12"
+      ]
+    },
+    {
+      "id": "python-print::L1",
+      "taskId": "python-print",
+      "category": "code",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "what does this python script print when i run it ```python\nx = [1, 2, 3, 4]\ny = [n * 2 for n in x if n % 2 == 0]\nprint(sum(y))\n```",
+      "answer": "12",
+      "accept": [
+        "12"
+      ]
+    },
+    {
+      "id": "python-print::L2",
+      "taskId": "python-print",
+      "category": "code",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "what does this python script print when i run it ```python\nx = [1, 2, 3, 4]\ny = [n * 2 for n in x if n % 2 == 0]\nprint(sum(y))\n```",
+      "answer": "12",
+      "accept": [
+        "12"
+      ]
+    },
+    {
+      "id": "python-print::L3",
+      "taskId": "python-print",
+      "category": "code",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so what des this i mean python scriot print u know whwn i run real quick it ```python\nx = [1, 2, 3, 4]\ny = [n * 2 for n in x if n % 2 == 0]\nprint(sum(y))\n```",
+      "answer": "12",
+      "accept": [
+        "12"
+      ]
+    },
+    {
+      "id": "python-print::L4",
+      "taskId": "python-print",
+      "category": "code",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "wat does this python script print when i run it ```python\nx = [1, 2, 3, 4]\ny = [n * 2 for n in x if n % 2 == 0]\nprint(sum(y))\n```",
+      "answer": "12",
+      "accept": [
+        "12"
+      ]
+    },
+    {
+      "id": "python-print::L5",
+      "taskId": "python-print",
+      "category": "code",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "what does tis pythln sicrpt printwhrn i urn it ```python\nx = [1, 2, 3, 4]\ny = [n * 2 for n in x if n % 2 == 0]\nprint(sum(y))\n```",
+      "answer": "12",
+      "accept": [
+        "12"
+      ]
+    },
+    {
+      "id": "fact-extract::L0",
+      "taskId": "fact-extract",
+      "category": "extraction",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "Here is a note from our records. The Aurora-7 satellite launched in 2019 from Kourou. It completed 11,402 orbits before its primary sensor failed. The replacement, Aurora-8, launched 14 months later carrying twice the fuel. Based on the note, how many orbits did Aurora-7 complete before the sensor failure?",
+      "answer": "11402",
+      "accept": [
+        "11402",
+        "11,402"
+      ]
+    },
+    {
+      "id": "fact-extract::L1",
+      "taskId": "fact-extract",
+      "category": "extraction",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "here is a note from our records the Aurora-7 satellite launched in 2019 from Kourou. it completed 11,402 orbits before its primary sensor failed the replacement Aurora-8, launched 14 months later carrying twice the fuel based on the note how many orbits did Aurora-7 complete before the sensor failure",
+      "answer": "11402",
+      "accept": [
+        "11402",
+        "11,402"
+      ]
+    },
+    {
+      "id": "fact-extract::L2",
+      "taskId": "fact-extract",
+      "category": "extraction",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "here is a note frm our recoeds the Aurora-7 satellite lauunched in 2019 feom Kourou. it completed 11,402 orbits before its primary sensor failed the replacement Aurora-8, launched 14 monnths later carrying twice the fuel based on the nte how many orbits did Aurora-7 compltee before thhe sensor failure",
+      "answer": "11402",
+      "accept": [
+        "11402",
+        "11,402"
+      ]
+    },
+    {
+      "id": "fact-extract::L3",
+      "taskId": "fact-extract",
+      "category": "extraction",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so hee is a real quick note from our records te Aurora-7 stellite launchwd in 2019 from Kourou. it completed 11,402 like orbirs before like is primqry basically sesor failed te replacememt Aurora-8, launched 14 months later real quick carring twwice the fjel based on tne note how many orbits did Aurora-7 complete before like the sensor failure",
+      "answer": "11402",
+      "accept": [
+        "11402",
+        "11,402"
+      ]
+    },
+    {
+      "id": "fact-extract::L4",
+      "taskId": "fact-extract",
+      "category": "extraction",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "here is a noe from uor records the Aurora-7 satellite launched in 2019 from Kourou. it cmpltd 11,402 orbits b4 its prmry snsr fld the replacement Aurora-8, lunched 14 mpnths l8r carrying twice the fuel bwd on the nte how amny orbits did Aurora-7 complete b4 the sensor frle",
+      "answer": "11402",
+      "accept": [
+        "11402",
+        "11,402"
+      ]
+    },
+    {
+      "id": "fact-extract::L5",
+      "taskId": "fact-extract",
+      "category": "extraction",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "hree is a note fromourrecords the Aurora-7 satellite lauched in 2019 from Kourou. it completed 11,402 otribs befooreits ptimary sensor faled te recnaeepmlt Aurora-8, launched 14 monrhs lter carrniyg twiice the fuel based on the ntoe how many oibrts did Aurora-7 complete bfeore te snseorfailure",
+      "answer": "11402",
+      "accept": [
+        "11402",
+        "11,402"
+      ]
+    },
+    {
+      "id": "height-logic::L0",
+      "taskId": "height-logic",
+      "category": "logic",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "Dana is shorter than Priya. Priya is shorter than Marcus. Marcus is shorter than only one person in the group: Lena. Who is the second tallest person in the group?",
+      "answer": "marcus",
+      "accept": [
+        "marcus"
+      ]
+    },
+    {
+      "id": "height-logic::L1",
+      "taskId": "height-logic",
+      "category": "logic",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "Dana is shorter than Priya. Priya is shorter than Marcus. Marcus is shorter than only one person in the group: Lena. who is the second tallest person in the group",
+      "answer": "marcus",
+      "accept": [
+        "marcus"
+      ]
+    },
+    {
+      "id": "height-logic::L2",
+      "taskId": "height-logic",
+      "category": "logic",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "Dana is shorter than Priya. Priya is shorter than Marcus. Marcus is shorter than olny one petson in the group: Lena. who is the second tallest person in the group",
+      "answer": "marcus",
+      "accept": [
+        "marcus"
+      ]
+    },
+    {
+      "id": "height-logic::L3",
+      "taskId": "height-logic",
+      "category": "logic",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so Dana is shofter htan Priya. basically Priya is shorter thhan Marcus. Marcus is shorter than only one person in the i mean grooup: Lena. ok so who is tje sexond tallest persn in the rgoup",
+      "answer": "marcus",
+      "accept": [
+        "marcus"
+      ]
+    },
+    {
+      "id": "height-logic::L4",
+      "taskId": "height-logic",
+      "category": "logic",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "Dana is shorter than Priya. Priya is shrtr than Marcus. Marcus is shrter than only one prsn in the grop: Lena. who is the scnd tallest prsn in the grp",
+      "answer": "marcus",
+      "accept": [
+        "marcus"
+      ]
+    },
+    {
+      "id": "height-logic::L5",
+      "taskId": "height-logic",
+      "category": "logic",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "Dana is sotrhertahn Priya. Priya is sretohr than Marcus. Marcus is sorterthn only oneproesn in htegroup: Lena. who is tjescond tallest psroen in the group",
+      "answer": "marcus",
+      "accept": [
+        "marcus"
+      ]
+    },
+    {
+      "id": "letter-count::L0",
+      "taskId": "letter-count",
+      "category": "string",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "How many times does the letter r appear in the word 'strawberry'?",
+      "answer": "3",
+      "accept": [
+        "3",
+        "three",
+        "3 times"
+      ]
+    },
+    {
+      "id": "letter-count::L1",
+      "taskId": "letter-count",
+      "category": "string",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "how many times does the letter r appear in the word 'strawberry'?",
+      "answer": "3",
+      "accept": [
+        "3",
+        "three",
+        "3 times"
+      ]
+    },
+    {
+      "id": "letter-count::L2",
+      "taskId": "letter-count",
+      "category": "string",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "how many times does the leter r appear in the word 'strawberry'?",
+      "answer": "3",
+      "accept": [
+        "3",
+        "three",
+        "3 times"
+      ]
+    },
+    {
+      "id": "letter-count::L3",
+      "taskId": "letter-count",
+      "category": "string",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so how many times does hte letter r appear in thhe word 'strawberry'?",
+      "answer": "3",
+      "accept": [
+        "3",
+        "three",
+        "3 times"
+      ]
+    },
+    {
+      "id": "letter-count::L4",
+      "taskId": "letter-count",
+      "category": "string",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "how many mts does the letter r appar in the word 'strawberry'?",
+      "answer": "3",
+      "accept": [
+        "3",
+        "three",
+        "3 times"
+      ]
+    },
+    {
+      "id": "letter-count::L5",
+      "taskId": "letter-count",
+      "category": "string",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "how many tiimes does theltter r appear in the word 'strawberry'?",
+      "answer": "3",
+      "accept": [
+        "3",
+        "three",
+        "3 times"
+      ]
+    },
+    {
+      "id": "flour-containers::L0",
+      "taskId": "flour-containers",
+      "category": "arithmetic",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "A recipe needs 2.5 cups of flour per batch. I am baking 6 batches, and my measuring container holds exactly 4 cups. What is the minimum number of times I need to fill the container?",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 times"
+      ]
+    },
+    {
+      "id": "flour-containers::L1",
+      "taskId": "flour-containers",
+      "category": "arithmetic",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "a recipe needs 2.5 cups of flour per batch i am baking 6 batches and my measuring container holds exactly 4 cups what is the minimum number of times i need to fill the container",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 times"
+      ]
+    },
+    {
+      "id": "flour-containers::L2",
+      "taskId": "flour-containers",
+      "category": "arithmetic",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "a recipe needs 2.5 cups of flour per batch i am baking 6 battches and my measuring container holds exactly 4 cups what is the minimum number of times i need to fiill the container",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 times"
+      ]
+    },
+    {
+      "id": "flour-containers::L3",
+      "taskId": "flour-containers",
+      "category": "arithmetic",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so a recipe neds 2.5 cups of anyway flour per batch like i am baking 6 batches and my measuring basically container holds exactly 4 cups what is the minimum number of times i need to flil tje contaier",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 times"
+      ]
+    },
+    {
+      "id": "flour-containers::L4",
+      "taskId": "flour-containers",
+      "category": "arithmetic",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "a recipe needs 2.5 cups of flour per batch i am bknng 6 batches and my measrng contsinr hlds exactly 4 cups wat is the minimum numbr of tms i nwed to fill the contnr",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 times"
+      ]
+    },
+    {
+      "id": "flour-containers::L5",
+      "taskId": "flour-containers",
+      "category": "arithmetic",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "a riecpe nerds 2.5 cpus of fllourper batch i am baking 6 batchesannd my mnsaeriugocntainer holdsexactly 4 cpus whaat is the minimum number of times i need to fill tje container",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 times"
+      ]
+    },
+    {
+      "id": "fourth-word::L0",
+      "taskId": "fourth-word",
+      "category": "instruction",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "What is the fourth word of the sentence \"the quick brown fox jumps over the lazy dog\"?",
+      "answer": "fox",
+      "accept": [
+        "fox"
+      ]
+    },
+    {
+      "id": "fourth-word::L1",
+      "taskId": "fourth-word",
+      "category": "instruction",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "what is the fourth word of the sentence \"the quick brown fox jumps over the lazy dog\"?",
+      "answer": "fox",
+      "accept": [
+        "fox"
+      ]
+    },
+    {
+      "id": "fourth-word::L2",
+      "taskId": "fourth-word",
+      "category": "instruction",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "what is tje fourth word of the sentence \"the quick brown fox jumps over the lazy dog\"?",
+      "answer": "fox",
+      "accept": [
+        "fox"
+      ]
+    },
+    {
+      "id": "fourth-word::L3",
+      "taskId": "fourth-word",
+      "category": "instruction",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so hwat is the fourth word of the ok so sentence \"the quick brown fox jumps over the lazy dog\"?",
+      "answer": "fox",
+      "accept": [
+        "fox"
+      ]
+    },
+    {
+      "id": "fourth-word::L4",
+      "taskId": "fourth-word",
+      "category": "instruction",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "wat is the frth word of the sentence \"the quick brown fox jumps over the lazy dog\"?",
+      "answer": "fox",
+      "accept": [
+        "fox"
+      ]
+    },
+    {
+      "id": "fourth-word::L5",
+      "taskId": "fourth-word",
+      "category": "instruction",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "hwat is tje fourrh woord of the stcennee \"the quick brown fox jumps over the lazy dog\"?",
+      "answer": "fox",
+      "accept": [
+        "fox"
+      ]
+    },
+    {
+      "id": "meeting-overlap::L0",
+      "taskId": "meeting-overlap",
+      "category": "scheduling",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "One meeting runs from 9:40 to 11:05. Another meeting runs from 10:50 to 12:15. For how many minutes do the two meetings overlap?",
+      "answer": "15",
+      "accept": [
+        "15",
+        "15 minutes",
+        "fifteen"
+      ]
+    },
+    {
+      "id": "meeting-overlap::L1",
+      "taskId": "meeting-overlap",
+      "category": "scheduling",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "one meeting runs from 9:40 to 11:05 another meeting runs from 10:50 to 12:15 for how many minutes do the two meetings overlap",
+      "answer": "15",
+      "accept": [
+        "15",
+        "15 minutes",
+        "fifteen"
+      ]
+    },
+    {
+      "id": "meeting-overlap::L2",
+      "taskId": "meeting-overlap",
+      "category": "scheduling",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "one meeting runs frrom 9:40 to 11:05 another meeting runs from 10:50 to 12:15 for hlw many miinutes do the two meetings overlap",
+      "answer": "15",
+      "accept": [
+        "15",
+        "15 minutes",
+        "fifteen"
+      ]
+    },
+    {
+      "id": "meeting-overlap::L3",
+      "taskId": "meeting-overlap",
+      "category": "scheduling",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so one meetig i mean runs from 9:40 to 11:05 another meeing real quick runs ffom 10:50 to 12:15 fir how many minues do the two metings overlap",
+      "answer": "15",
+      "accept": [
+        "15",
+        "15 minutes",
+        "fifteen"
+      ]
+    },
+    {
+      "id": "meeting-overlap::L4",
+      "taskId": "meeting-overlap",
+      "category": "scheduling",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "noe metng runs from 9:40 to 11:05 another meeting runs from 10:50 to 12:15 4 how many mns do the wto metngs ovrlap",
+      "answer": "15",
+      "accept": [
+        "15",
+        "15 minutes",
+        "fifteen"
+      ]
+    },
+    {
+      "id": "meeting-overlap::L5",
+      "taskId": "meeting-overlap",
+      "category": "scheduling",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "one meetingruns feom 9:40 to 11:05 anotther meeting rnusform 10:50 to 12:15 for hpwmany mintues do the twomeetints overlap",
+      "answer": "15",
+      "accept": [
+        "15",
+        "15 minutes",
+        "fifteen"
+      ]
+    },
+    {
+      "id": "negation::L0",
+      "taskId": "negation",
+      "category": "logic",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "I am listing programming languages I do not want to use: not Python, not JavaScript, not Go. Out of Rust, Python, and Go, which one am I okay with?",
+      "answer": "rust",
+      "accept": [
+        "rust"
+      ]
+    },
+    {
+      "id": "negation::L1",
+      "taskId": "negation",
+      "category": "logic",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "i am listing programming languages i do not want to use: not Python, not JavaScript, not Go. out of Rust, Python, and Go, which one am i okay with",
+      "answer": "rust",
+      "accept": [
+        "rust"
+      ]
+    },
+    {
+      "id": "negation::L2",
+      "taskId": "negation",
+      "category": "logic",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "i am listing programming langjages i do ont want to use: not Python, noot JavaScript, not Go. out of Rust, Python, abd Go, which oe am i oaky wiith",
+      "answer": "rust",
+      "accept": [
+        "rust"
+      ]
+    },
+    {
+      "id": "negation::L3",
+      "taskId": "negation",
+      "category": "logic",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so i am listing programming languages i i mean do not want to use: not basically Python, not JavaScript, not Go. out of Rust, Python, and Go, which oe am i okay wiith",
+      "answer": "rust",
+      "accept": [
+        "rust"
+      ]
+    },
+    {
+      "id": "negation::L4",
+      "taskId": "negation",
+      "category": "logic",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "i am listing prohramming languages i do npt want to use: not Python, not JavaScript, not Go. out of Rust, Python, and Go, which one am i ok w",
+      "answer": "rust",
+      "accept": [
+        "rust"
+      ]
+    },
+    {
+      "id": "negation::L5",
+      "taskId": "negation",
+      "category": "logic",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "i am listinng pnmrgroimag languages i do not awnt to ues: not Python, not JavaScript, not Go. oit of Rust, Python, and Go, whichone am i okaay wtih",
+      "answer": "rust",
+      "accept": [
+        "rust"
+      ]
+    },
+    {
+      "id": "jacket-price::L0",
+      "taskId": "jacket-price",
+      "category": "arithmetic",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "A jacket costs $80. It is discounted 25 percent, and then I use a coupon for $10 off the discounted price. Sales tax of 10 percent applies after all discounts. What is the final price I pay?",
+      "answer": "55",
+      "accept": [
+        "55",
+        "$55",
+        "55.00",
+        "$55.00",
+        "55 dollars"
+      ]
+    },
+    {
+      "id": "jacket-price::L1",
+      "taskId": "jacket-price",
+      "category": "arithmetic",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "a jacket costs $80 it is discounted 25 percent and then i use a coupon for $10 off the discounted price sales tax of 10 percent applies after all discounts what is the final price i pay",
+      "answer": "55",
+      "accept": [
+        "55",
+        "$55",
+        "55.00",
+        "$55.00",
+        "55 dollars"
+      ]
+    },
+    {
+      "id": "jacket-price::L2",
+      "taskId": "jacket-price",
+      "category": "arithmetic",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "a jacket costs $80 it is discoubted 25 percent and then i use a coupon for $10 off the discunted prrice saales tax of 10 pdrcent applies after all discounts what is the final price i pay",
+      "answer": "55",
+      "accept": [
+        "55",
+        "$55",
+        "55.00",
+        "$55.00",
+        "55 dollars"
+      ]
+    },
+    {
+      "id": "jacket-price::L3",
+      "taskId": "jacket-price",
+      "category": "arithmetic",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so a jacket cosys $80 it is like discounted 25 basically percent and thwn i use a coupoon lol fr $10 off the i mean discounted price sales tax of 10 percent appies after u know all discouunts what is tne final pfice i pay",
+      "answer": "55",
+      "accept": [
+        "55",
+        "$55",
+        "55.00",
+        "$55.00",
+        "55 dollars"
+      ]
+    },
+    {
+      "id": "jacket-price::L4",
+      "taskId": "jacket-price",
+      "category": "arithmetic",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "a jckt costs $80 it is dsccntd 25 percnt and then i use a coupon 4 $10 off the disccounted prce sles tax of 10 percent appls aftr all discounts wat is tne fnl price i pay",
+      "answer": "55",
+      "accept": [
+        "55",
+        "$55",
+        "55.00",
+        "$55.00",
+        "55 dollars"
+      ]
+    },
+    {
+      "id": "jacket-price::L5",
+      "taskId": "jacket-price",
+      "category": "arithmetic",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "a jackt costs $80 it is disdounted 25 percent nad then i use a couponfoor $10 offthediscointed price saleesatx of 10 percentaipepls fater all idscounts what is thefinnalprice i pay",
+      "answer": "55",
+      "accept": [
+        "55",
+        "$55",
+        "55.00",
+        "$55.00",
+        "55 dollars"
+      ]
+    },
+    {
+      "id": "maya-age::L0",
+      "taskId": "maya-age",
+      "category": "algebra",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "Maya is twice as old as her brother was 2 years ago. Her brother is 12 years old now. How old is Maya?",
+      "answer": "20",
+      "accept": [
+        "20",
+        "twenty",
+        "20 years old"
+      ]
+    },
+    {
+      "id": "maya-age::L1",
+      "taskId": "maya-age",
+      "category": "algebra",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "Maya is twice as old as her brother was 2 years ago her brother is 12 years old now how old is Maya?",
+      "answer": "20",
+      "accept": [
+        "20",
+        "twenty",
+        "20 years old"
+      ]
+    },
+    {
+      "id": "maya-age::L2",
+      "taskId": "maya-age",
+      "category": "algebra",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "Maya is wtice as old as her brother was 2 yars ago her brother is 12 years old now how old is Maya?",
+      "answer": "20",
+      "accept": [
+        "20",
+        "twenty",
+        "20 years old"
+      ]
+    },
+    {
+      "id": "maya-age::L3",
+      "taskId": "maya-age",
+      "category": "algebra",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so Maya is twice as od u know as her brother was 2 years ago her brother is 12 years old i mean nw hiw od real quick is Maya?",
+      "answer": "20",
+      "accept": [
+        "20",
+        "twenty",
+        "20 years old"
+      ]
+    },
+    {
+      "id": "maya-age::L4",
+      "taskId": "maya-age",
+      "category": "algebra",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "Maya is twice as old as her brother was 2 yars ago her brother is 12 yeafs old now how od is Maya?",
+      "answer": "20",
+      "accept": [
+        "20",
+        "twenty",
+        "20 years old"
+      ]
+    },
+    {
+      "id": "maya-age::L5",
+      "taskId": "maya-age",
+      "category": "algebra",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "Maya is twwice as old as her bother ws 2 yearsago her beorhtr is 12 years oldnow how old is Maya?",
+      "answer": "20",
+      "accept": [
+        "20",
+        "twenty",
+        "20 years old"
+      ]
+    },
+    {
+      "id": "tip-split::L0",
+      "taskId": "tip-split",
+      "category": "arithmetic",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "A dinner bill is $147. We add a 20 percent tip and then split the total evenly among 6 people. How much does each person pay?",
+      "answer": "29.40",
+      "accept": [
+        "29.40",
+        "29.4",
+        "$29.40",
+        "$29.4",
+        "29.40 dollars"
+      ]
+    },
+    {
+      "id": "tip-split::L1",
+      "taskId": "tip-split",
+      "category": "arithmetic",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "a dinner bill is $147 we add a 20 percent tip and then split the total evenly among 6 people how much does each person pay",
+      "answer": "29.40",
+      "accept": [
+        "29.40",
+        "29.4",
+        "$29.40",
+        "$29.4",
+        "29.40 dollars"
+      ]
+    },
+    {
+      "id": "tip-split::L2",
+      "taskId": "tip-split",
+      "category": "arithmetic",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "a dinner bill is $147 we add a 20 percent tip and then split the total evenly among 6 people how muuch does each person paay",
+      "answer": "29.40",
+      "accept": [
+        "29.40",
+        "29.4",
+        "$29.40",
+        "$29.4",
+        "29.40 dollars"
+      ]
+    },
+    {
+      "id": "tip-split::L3",
+      "taskId": "tip-split",
+      "category": "arithmetic",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so a dinner bill is $147 u know we add like a 20 percent tip and then split tge ttoal evenly among 6 people ohw mjch does each person py",
+      "answer": "29.40",
+      "accept": [
+        "29.40",
+        "29.4",
+        "$29.40",
+        "$29.4",
+        "29.40 dollars"
+      ]
+    },
+    {
+      "id": "tip-split::L4",
+      "taskId": "tip-split",
+      "category": "arithmetic",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "a dnner bill is $147 we add a 20 percent tip and then pslit tge total evenly amng 6 ppl how much does ech person paay",
+      "answer": "29.40",
+      "accept": [
+        "29.40",
+        "29.4",
+        "$29.40",
+        "$29.4",
+        "29.40 dollars"
+      ]
+    },
+    {
+      "id": "tip-split::L5",
+      "taskId": "tip-split",
+      "category": "arithmetic",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "a dknner bill is $147 we dad a 20 percent tip nadthen slit thhe total elvney amnog 6 plopee how much dooes each personapy",
+      "answer": "29.40",
+      "accept": [
+        "29.40",
+        "29.4",
+        "$29.40",
+        "$29.4",
+        "29.40 dollars"
+      ]
+    },
+    {
+      "id": "seq-next::L0",
+      "taskId": "seq-next",
+      "category": "pattern",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "What is the next number in the sequence 2, 6, 18, 54?",
+      "answer": "162",
+      "accept": [
+        "162"
+      ]
+    },
+    {
+      "id": "seq-next::L1",
+      "taskId": "seq-next",
+      "category": "pattern",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "what is the next number in the sequence 2 6 18 54",
+      "answer": "162",
+      "accept": [
+        "162"
+      ]
+    },
+    {
+      "id": "seq-next::L2",
+      "taskId": "seq-next",
+      "category": "pattern",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "what is thhe next number in the sequence 2 6 18 54",
+      "answer": "162",
+      "accept": [
+        "162"
+      ]
+    },
+    {
+      "id": "seq-next::L3",
+      "taskId": "seq-next",
+      "category": "pattern",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so hwat is the next number in the sequence 2 6 18 54",
+      "answer": "162",
+      "accept": [
+        "162"
+      ]
+    },
+    {
+      "id": "seq-next::L4",
+      "taskId": "seq-next",
+      "category": "pattern",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "wat is the next number in the sequence 2 6 18 54",
+      "answer": "162",
+      "accept": [
+        "162"
+      ]
+    },
+    {
+      "id": "seq-next::L5",
+      "taskId": "seq-next",
+      "category": "pattern",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "waht is thhe nxet number in tye suneeqce 2 6 18 54",
+      "answer": "162",
+      "accept": [
+        "162"
+      ]
+    },
+    {
+      "id": "sisters-brother::L0",
+      "taskId": "sisters-brother",
+      "category": "logic",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "Tom has 3 sisters: April, May, and June. Each sister has exactly one brother. How many children are in the family?",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 children"
+      ]
+    },
+    {
+      "id": "sisters-brother::L1",
+      "taskId": "sisters-brother",
+      "category": "logic",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "Tom has 3 sisters: April, May, and June. each sister has exactly one brother how many children are in the family",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 children"
+      ]
+    },
+    {
+      "id": "sisters-brother::L2",
+      "taskId": "sisters-brother",
+      "category": "logic",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "Tom has 3 sisters: April, May, and June. each sister has exactly one brother how many childrn are in the family",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 children"
+      ]
+    },
+    {
+      "id": "sisters-brother::L3",
+      "taskId": "sisters-brother",
+      "category": "logic",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so Tom has 3 sisters: April, May, and June. each sister has exacly one brother how manny childern are in the family",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 children"
+      ]
+    },
+    {
+      "id": "sisters-brother::L4",
+      "taskId": "sisters-brother",
+      "category": "logic",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "Tom has 3 sisters: April, May, and June. each sister has exactly one brother how many children r in the famly",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 children"
+      ]
+    },
+    {
+      "id": "sisters-brother::L5",
+      "taskId": "sisters-brother",
+      "category": "logic",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "Tom has 3 issters: April, May, and June. each sister has exactly oje brotther howmany children ate in tjefamily",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 children"
+      ]
+    },
+    {
+      "id": "sort-third::L0",
+      "taskId": "sort-third",
+      "category": "instruction",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "Sort these words alphabetically and tell me which one comes third: mango, apple, banana, kiwi.",
+      "answer": "kiwi",
+      "accept": [
+        "kiwi"
+      ]
+    },
+    {
+      "id": "sort-third::L1",
+      "taskId": "sort-third",
+      "category": "instruction",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "sort these words alphabetically and tell me which one comes third: mango, apple, banana, kiwi.",
+      "answer": "kiwi",
+      "accept": [
+        "kiwi"
+      ]
+    },
+    {
+      "id": "sort-third::L2",
+      "taskId": "sort-third",
+      "category": "instruction",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "sort these words alphabetically and tell me which one comes third: mango, apple, banana, kiwi.",
+      "answer": "kiwi",
+      "accept": [
+        "kiwi"
+      ]
+    },
+    {
+      "id": "sort-third::L3",
+      "taskId": "sort-third",
+      "category": "instruction",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so sort these words alphabetically annd tell me whkch onne comes third: mango, apple, banana, kiwi.",
+      "answer": "kiwi",
+      "accept": [
+        "kiwi"
+      ]
+    },
+    {
+      "id": "sort-third::L4",
+      "taskId": "sort-third",
+      "category": "instruction",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "sort these wrds alphabetically and tell me whch one comes third: mango, apple, banana, kiwi.",
+      "answer": "kiwi",
+      "accept": [
+        "kiwi"
+      ]
+    },
+    {
+      "id": "sort-third::L5",
+      "taskId": "sort-third",
+      "category": "instruction",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "sorttsehe words aiplbhelaaltcy nad tell me whcih onecomes thirdd: mango, apple, banana, kiwi.",
+      "answer": "kiwi",
+      "accept": [
+        "kiwi"
+      ]
+    },
+    {
+      "id": "cookie-remainder::L0",
+      "taskId": "cookie-remainder",
+      "category": "arithmetic",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "I have 100 cookies and I pack them into boxes that hold 12 cookies each. After filling as many boxes as possible, how many cookies are left over?",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 cookies"
+      ]
+    },
+    {
+      "id": "cookie-remainder::L1",
+      "taskId": "cookie-remainder",
+      "category": "arithmetic",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "i have 100 cookies and i pack them into boxes that hold 12 cookies each after filling as many boxes as possible how many cookies are left over",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 cookies"
+      ]
+    },
+    {
+      "id": "cookie-remainder::L2",
+      "taskId": "cookie-remainder",
+      "category": "arithmetic",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "i hvae 100 cookies and i pack them into boxes that hold 12 cookies each after filling as many boxes as posisble how many cookies are leeft over",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 cookies"
+      ]
+    },
+    {
+      "id": "cookie-remainder::L3",
+      "taskId": "cookie-remainder",
+      "category": "arithmetic",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so i have 100 cookeis and i pack them into boxes that like hold 12 cookis ech after filling as like many boxes i mean as lol possible how many cookies like rae levt voer",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 cookies"
+      ]
+    },
+    {
+      "id": "cookie-remainder::L4",
+      "taskId": "cookie-remainder",
+      "category": "arithmetic",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "i haave 100 cookies and i pack them into bxes that hold 12 cookies each afetr filling as many bxes as pssle how mnay cokis r left over",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 cookies"
+      ]
+    },
+    {
+      "id": "cookie-remainder::L5",
+      "taskId": "cookie-remainder",
+      "category": "arithmetic",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "i have 100 cookies and i pck tem ibto beoxs thathold 12 cookies ecah after fnlliig as many boxes as possible how mnaycokoiesare lefft over",
+      "answer": "4",
+      "accept": [
+        "4",
+        "four",
+        "4 cookies"
+      ]
+    },
+    {
+      "id": "train-minutes::L0",
+      "taskId": "train-minutes",
+      "category": "arithmetic",
+      "level": 0,
+      "levelKey": "pristine",
+      "levelLabel": "Pristine",
+      "prompt": "A train travels 180 km in 2.5 hours. At that same speed, how many minutes does it take to travel 60 km?",
+      "answer": "50",
+      "accept": [
+        "50",
+        "50 minutes",
+        "fifty"
+      ]
+    },
+    {
+      "id": "train-minutes::L1",
+      "taskId": "train-minutes",
+      "category": "arithmetic",
+      "level": 1,
+      "levelKey": "no-shift",
+      "levelLabel": "No Shift Key",
+      "prompt": "a train travels 180 km in 2.5 hours at that same speed how many minutes does it take to travel 60 km",
+      "answer": "50",
+      "accept": [
+        "50",
+        "50 minutes",
+        "fifty"
+      ]
+    },
+    {
+      "id": "train-minutes::L2",
+      "taskId": "train-minutes",
+      "category": "arithmetic",
+      "level": 2,
+      "levelKey": "fat-fingers",
+      "levelLabel": "Fat Fingers",
+      "prompt": "a train travels 180 km in 2.5 hours at tht same speed how manny minytes does it take to trael 60 km",
+      "answer": "50",
+      "accept": [
+        "50",
+        "50 minutes",
+        "fifty"
+      ]
+    },
+    {
+      "id": "train-minutes::L3",
+      "taskId": "train-minutes",
+      "category": "arithmetic",
+      "level": 3,
+      "levelKey": "run-on",
+      "levelLabel": "Stream of Consciousness",
+      "prompt": "ok so a train travels lol 180 basically km in real quick 2.5 hours at that same spedd how anyway manny minutes dos it i mean take to travel 60 km",
+      "answer": "50",
+      "accept": [
+        "50",
+        "50 minutes",
+        "fifty"
+      ]
+    },
+    {
+      "id": "train-minutes::L4",
+      "taskId": "train-minutes",
+      "category": "arithmetic",
+      "level": 4,
+      "levelKey": "txt-spk",
+      "levelLabel": "Txt Spk",
+      "prompt": "a train travels 180 km in 2.5 hours at that same speed how many mins does it take to travel 60 km",
+      "answer": "50",
+      "accept": [
+        "50",
+        "50 minutes",
+        "fifty"
+      ]
+    },
+    {
+      "id": "train-minutes::L5",
+      "taskId": "train-minutes",
+      "category": "arithmetic",
+      "level": 5,
+      "levelKey": "keyboard-smash",
+      "levelLabel": "Keyboard Smash",
+      "prompt": "a tfain trravels 180 km in 2.5 hours at that sqme speed how many muteinsdoes it tke to travel 60 km",
+      "answer": "50",
+      "accept": [
+        "50",
+        "50 minutes",
+        "fifty"
+      ]
+    }
+  ]
+}
