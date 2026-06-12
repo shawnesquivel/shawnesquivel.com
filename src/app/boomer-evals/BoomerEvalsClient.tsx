@@ -282,119 +282,134 @@ function FrontierChart({ summary }: { summary: GibberishSummary }) {
   );
 }
 
-// --- accuracy-vs-corruption chart --------------------------------------------------
+// --- accuracy-vs-corruption: small multiples, one panel per model -------------------
 
-function DegradationChart({ summary }: { summary: GibberishSummary }) {
+function ModelSparkPanel({ model, levels }: { model: ModelSummary; levels: LevelInfo[] }) {
   const [hovered, setHovered] = useState<number | null>(null);
-  const [focusModel, setFocusModel] = useState<string | null>(null);
 
-  const width = 860;
-  const height = 320;
-  const plot = { left: 48, right: 16, top: 16, bottom: 44 };
-  const pw = width - plot.left - plot.right;
-  const ph = height - plot.top - plot.bottom;
-  const levels = summary.levels;
+  const W = 220;
+  const H = 116;
+  const plot = { left: 10, right: 10, top: 14, bottom: 20 };
+  const pw = W - plot.left - plot.right;
+  const ph = H - plot.top - plot.bottom;
 
   const yMin = 0.4;
   const x = (level: number) => plot.left + (level / (levels.length - 1)) * pw;
   const y = (acc: number) => plot.top + ((1 - Math.max(acc, yMin)) / (1 - yMin)) * ph;
 
+  const c = color(model.id);
+  const pts = model.perLevel.map((p) => ({ level: p.level, acc: p.accuracy }));
+  const line = pts.map((p) => `${x(p.level).toFixed(1)},${y(p.acc).toFixed(1)}`).join(" ");
+  const area = `${x(0).toFixed(1)},${(plot.top + ph).toFixed(1)} ${line} ${x(levels.length - 1).toFixed(1)},${(
+    plot.top + ph
+  ).toFixed(1)}`;
+
+  // annotate the worst level (only when it visibly dips)
+  const minPt = pts.reduce((a, b) => (b.acc < a.acc ? b : a));
+  const showDip = minPt.acc < 0.985;
+  const gradId = `spark-${model.id.replace(/[^a-z0-9]/gi, "")}`;
+
   return (
-    <div className="relative">
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full overflow-visible">
-        {[0.4, 0.55, 0.7, 0.85, 1].map((tick) => (
-          <g key={tick}>
-            <line x1={plot.left} x2={plot.left + pw} y1={y(tick)} y2={y(tick)} stroke={INK.grid} />
-            <text x={plot.left - 10} y={y(tick) + 4} textAnchor="end" fill={INK.muted} fontSize="11">
-              {pct(tick)}
-            </text>
-          </g>
-        ))}
-        {levels.map((lv) => (
-          <g key={lv.level}>
-            <text x={x(lv.level)} y={height - 26} textAnchor="middle" fill={INK.neon} fontSize="9" style={pixelFont}>
-              L{lv.level}
-            </text>
-            <text x={x(lv.level)} y={height - 9} textAnchor="middle" fill={INK.muted} fontSize="10">
-              {lv.label}
-            </text>
+    <div
+      className="rounded-lg p-4"
+      style={{ background: INK.bg, border: `1px solid ${INK.panelBorder}` }}
+      onMouseLeave={() => setHovered(null)}
+    >
+      <div className="flex items-baseline justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-1.5">
+          <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: c }} />
+          <span className="truncate text-[12px] font-semibold" style={{ color: INK.white }}>
+            {model.label}
+          </span>
+        </div>
+        <span className="shrink-0 text-[14px] font-bold tabular-nums" style={{ color: c }}>
+          {hovered !== null ? pct(pts[hovered]?.acc ?? 0) : pct(model.corruptedAccuracy)}
+        </span>
+      </div>
+      <div className="mt-0.5 flex items-baseline justify-between text-[10px]" style={{ color: INK.faint }}>
+        <span>{model.id === "gpt-3.5-turbo" ? `${model.era} boomer control` : `${model.era} ${model.tier}`}</span>
+        <span>{hovered !== null ? `at L${hovered}` : "on gibberish"}</span>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="mt-2 w-full overflow-visible">
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={c} stopOpacity="0.22" />
+            <stop offset="100%" stopColor={c} stopOpacity="0.02" />
+          </linearGradient>
+        </defs>
+        {/* 100% reference line */}
+        <line x1={plot.left} x2={plot.left + pw} y1={y(1)} y2={y(1)} stroke={INK.grid} strokeDasharray="3 3" />
+        <line x1={plot.left} x2={plot.left + pw} y1={y(0.7)} y2={y(0.7)} stroke={INK.gridFaint} />
+        <line x1={plot.left} x2={plot.left + pw} y1={y(0.4)} y2={y(0.4)} stroke={INK.gridFaint} />
+        <polygon points={area} fill={`url(#${gradId})`} />
+        <polyline points={line} fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        {pts.map((p) => (
+          <g key={p.level}>
+            <circle
+              cx={x(p.level)}
+              cy={y(p.acc)}
+              r={hovered === p.level ? 4 : 2.6}
+              fill={hovered === p.level ? c : INK.bg}
+              stroke={c}
+              strokeWidth="1.6"
+            />
             <rect
-              x={x(lv.level) - pw / (levels.length - 1) / 2}
-              y={plot.top}
-              width={pw / (levels.length - 1)}
-              height={ph}
+              x={x(p.level) - pw / 10}
+              y={0}
+              width={pw / 5}
+              height={H}
               fill="transparent"
-              onMouseEnter={() => setHovered(lv.level)}
-              onMouseLeave={() => setHovered(null)}
+              onMouseEnter={() => setHovered(p.level)}
             />
           </g>
         ))}
-        {hovered !== null && (
-          <line x1={x(hovered)} x2={x(hovered)} y1={plot.top} y2={plot.top + ph} stroke={INK.faint} strokeDasharray="3 3" />
-        )}
-        {summary.models.map((m) => {
-          const dimmed = focusModel !== null && focusModel !== m.id;
-          const pts = m.perLevel.map((p) => `${x(p.level).toFixed(1)},${y(p.accuracy).toFixed(1)}`).join(" ");
-          return (
-            <g key={m.id} opacity={dimmed ? 0.12 : 1} style={{ transition: "opacity 150ms" }}>
-              <polyline
-                points={pts}
-                fill="none"
-                stroke={color(m.id)}
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              {m.perLevel.map((p) => (
-                <circle key={p.level} cx={x(p.level)} cy={y(p.accuracy)} r="3.4" fill={color(m.id)} />
-              ))}
-            </g>
-          );
-        })}
-      </svg>
-      {hovered !== null && (
-        <div
-          className="pointer-events-none absolute top-2 z-10 w-56 rounded-md p-3 text-xs shadow-lg"
-          style={{
-            left: `${Math.min((x(hovered) / width) * 100, 70)}%`,
-            background: INK.bg,
-            border: `1px solid ${INK.panelBorder}`,
-          }}
-        >
-          <div className="font-medium" style={{ color: INK.white }}>
-            L{hovered} · {levels[hovered]?.label}
-          </div>
-          <div className="mt-2 space-y-1">
-            {[...summary.models]
-              .sort((a, b) => (b.perLevel[hovered]?.accuracy ?? 0) - (a.perLevel[hovered]?.accuracy ?? 0))
-              .map((m) => (
-                <div key={m.id} className="flex items-center justify-between gap-3">
-                  <span className="inline-flex items-center gap-1.5 truncate" style={{ color: INK.text }}>
-                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: color(m.id) }} />
-                    {m.label}
-                  </span>
-                  <span className="tabular-nums font-medium" style={{ color: INK.white }}>
-                    {pct(m.perLevel[hovered]?.accuracy ?? 0)}
-                  </span>
-                </div>
-              ))}
-          </div>
-        </div>
-      )}
-      <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-xs">
-        {summary.models.map((m) => (
-          <button
-            key={m.id}
-            type="button"
-            onMouseEnter={() => setFocusModel(m.id)}
-            onMouseLeave={() => setFocusModel(null)}
-            className="inline-flex items-center gap-1.5 transition-colors"
-            style={{ color: INK.muted }}
+        {showDip && hovered === null && (
+          <text
+            x={Math.min(Math.max(x(minPt.level), plot.left + 14), plot.left + pw - 14)}
+            y={y(minPt.acc) + 14}
+            textAnchor="middle"
+            fontSize="9.5"
+            fontWeight={700}
+            fill={c}
           >
-            <span className="h-2 w-2 rounded-full" style={{ background: color(m.id) }} />
-            {m.label}
-          </button>
+            {pct(minPt.acc)}
+          </text>
+        )}
+        {levels.map((lv) => (
+          <text
+            key={lv.level}
+            x={x(lv.level)}
+            y={H - 4}
+            textAnchor="middle"
+            fontSize="7"
+            style={pixelFont}
+            fill={hovered === lv.level ? INK.neon : INK.faint}
+          >
+            L{lv.level}
+          </text>
         ))}
+      </svg>
+    </div>
+  );
+}
+
+function DegradationChart({ summary }: { summary: GibberishSummary }) {
+  // frontier first, then small models, legacy control last — reading order matches the story
+  const tierOrder: Record<string, number> = { frontier: 0, mini: 1, nano: 2, legacy: 3 };
+  const models = [...summary.models].sort(
+    (a, b) => (tierOrder[a.tier] ?? 1) - (tierOrder[b.tier] ?? 1) || b.corruptedAccuracy - a.corruptedAccuracy,
+  );
+
+  return (
+    <div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {models.map((m) => (
+          <ModelSparkPanel key={m.id} model={m} levels={summary.levels} />
+        ))}
+      </div>
+      <div className="mt-4 flex items-center justify-between text-[10px]" style={{ color: INK.faint }}>
+        <span style={pixelFont}>Y: 40–100% · DASHED LINE = 100%</span>
+        <span style={pixelFont}>L0 CLEAN → L5 KEYBOARD SMASH</span>
       </div>
     </div>
   );
@@ -761,7 +776,7 @@ export function BoomerEvalsClient({
 
         <Figure
           n={2}
-          caption="Accuracy by corruption level. Each line is a model; L0 is the clean prompt. The frontier lines are flat at 100%. The only visible dents are small models at L5, and GPT-3.5 Turbo being uniformly bad. Y axis starts at 40%."
+          caption="Accuracy by corruption level, one panel per model on a shared 40–100% scale. The big number is accuracy on corrupted prompts; hover any point for the exact level. Frontier models are flat at 100%; small models dent slightly at L5; GPT-3.5 Turbo is uniformly bad regardless of corruption."
         >
           <DegradationChart summary={summary} />
         </Figure>
