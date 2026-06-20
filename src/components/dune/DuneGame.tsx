@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import type { DuneGame as Engine, HudState } from "@/lib/dune/game";
 
 const INITIAL_HUD: HudState = {
@@ -229,7 +230,15 @@ export default function DuneGame({ sandbox = false }: { sandbox?: boolean }) {
 
       {/* ---------- intro ---------- */}
       {hud.phase === "intro" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-black/70 via-black/40 to-black/75 p-6">
+        <Link
+          href="/"
+          className="pointer-events-auto absolute top-4 left-4 z-20 inline-flex items-center gap-1.5 rounded border border-amber-300/50 bg-amber-400/10 px-3 py-1.5 text-[11px] font-semibold tracking-[0.25em] text-amber-100 uppercase backdrop-blur-sm transition hover:bg-amber-400/25"
+        >
+          ← Home
+        </Link>
+      )}
+      {hud.phase === "intro" && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-gradient-to-b from-black/70 via-black/40 to-black/75 p-6">
           <div className="max-w-xl text-center text-amber-50">
             <div className="text-[11px] tracking-[0.5em] text-amber-300/70 uppercase">Arrakis · Dune · Desert Planet</div>
             <h1 className="mt-2 font-serif text-5xl font-bold tracking-wide text-amber-100 sm:text-6xl">
@@ -237,19 +246,38 @@ export default function DuneGame({ sandbox = false }: { sandbox?: boolean }) {
             </h1>
             <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-amber-100/85">
               Your ornithopter is down. <b className="text-amber-200">Objective: reach Sietch Tabr</b> — the
-              cliff stronghold across the open erg, marked on your minimap. The
-              sand carries every footfall to Shai-Hulud.
+              cliff stronghold across the open erg, marked on your minimap.
             </p>
-            <blockquote className="mx-auto mt-4 max-w-md border-l-2 border-amber-400/40 pl-3 text-left text-[13px] text-amber-200/75 italic">
-              “We must walk without rhythm… they must sound like the natural
-              shifting of sand… like the wind. Step… drag… drag… step… step…
-              wait… drag… step…”
-            </blockquote>
-            <div className="mx-auto mt-5 grid max-w-md grid-cols-1 gap-1.5 text-left text-[12px] text-amber-100/70 sm:grid-cols-2">
-              <div><b className="text-lime-300">Tap</b> W/A/S/D — single steps. Break your timing.</div>
-              <div><b className="text-red-300">Hold</b> W or Shift — fast but rhythmic. It will hear.</div>
-              <div><b className="text-amber-200">T</b> — plant a thumper to lure the worm away.</div>
-              <div><b className="text-emerald-300">Rock</b> is safe. Pale taut sand is drum sand — never step on it.</div>
+            <div className="mx-auto mt-6 flex max-w-md flex-wrap items-end justify-center gap-x-7 gap-y-4 text-amber-100/80">
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-1">
+                  <Key>W</Key>
+                  <div className="flex gap-1">
+                    <Key>A</Key>
+                    <Key>S</Key>
+                    <Key>D</Key>
+                  </div>
+                </div>
+                <span className="text-[10px] tracking-[0.2em] text-amber-200/60 uppercase">move / sandwalk</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex gap-1">
+                  <Key>←</Key>
+                  <Key>→</Key>
+                </div>
+                <span className="text-[10px] tracking-[0.2em] text-amber-200/60 uppercase">look</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Key>T</Key>
+                <span className="text-[10px] tracking-[0.2em] text-amber-200/60 uppercase">plant thumper</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Key>Shift</Key>
+                <span className="text-[10px] tracking-[0.2em] text-amber-200/60 uppercase">run (loud)</span>
+              </div>
+            </div>
+            <div className="mx-auto mt-5 max-w-md text-[13px] text-amber-200/75">
+              Pale drum sand = death. <span className="text-amber-100">Walk without rhythm.</span>
             </div>
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
               <button
@@ -521,6 +549,14 @@ function SandboxPanel({ hud }: { hud: HudState }) {
       </div>
       <div className="text-[10px] text-amber-100/50">Camera orbits the proving ground automatically.</div>
     </div>
+  );
+}
+
+function Key({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex min-w-7 items-center justify-center rounded border border-amber-200/40 bg-amber-100/5 px-2 py-1 font-mono text-xs font-semibold text-amber-100">
+      {children}
+    </span>
   );
 }
 
