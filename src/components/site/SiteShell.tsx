@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 const TABS = [
   { href: "/portfolio", label: "portfolio" },
   { href: "/contact", label: "contact" },
-  { href: "/dune", label: "play /dune" },
 ];
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
