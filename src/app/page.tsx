@@ -66,8 +66,8 @@ export default function Home() {
 
               <div className="overflow-hidden rounded-2xl border border-white/10 bg-white p-4">
                 <blockquote className="twitter-tweet">
-                  <a href="https://x.com/composio/status/2075271401263476808">
-                    https://x.com/composio/status/2075271401263476808
+                  <a href="https://x.com/shawnbuilds/status/2032870632971710651?s=20">
+                    https://x.com/shawnbuilds/status/2032870632971710651?s=20
                   </a>
                 </blockquote>
               </div>
