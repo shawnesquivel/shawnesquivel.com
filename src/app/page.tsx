@@ -25,65 +25,79 @@ export default function Home() {
           open to video, writing, growth, and DevRel opportunities.
         </p>
 
-        <ul className="list-disc space-y-3 pl-5">
-          <li>
-            <span className="font-semibold">Growth experience:</span>
-          </li>
-          <li>
-            <LinkText href="https://www.udemy.com/course/langchain-develop-ai-web-apps-with-javascript-and-langchain/">
-              LangChain / Cursor AI courses on Udemy
-            </LinkText>{" "}
-            with 4K+ students
-          </li>
-          <li>
-            26K subs on{" "}
-            <LinkText href="https://www.youtube.com/@shawn.builds">
-              YouTube
-            </LinkText>
-          </li>
-          <li>
-            180K+ views on{" "}
-            <LinkText href="https://www.instagram.com/reels/DNM8aS6y3dh/">
-              Instagram
-            </LinkText>
-          </li>
-          <li>
-            <LinkText href="https://www.youtube.com/watch?v=hIh2O9OL69o">
-              FreeCodeCamp tutorial
-            </LinkText>
-          </li>
-          <li>
-            <span className="font-semibold">Technical Writing:</span> Writing
-            for AEO for{" "}
-            <LinkText href="https://composio.dev/blog">
-              Composio&apos;s blog
-            </LinkText>
-          </li>
-          <li>
-            <span className="font-semibold">Community:</span> Hosted IRL events
-            for Cursor, Codex, and OpenClaw -{" "}
-            <LinkText href="https://luma.com/user/usr-aAbNymCdKuliJCa">
-              Luma
-            </LinkText>
-          </li>
-          <li>Full Stack experience</li>
-          <li>
-            <span className="font-semibold">Engineering:</span> Shipped{" "}
-            <LinkText href="https://github.com/ComposioHQ/composio-mcp-plugin">
-              Claude / ChatGPT App / OpenClaw / Cursor plugins
-            </LinkText>
-          </li>
-          <li>
-            Built{" "}
-            <LinkText href="https://apps.apple.com/ca/app/matchya-wellness-companion/id6752518461">
-              mobile apps like this
-            </LinkText>
-          </li>
-          <li>
-            <span className="font-semibold">Tech stack:</span> TypeScript /
-            Python / React Native
-          </li>
-        </ul>
+        <div className="space-y-6">
+          <section>
+            <h3 className="font-semibold">Growth experience</h3>
+            <ul className="mt-2 list-disc space-y-2 pl-5">
+              <li>
+                <LinkText href="https://www.udemy.com/course/langchain-develop-ai-web-apps-with-javascript-and-langchain/">
+                  LangChain / Cursor AI courses on Udemy
+                </LinkText>{" "}
+                with 4K+ students
+              </li>
+              <li>
+                26K subs on{" "}
+                <LinkText href="https://www.youtube.com/@shawn.builds">
+                  YouTube
+                </LinkText>
+              </li>
+              <li>
+                180K+ views on{" "}
+                <LinkText href="https://www.instagram.com/reels/DNM8aS6y3dh/">
+                  Instagram
+                </LinkText>
+              </li>
+              <li>
+                <LinkText href="https://www.youtube.com/watch?v=hIh2O9OL69o">
+                  FreeCodeCamp tutorial
+                </LinkText>
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h3 className="font-semibold">Technical Writing</h3>
+            <ul className="mt-2 list-disc space-y-2 pl-5">
+              <li>
+                Writing for AEO for{" "}
+                <LinkText href="https://composio.dev/blog">
+                  Composio&apos;s blog
+                </LinkText>
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h3 className="font-semibold">Community</h3>
+            <ul className="mt-2 list-disc space-y-2 pl-5">
+              <li>
+                Hosted IRL events for Cursor, Codex, and OpenClaw -{" "}
+                <LinkText href="https://luma.com/user/usr-aAbNymCdKuliJCa">
+                  Luma
+                </LinkText>
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h3 className="font-semibold">Full Stack experience</h3>
+            <ul className="mt-2 list-disc space-y-2 pl-5">
+              <li>
+                Engineering: Shipped{" "}
+                <LinkText href="https://github.com/ComposioHQ/composio-mcp-plugin">
+                  Claude / ChatGPT App / OpenClaw / Cursor plugins
+                </LinkText>
+              </li>
+              <li>
+                Built{" "}
+                <LinkText href="https://apps.apple.com/ca/app/matchya-wellness-companion/id6752518461">
+                  mobile apps like this
+                </LinkText>
+              </li>
+              <li>Tech stack: TypeScript / Python / React Native</li>
+            </ul>
+          </section>
+        </div>
 
         <section className="border-t border-black/10 pt-10">
           <h2 className="mb-6 text-lg font-semibold">Videos &amp; posts</h2>
