@@ -27,8 +27,14 @@ export default function Home() {
 
         <div className="space-y-6">
           <section>
-            <h3 className="font-semibold">Growth experience</h3>
-            <ul className="mt-2 list-disc space-y-2 pl-5">
+            <h3 className="mb-2 font-semibold">Growth experience</h3>
+            <ul className="list-disc space-y-2 pl-5">
+              <li>
+                Build an AI agent with Vercel, Composio and Cursor on{" "}
+                <LinkText href="https://www.youtube.com/watch?v=hIh2O9OL69o">
+                  FreeCodeCamp (8.5M subs)
+                </LinkText>
+              </li>
               <li>
                 <LinkText href="https://www.udemy.com/course/langchain-develop-ai-web-apps-with-javascript-and-langchain/">
                   LangChain / Cursor AI courses on Udemy
@@ -47,17 +53,12 @@ export default function Home() {
                   Instagram
                 </LinkText>
               </li>
-              <li>
-                <LinkText href="https://www.youtube.com/watch?v=hIh2O9OL69o">
-                  FreeCodeCamp tutorial
-                </LinkText>
-              </li>
             </ul>
           </section>
 
           <section>
-            <h3 className="font-semibold">Technical Writing</h3>
-            <ul className="mt-2 list-disc space-y-2 pl-5">
+            <h3 className="mb-2 font-semibold">Technical Writing</h3>
+            <ul className="list-disc space-y-2 pl-5">
               <li>
                 Writing for AEO for{" "}
                 <LinkText href="https://composio.dev/blog">
@@ -68,8 +69,8 @@ export default function Home() {
           </section>
 
           <section>
-            <h3 className="font-semibold">Community</h3>
-            <ul className="mt-2 list-disc space-y-2 pl-5">
+            <h3 className="mb-2 font-semibold">Community</h3>
+            <ul className="list-disc space-y-2 pl-5">
               <li>
                 Hosted IRL events for Cursor, Codex, and OpenClaw -{" "}
                 <LinkText href="https://luma.com/user/usr-aAbNymCdKuliJCa">
@@ -80,10 +81,10 @@ export default function Home() {
           </section>
 
           <section>
-            <h3 className="font-semibold">Full Stack experience</h3>
-            <ul className="mt-2 list-disc space-y-2 pl-5">
+            <h3 className="mb-2 font-semibold">Full Stack experience</h3>
+            <ul className="list-disc space-y-2 pl-5">
               <li>
-                Engineering: Shipped{" "}
+                Shipped{" "}
                 <LinkText href="https://github.com/ComposioHQ/composio-mcp-plugin">
                   Claude / ChatGPT App / OpenClaw / Cursor plugins
                 </LinkText>
@@ -102,17 +103,6 @@ export default function Home() {
         <section className="border-t border-black/10 pt-10">
           <h2 className="mb-6 text-lg font-semibold">Videos &amp; posts</h2>
           <div className="flex flex-col gap-8">
-            <div className="aspect-video w-full">
-              <iframe
-                className="h-full w-full"
-                src="https://www.youtube.com/embed/hIh2O9OL69o"
-                title="FreeCodeCamp tutorial"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-              />
-            </div>
-
             <div className="mx-auto w-full max-w-100">
               <iframe
                 className="h-150 w-full"
@@ -123,7 +113,10 @@ export default function Home() {
               />
             </div>
 
-            <div data-theme="light" className="flex flex-col items-center gap-6">
+            <div
+              data-theme="light"
+              className="flex flex-col items-center gap-6"
+            >
               {TWEET_IDS.map((id) => (
                 <Tweet key={id} id={id} />
               ))}
