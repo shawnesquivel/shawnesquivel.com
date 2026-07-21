@@ -9,10 +9,13 @@ export const metadata: Metadata = {
     "Previous Developer Relations Engineer at Composio. Open to video, writing, growth, and DevRel opportunities.",
 };
 
-const TWEET_IDS = [
-  "2075271401263476808",
-  "2076653097338724843",
-  "2032550830042394979",
+const TWEETS = [
+  { id: "2032550830042394979", caption: "90K+ views" },
+  { id: "2076653097338724843", caption: "10K+ views" },
+  {
+    id: "2075271401263476808",
+    caption: "I built and shipped this Cursor plugin. 5K+ views",
+  },
 ];
 
 export default function Home() {
@@ -102,8 +105,8 @@ export default function Home() {
 
         <section className="border-t border-black/10 pt-10">
           <h2 className="mb-6 text-lg font-semibold">Videos &amp; posts</h2>
-          <div className="flex flex-col gap-8">
-            <div className="mx-auto w-full max-w-100">
+          <div className="flex flex-col items-center gap-10" data-theme="light">
+            <figure className="mx-auto w-full max-w-100">
               <iframe
                 className="h-150 w-full"
                 src="https://www.instagram.com/reel/DNM8aS6y3dh/embed"
@@ -111,16 +114,19 @@ export default function Home() {
                 scrolling="no"
                 allowFullScreen
               />
-            </div>
+              <figcaption className="mt-2 text-center text-sm text-neutral-500">
+                180K+ views
+              </figcaption>
+            </figure>
 
-            <div
-              data-theme="light"
-              className="flex flex-col items-center gap-6"
-            >
-              {TWEET_IDS.map((id) => (
-                <Tweet key={id} id={id} />
-              ))}
-            </div>
+            {TWEETS.map(({ id, caption }) => (
+              <figure key={id} className="w-full max-w-100">
+                <Tweet id={id} />
+                <figcaption className="mt-2 text-center text-sm text-neutral-500">
+                  {caption}
+                </figcaption>
+              </figure>
+            ))}
           </div>
         </section>
       </div>
