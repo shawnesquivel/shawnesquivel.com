@@ -25,8 +25,10 @@ export default function Home() {
           open to video, writing, growth, and DevRel opportunities.
         </p>
 
-        <ul className="space-y-3">
-          <li>Growth experience: Helped grow Composio to 10M+ daily tool calls</li>
+        <ul className="list-disc space-y-3 pl-5">
+          <li>
+            <span className="font-semibold">Growth experience:</span>
+          </li>
           <li>
             <LinkText href="https://www.udemy.com/course/langchain-develop-ai-web-apps-with-javascript-and-langchain/">
               LangChain / Cursor AI courses on Udemy
@@ -51,20 +53,22 @@ export default function Home() {
             </LinkText>
           </li>
           <li>
-            Technical Writing: Writing for AEO for{" "}
+            <span className="font-semibold">Technical Writing:</span> Writing
+            for AEO for{" "}
             <LinkText href="https://composio.dev/blog">
               Composio&apos;s blog
             </LinkText>
           </li>
           <li>
-            Community: Hosted IRL events for Cursor, Codex, and OpenClaw -{" "}
+            <span className="font-semibold">Community:</span> Hosted IRL events
+            for Cursor, Codex, and OpenClaw -{" "}
             <LinkText href="https://luma.com/user/usr-aAbNymCdKuliJCa">
               Luma
             </LinkText>
           </li>
           <li>Full Stack experience</li>
           <li>
-            Engineering: Shipped{" "}
+            <span className="font-semibold">Engineering:</span> Shipped{" "}
             <LinkText href="https://github.com/ComposioHQ/composio-mcp-plugin">
               Claude / ChatGPT App / OpenClaw / Cursor plugins
             </LinkText>
@@ -75,7 +79,10 @@ export default function Home() {
               mobile apps like this
             </LinkText>
           </li>
-          <li>Tech stack: TypeScript / Python / React Native</li>
+          <li>
+            <span className="font-semibold">Tech stack:</span> TypeScript /
+            Python / React Native
+          </li>
         </ul>
 
         <section className="border-t border-black/10 pt-10">
