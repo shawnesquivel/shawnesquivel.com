@@ -27,8 +27,6 @@ export default function ContactPage() {
           <LinkText href="https://www.linkedin.com/in/shawnesquivel/">
             linkedin
           </LinkText>
-          , or{" "}
-          <LinkText href="https://www.youtube.com/@shawn.builds">youtube</LinkText>
           .
         </p>
       </div>

@@ -12,14 +12,14 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://shawnesquivel.com"),
   title: "Shawn Esquivel",
   description:
-    "Member of Technical Staff at Composio. Cursor Ambassador. Codex Ambassador.",
+    "Member of Technical Staff at Composio.",
   icons: {
     icon: "/favicon.png",
   },
   openGraph: {
     title: "Shawn Esquivel",
     description:
-      "Member of Technical Staff at Composio. Cursor Ambassador. Codex Ambassador.",
+      "Member of Technical Staff at Composio.",
     images: [
       {
         url: "/thumbnail.png",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Shawn Esquivel",
     description:
-      "Member of Technical Staff at Composio. Cursor Ambassador. Codex Ambassador.",
+      "Member of Technical Staff at Composio.",
     images: ["/thumbnail.png"],
   },
 };
