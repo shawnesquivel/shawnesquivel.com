@@ -39,7 +39,7 @@ export default function Home() {
                 </LinkText>
               </li>
               <li>
-                <LinkText href="https://www.udemy.com/course/langchain-develop-ai-web-apps-with-javascript-and-langchain/">
+                <LinkText href="https://www.udemy.com/user/shawn-esquivel-2/">
                   LangChain / Cursor AI courses on Udemy
                 </LinkText>{" "}
                 with 4K+ students
