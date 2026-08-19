@@ -29,6 +29,10 @@ export default function ContactPage() {
           </LinkText>
           .
         </p>
+        <p>
+          Book a call on my{" "}
+          <LinkText href="https://cal.com/shawn-ai/30min">calendar</LinkText>.
+        </p>
       </div>
     </SiteShell>
   );

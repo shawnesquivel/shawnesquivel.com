@@ -127,6 +127,20 @@ export default function Home() {
                 </figcaption>
               </figure>
             ))}
+
+            <figure className="w-full">
+              <iframe
+                className="aspect-video w-full"
+                src="https://www.youtube.com/embed/3b25TnusP7I"
+                title="Explaining Gumloop Skills"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+              <figcaption className="mt-2 text-center text-sm text-neutral-500">
+                Explaining Gumloop Skills
+              </figcaption>
+            </figure>
           </div>
         </section>
       </div>

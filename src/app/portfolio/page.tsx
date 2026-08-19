@@ -31,6 +31,28 @@ export default function PortfolioPage() {
             </li>
           </ul>
         </section>
+
+        <section>
+          <h2 className="mb-3 text-lg font-semibold">Social</h2>
+          <ul className="space-y-2">
+            <li>
+              <LinkText href="https://www.linkedin.com/in/shawnesquivel/">
+                LinkedIn
+              </LinkText>
+            </li>
+            <li>
+              <LinkText href="https://www.instagram.com/shawn.builds/">
+                Instagram
+              </LinkText>
+            </li>
+            <li>
+              <LinkText href="https://x.com/shawnbuilds">X</LinkText>
+            </li>
+            <li>
+              <LinkText href="https://github.com/shawnesquivel/">GitHub</LinkText>
+            </li>
+          </ul>
+        </section>
       </div>
     </SiteShell>
   );
