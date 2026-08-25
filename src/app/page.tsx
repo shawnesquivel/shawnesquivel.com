@@ -56,6 +56,20 @@ export default function Home() {
                   Instagram
                 </LinkText>
               </li>
+              <li>
+                Developer activation on LinkedIn —{" "}
+                <LinkText href="https://www.linkedin.com/posts/shawnesquivel_stop-wasting-your-time-watching-claude-code-activity-7444382942673547265-es02">
+                  Claude Code
+                </LinkText>
+                ,{" "}
+                <LinkText href="https://www.linkedin.com/posts/shawnesquivel_claude-code-can-now-build-and-run-ai-powered-activity-7444850140575715329-JfIk">
+                  AI-powered Claude Code
+                </LinkText>
+                ,{" "}
+                <LinkText href="https://www.linkedin.com/posts/shawnesquivel_we-just-solved-oauth-just-grant-apps-access-activity-7445487603325411329-uGN5">
+                  OAuth
+                </LinkText>
+              </li>
             </ul>
           </section>
 
@@ -74,6 +88,17 @@ export default function Home() {
           <section>
             <h3 className="mb-2 font-semibold">Community</h3>
             <ul className="list-disc space-y-2 pl-5">
+              <li>
+                Cursor hackathon with 80+ guests, 500K+ impressions generated
+                across X and LinkedIn —{" "}
+                <LinkText href="https://www.linkedin.com/posts/shawnesquivel_80-people-showed-up-to-build-canada-activity-7444429338130731008-ftql">
+                  80 people showed up to build Canada
+                </LinkText>
+                ,{" "}
+                <LinkText href="https://www.linkedin.com/posts/raywalia_another-packed-event-at-the-launch-academy-share-7448783491825041408-QTR5">
+                  packed Launch Academy event
+                </LinkText>
+              </li>
               <li>
                 Hosted IRL events for Cursor, Codex, and OpenClaw -{" "}
                 <LinkText href="https://luma.com/user/usr-aAbNymCdKuliJCa">
