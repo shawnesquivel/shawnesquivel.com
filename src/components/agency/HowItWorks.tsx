@@ -8,9 +8,9 @@ const STEPS = [
     title: "Subscribe",
     body: "One flat monthly fee. No hiring loop, no contracts, no agency retainers. Pause or cancel anytime.",
     visual: (
-      <div className="flex items-baseline gap-1 font-mono">
-        <span className="text-3xl font-semibold text-fg">1</span>
-        <span className="text-sm text-subtle">plan · unlimited queue</span>
+      <div className="flex items-center gap-2 font-mono text-xs">
+        <span className="rounded-full border border-line-strong px-2 py-0.5 font-semibold text-fg">1 plan</span>
+        <span className="text-subtle">unlimited queue · cancel anytime</span>
       </div>
     ),
   },
