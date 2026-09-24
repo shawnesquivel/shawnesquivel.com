@@ -1,0 +1,149 @@
+/*
+ * Dark theme for /agency. Tailwind color utilities resolve through CSS variables (see the non-inline
+ * @theme in globals.css), so redefining the shared tokens here re-skins them only inside .agency.
+ */
+.agency {
+  --color-surface: #0e0e13;
+  --color-muted: #a1a1aa;
+  --color-accent: #c6ff4a;
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-instrument-serif);
+  --font-inter: var(--font-geist-sans);
+
+  color-scheme: dark;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+body:has(.agency) {
+  background: #07070a;
+}
+
+.agency ::selection {
+  background: var(--color-accent);
+  color: #000;
+}
+
+.agency .ag-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.agency .ag-mask-fade-y {
+  mask-image: linear-gradient(to bottom, transparent, #000 20%, #000 70%, transparent);
+}
+
+.agency .ag-mask-fade-x {
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+
+.agency .ag-text-gradient {
+  background: linear-gradient(180deg, #fff 30%, rgb(255 255 255 / 0.55));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes ag-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Must be a multiple of the .ag-dash dasharray period (4 + 8) or the loop visibly jumps. */
+@keyframes ag-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+@keyframes ag-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ag-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes ag-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes ag-reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.agency .ag-marquee {
+  animation: ag-marquee 40s linear infinite;
+}
+
+.agency .group:hover .ag-marquee,
+.agency .ag-marquee:hover {
+  animation-play-state: paused;
+}
+
+.agency .ag-dash {
+  stroke-dasharray: 4 8;
+  animation: ag-dash 1s linear infinite;
+}
+
+.agency .ag-spin-slow {
+  animation: ag-spin 14s linear infinite;
+}
+
+.agency .ag-float {
+  animation: ag-float 6s ease-in-out infinite;
+}
+
+.agency .ag-blink {
+  animation: ag-blink 1s step-end infinite;
+}
+
+.agency .ag-reveal {
+  opacity: 0;
+}
+
+.agency .ag-reveal.is-visible {
+  animation: ag-reveal-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agency .ag-marquee,
+  .agency .ag-dash,
+  .agency .ag-spin-slow,
+  .agency .ag-float,
+  .agency .ag-blink {
+    animation: none;
+  }
+
+  .agency .ag-reveal {
+    opacity: 1;
+  }
+
+  .agency .ag-reveal.is-visible {
+    animation: none;
+  }
+}

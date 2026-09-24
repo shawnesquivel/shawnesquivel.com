@@ -2,6 +2,10 @@
 
 @theme inline {
   --font-sans: var(--font-inter);
+}
+
+/* Not inline: utilities read these through CSS variables so /agency can re-skin them (see agency/agency.css). */
+@theme {
   --color-link: #8b2942;
   --color-background: #f0e6d3;
   --color-foreground: #1a1a1a;
@@ -16,6 +20,16 @@
   --color-green: #a5d6a7;
   --color-purple: #ce93d8;
   --color-orange: #ffab40;
+
+  /* /agency dark palette */
+  --color-bg: #07070a;
+  --color-surface-2: #15151c;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-strong: rgb(255 255 255 / 0.14);
+  --color-fg: #f4f4f5;
+  --color-subtle: #71717a;
+  --color-accent-soft: rgb(198 255 74 / 0.12);
+  --color-violet: #8b7bff;
 }
 
 body {
