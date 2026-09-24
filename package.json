@@ -7,28 +7,39 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "sanitize:hackathon-data": "node sanitize-hackathon-data.mjs"
+    "sanitize:hackathon-data": "node sanitize-hackathon-data.mjs",
+    "test:agency": "vitest run --config vitest.agency.config.ts",
+    "test:agency:e2e": "next build && vitest run --config vitest.agency.e2e.config.ts",
+    "agency:keys:create": "tsx --env-file-if-exists=.env.local scripts/agency-create-api-key.mts"
   },
   "dependencies": {
+    "@modelcontextprotocol/server": "2.1.0",
+    "@supabase/supabase-js": "2.117.1",
     "@types/three": "^0.184.1",
     "@vercel/analytics": "^1.6.1",
     "gray-matter": "^4.0.3",
     "marked": "^17.0.3",
+    "mcp-handler": "2.2.0",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-tweet": "^3.3.1",
-    "three": "^0.184.0"
+    "server-only": "0.0.1",
+    "three": "^0.184.0",
+    "zod": "4.6.5"
   },
   "devDependencies": {
+    "@modelcontextprotocol/client": "2.1.0",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "22.20.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "playwright": "^1.60.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "4.23.15",
+    "typescript": "^5",
+    "vitest": "5.0.1"
   }
 }
