@@ -15,12 +15,11 @@ type Step = "menu" | "create" | "code" | "join";
 
 const segmenter = typeof Intl !== "undefined" && "Segmenter" in Intl ? new Intl.Segmenter(undefined, { granularity: "grapheme" }) : null;
 
-// First user-perceived character, only if it's an emoji (keeps ZWJ families, skin tones and flags intact).
-export function firstEmoji(text: string): string | null {
-  const trimmed = text.trim();
-  if (!trimmed) return null;
-  const first = segmenter ? segmenter.segment(trimmed)[Symbol.iterator]().next().value?.segment ?? "" : Array.from(trimmed)[0];
-  return /\p{Extended_Pictographic}|\p{Regional_Indicator}/u.test(first) ? first : null;
+// Most recently typed emoji anywhere in the text, ignoring letters and spaces
+// (keeps ZWJ families, skin tones and flags intact).
+export function lastEmoji(text: string): string | null {
+  const chars = segmenter ? Array.from(segmenter.segment(text), (s) => s.segment) : Array.from(text);
+  return chars.findLast((c) => /\p{Extended_Pictographic}|\p{Regional_Indicator}/u.test(c)) ?? null;
 }
 
 export function normalizeCode(code: string) {
@@ -53,11 +52,15 @@ function EmojiPicker({ value, onChange }: { value: string; onChange: (emoji: str
           className="w-0 flex-1 rounded-xl bg-white/15 px-3 py-2 text-base outline-none placeholder:text-white/55"
           placeholder="…or type any emoji 😎"
           value={custom}
+          autoCapitalize="off"
+          autoCorrect="off"
+          autoComplete="off"
+          spellCheck={false}
           onChange={(e) => {
             const v = e.target.value;
-            setCustom(v);
-            const emoji = firstEmoji(v);
-            setError(!!v.trim() && !emoji);
+            const emoji = lastEmoji(v);
+            setError(!emoji && !!v.trim());
+            setCustom(emoji ?? v);
             if (emoji) onChange(emoji);
           }}
           data-testid="emoji-input"
@@ -66,7 +69,7 @@ function EmojiPicker({ value, onChange }: { value: string; onChange: (emoji: str
           {value}
         </span>
       </div>
-      {error && <p className="mt-1 text-xs text-[var(--bad)]">That isn&apos;t an emoji. Try the emoji keyboard 🙂</p>}
+      {error && <p className="mt-1 text-xs text-[var(--bad)]">Letters can&apos;t be a buddy. Switch to the emoji keyboard 🙂</p>}
     </div>
   );
 }
