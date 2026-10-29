@@ -60,10 +60,10 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-27 | Personal bests (per board+timer, longest word, most words; localStorage) + near misses ("lost by 2", big words nobody found) | done | `bests.ts`, `ResultsExtras.tsx` |
 | BOG-28 | Battle log (kill feed) on results: every attack with time, attacker, target, shield blocks | done | |
 | BOG-29 | 🙃 Flip attack: 2 rival letters turn pink + upside down for 6 s. Long words alternate bomb → flip | done | |
-| BOG-30 | Halftime: rival scores hidden (🙈) until halftime, then revealed with a whistle; in Danger mode whoever's behind gets a free 💣 | done | |
+| BOG-30 | Halftime: rival scores hidden (🙈) until halftime, then revealed with a whistle (the free 💣 for whoever was behind was dropped: too big a swing in a close game) | done | |
 | BOG-31 | Best-of-3/5 series: Game N chip, pips + match point, series champion banner, 🏅 on scoreboard, ties = sudden death | done | `series.ts` |
-| BOG-32 | 🛡️ Shield: 3 words in 10 s; quiet icon, tap to explain; auto-blocks the next attack | done | |
-| BOG-33 | ☠️ Danger mode setting (replaces Power-ups): attacks, shields, halftime comeback, last 15 s = +10% (ceil of late points) with siren + red glow | done | |
+| BOG-32 | 🛡️ Shield: earned from the combo ring (BOG-34); quiet icon, tap to explain; auto-blocks the next attack | done | |
+| BOG-33 | ☠️ Danger mode setting (replaces Power-ups): attacks, shields, last 15 s = +10% (ceil of late points) with siren + red glow | done | |
 | BOG-34 | Combo ring (top right): fills clockwise a quarter per word; 4 words in 4 s = boost. Rewards capped against farming short words: multiplayer (Danger mode) → 🛡️ shield (max 1, ring shows it until used); solo → +5 s on the clock (max 3/round). Tap to explain | done | `ComboRing.tsx`, replaces "3 words in 10 s" shield rule |
 | BOG-24 | e2e: power-ups (bomb earn/use/block/expiry), reactions, scoreboard across 2 rounds | done | `tests/boggled/e2e/power-ups.mts` |
 

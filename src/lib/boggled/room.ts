@@ -635,12 +635,6 @@ export class RoomController {
           .map((p) => `${p.emoji} ${p.id === s.me.id ? "You" : p.name} ${s.livePoints[p.id] ?? 0}`)
           .join("  ·  ");
         this.toast(`⏱ HALFTIME  ${line}`, "halftime");
-        const mine = s.livePoints[s.me.id] ?? 0;
-        const top = Math.max(...round.players.map((p) => s.livePoints[p.id] ?? 0));
-        if (round.settings.danger && this.isParticipant(round) && mine < top && s.powers.bomb < MAX_ATTACKS) {
-          this.set({ powers: { ...this.state.powers, bomb: this.state.powers.bomb + 1 } });
-          this.toast("😤 Behind at halftime: free 💣", "earned");
-        }
       }
     }
     if (round.settings.danger && !this.state.dangerZone && now >= round.endsAt - DANGER_ZONE_MS) {
