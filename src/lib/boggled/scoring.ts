@@ -1,4 +1,5 @@
 export const LONGEST_WORD_BONUS = 3;
+export const DANGER_BOOST = 0.1;
 
 export function wordPoints(word: string): number {
   return word.length < 3 ? 0 : word.length - 2;
@@ -7,6 +8,8 @@ export function wordPoints(word: string): number {
 export type PlayerWords = {
   id: string;
   words: string[];
+  // Words found in the danger zone (last seconds of a Danger-mode round).
+  late?: string[];
 };
 
 export type ScoredWord = {
@@ -21,6 +24,7 @@ export type PlayerResult = {
   words: ScoredWord[];
   wordPoints: number;
   longestBonus: number;
+  dangerBonus: number;
   total: number;
   rank: number;
 };
@@ -34,6 +38,7 @@ export type RoundResult = {
 export type ScoreOptions = {
   longestWordBonus: boolean;
   isValid?: (word: string) => boolean;
+  dangerBoost?: number;
 };
 
 // Replay order: longest (most dramatic) words first, then alphabetical.
@@ -45,6 +50,7 @@ export function scoreRound(players: PlayerWords[], opts: ScoreOptions): RoundRes
   const multiplayer = players.length > 1;
   const cleaned = players.map((p) => ({
     id: p.id,
+    late: new Set((p.late ?? []).map((w) => w.toLowerCase())),
     words: [...new Set(p.words.map((w) => w.toLowerCase()))]
       .filter((w) => w.length >= 3 && (!opts.isValid || opts.isValid(w)))
       .sort(compareWords),
@@ -68,7 +74,17 @@ export function scoreRound(players: PlayerWords[], opts: ScoreOptions): RoundRes
     });
     const wordTotal = words.reduce((sum, w) => sum + w.points, 0);
     const longestBonus = longestWinners.includes(p.id) ? LONGEST_WORD_BONUS : 0;
-    return { id: p.id, words, wordPoints: wordTotal, longestBonus, total: wordTotal + longestBonus, rank: 0 };
+    const latePoints = words.filter((w) => p.late.has(w.word)).reduce((sum, w) => sum + w.points, 0);
+    const dangerBonus = opts.dangerBoost ? Math.ceil(latePoints * opts.dangerBoost) : 0;
+    return {
+      id: p.id,
+      words,
+      wordPoints: wordTotal,
+      longestBonus,
+      dangerBonus,
+      total: wordTotal + longestBonus + dangerBonus,
+      rank: 0,
+    };
   });
 
   const sorted = [...results].sort((a, b) => b.total - a.total);

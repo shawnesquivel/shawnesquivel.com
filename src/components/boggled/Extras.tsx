@@ -10,6 +10,13 @@ export const REACTIONS = ["😂", "🔥", "😭", "😤", "👏", "💀", "😘"
 // Sounds and haptics for toasts/reactions that arrive from the room, whatever screen is showing.
 export function useRoomEffects(state: RoomState) {
   const seen = useRef(new Set<string>());
+  const lastBurst = useRef(0);
+  useEffect(() => {
+    if (state.comboBurst && state.comboBurst !== lastBurst.current) {
+      lastBurst.current = state.comboBurst;
+      if (state.round && state.round.players.length > 1) sound.combo();
+    }
+  }, [state.comboBurst, state.round]);
   useEffect(() => {
     for (const t of state.toasts) {
       if (seen.current.has(t.id)) continue;
@@ -20,6 +27,17 @@ export function useRoomEffects(state: RoomState) {
       if (t.kind === "hit") {
         sound.bombHit();
         navigator.vibrate?.([60, 40, 120]);
+      }
+      if (t.kind === "flip-hit") {
+        sound.flipHit();
+        navigator.vibrate?.([40, 30, 40]);
+      }
+      if (t.kind === "shield" || t.kind === "blocked") sound.shieldBlock();
+      if (t.kind === "halftime") sound.whistle();
+      if (t.kind === "combo") sound.combo();
+      if (t.kind === "danger") {
+        sound.siren();
+        navigator.vibrate?.([100, 60, 100]);
       }
     }
     for (const r of state.reactions) {
@@ -118,7 +136,10 @@ export function Scoreboard({ state }: { state: RoomState }) {
                 {top && <span className="bg-title-badge">{leaderTitle(t.wins)}</span>}
               </span>
               <span className="text-right tabular-nums">
-                <span className="block text-lg font-bold">{t.wins} 🏆</span>
+                <span className="block text-lg font-bold">
+                  {t.series > 0 && <span className="mr-1.5 text-sm">{t.series} 🏅</span>}
+                  {t.wins} 🏆
+                </span>
                 <span className="block text-xs opacity-75">{t.points} pts</span>
               </span>
             </li>
