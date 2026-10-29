@@ -15,15 +15,19 @@ export default function Game({
   state,
   controller,
   dict,
+  onLeave,
 }: {
   state: RoomState;
   controller: RoomController;
   dict: Dictionary | null;
+  onLeave: () => void;
 }) {
   const round = state.round!;
   const [now, setNow] = useState(() => serverNow());
   const [live, setLive] = useState("");
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [confirmEnd, setConfirmEnd] = useState(false);
+  const solo = round.players.length === 1;
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSecond = useRef<number | null>(null);
   const participant = round.players.some((p) => p.id === state.me.id);
@@ -98,15 +102,24 @@ export default function Game({
   return (
     <div className="bg-screen gap-3" data-testid="game">
       <div className="flex items-center justify-between gap-2">
-        <div className={`bg-timer text-xl ${phase === "playing" && remaining <= 10 ? "urgent" : ""}`} data-testid="timer">
-          ⏱ {mm}:{ss}
+        <div className="flex items-center gap-2">
+          <div className={`bg-timer text-xl ${phase === "playing" && remaining <= 10 ? "urgent" : ""}`} data-testid="timer">
+            ⏱ {mm}:{ss}
+          </div>
+          {solo && phase !== "collecting" && (
+            <button className="bg-btn bg-btn-ghost px-3 py-1.5 text-base" onClick={() => setConfirmEnd(true)} data-testid="end-early">
+              ✕ End
+            </button>
+          )}
         </div>
         <div className="text-right">
           <div className="text-2xl font-bold leading-none" data-testid="my-score">
             {myPoints}
             <span className="ml-1 text-sm font-semibold opacity-70">pts</span>
           </div>
-          <div className="text-xs opacity-75">{state.myWords.length} words</div>
+          <div className="text-xs opacity-75">
+            {state.myWords.length} {state.myWords.length === 1 ? "word" : "words"}
+          </div>
         </div>
       </div>
 
@@ -177,6 +190,34 @@ export default function Game({
             {toStart > 0 ? toStart : "GO!"}
           </div>
           <p className="mt-2 text-lg opacity-80">Swipe across letters to make words</p>
+        </div>
+      )}
+
+      {confirmEnd && phase !== "collecting" && (
+        <div className="bg-modal" onClick={() => setConfirmEnd(false)} role="dialog" aria-modal aria-label="End practice" data-testid="end-confirm">
+          <div className="bg-modal-card text-center" onClick={(e) => e.stopPropagation()}>
+            <div className="text-5xl">🏁</div>
+            <div className="bg-title text-2xl">End practice early?</div>
+            <p className="text-sm opacity-85">
+              You&apos;ve found {state.myWords.length} {state.myWords.length === 1 ? "word" : "words"} for {myPoints} pts with {mm}:{ss} left.
+            </p>
+            <button
+              className="bg-btn bg-btn-primary"
+              onClick={() => {
+                setConfirmEnd(false);
+                controller.endEarly();
+              }}
+              data-testid="end-score"
+            >
+              🏆 End &amp; see my score
+            </button>
+            <button className="bg-btn bg-btn-ghost" onClick={onLeave} data-testid="end-home">
+              🏠 Quit to home
+            </button>
+            <button className="bg-btn bg-btn-ghost" onClick={() => setConfirmEnd(false)} data-testid="end-cancel">
+              Keep playing
+            </button>
+          </div>
         </div>
       )}
 

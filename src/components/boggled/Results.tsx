@@ -31,7 +31,15 @@ function AnimatedNumber({ value }: { value: number }) {
   return <>{shown}</>;
 }
 
-export default function Results({ state, controller }: { state: RoomState; controller: RoomController }) {
+export default function Results({
+  state,
+  controller,
+  onLeave,
+}: {
+  state: RoomState;
+  controller: RoomController;
+  onLeave: () => void;
+}) {
   const round = state.round!;
   const outcome = state.outcome;
   const result = outcome?.result;
@@ -237,6 +245,11 @@ export default function Results({ state, controller }: { state: RoomState; contr
               <button className="bg-btn bg-btn-ghost" onClick={() => controller.backToLobby()}>
                 Settings
               </button>
+              {solo && (
+                <button className="bg-btn bg-btn-ghost" onClick={onLeave} aria-label="Home" data-testid="home-button">
+                  🏠
+                </button>
+              )}
             </div>
           ) : (
             <p className="text-center opacity-80">Waiting for {name(state.hostId)} to start the next round…</p>

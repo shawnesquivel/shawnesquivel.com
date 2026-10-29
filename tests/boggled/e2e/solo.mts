@@ -93,5 +93,32 @@ const score = Number(await page.getByTestId("score").first().textContent());
 const expected = [...found2].reduce((s, w) => s + w.length - 2, 0);
 assert(score === expected, `final score ${score} equals sum of word points ${expected}`);
 
+// Ending a practice round early.
+await page.evaluate(() => window.__boggled.updateSettings({ duration: 180 }));
+await page.getByTestId("play-again").click();
+await page.locator(".bg-overlay").waitFor({ state: "detached", timeout: 6000 });
+const early = wordsOn(await readBoard(page))[0];
+await swipe(page, early[1]);
+await page.getByTestId("end-early").click();
+await page.getByTestId("end-confirm").waitFor();
+await page.waitForTimeout(500);
+await page.screenshot({ path: `${SHOTS}/08-end-early-confirm.png` });
+await page.getByTestId("end-cancel").click();
+assert(!(await page.getByTestId("end-confirm").isVisible()) && (await page.getByTestId("game").isVisible()), "Keep playing closes the prompt");
+await page.getByTestId("end-early").click();
+await page.getByTestId("end-score").click();
+await page.getByTestId("podium").waitFor({ timeout: 30000 });
+assert(Number(await page.getByTestId("score").first().textContent()) === early[0].length - 2, `"End & see my score" jumps to results with the words so far`);
+await page.getByTestId("home-button").click();
+await page.getByTestId("menu").waitFor();
+assert(true, "Home button on solo results returns to the menu");
+
+await page.getByTestId("solo").click();
+await page.getByTestId("start").click();
+await page.getByTestId("end-early").click();
+await page.getByTestId("end-home").click();
+await page.getByTestId("menu").waitFor();
+assert(page.url().endsWith("/boggled"), "Quit to home mid-round returns to the menu");
+
 await browser.close();
 console.log("Solo test passed");

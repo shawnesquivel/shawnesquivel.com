@@ -56,6 +56,7 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-22 | Friendlier settings: board/timer/word-length cards and toggle switches | done | |
 | BOG-23 | Step-based home: Practice solo / Create a room / Join a room → code → name + emoji. Invite links skip to the name step. Any emoji can be typed in. | done | `Home.tsx` |
 | BOG-25 | "?" button beside the sound toggle opens an animated how-to-play walkthrough (6 slides) | done | `HowToPlay.tsx` |
+| BOG-26 | Solo: "✕ End" button mid-round → confirm sheet (End & see my score / Quit to home / Keep playing); 🏠 Home on solo results | done | `RoomController.endEarly()` (solo only) |
 | BOG-24 | e2e: power-ups (bomb earn/use/block/expiry), reactions, scoreboard across 2 rounds | done | `tests/boggled/e2e/power-ups.mts` |
 
 ## Later

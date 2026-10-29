@@ -200,6 +200,15 @@ export class RoomController {
     this.startResends = [800, 2000].map((ms) => setTimeout(() => this.send({ type: "start", round }), ms));
   }
 
+  // Solo only: there's nobody to wait for, so the round can just end now.
+  endEarly() {
+    const { round, phase } = this.state;
+    if (!round || round.players.length !== 1 || (phase !== "playing" && phase !== "countdown")) return;
+    const now = serverNow();
+    this.set({ round: { ...round, startsAt: Math.min(round.startsAt, now), endsAt: now } });
+    this.tick();
+  }
+
   backToLobby() {
     if (!this.isHost) return;
     this.set({ phase: "lobby" });

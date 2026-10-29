@@ -74,9 +74,9 @@ function RoomView({
   if (state.phase === "lobby" || !state.round) {
     screen = <Lobby state={state} controller={controller} dictReady={!!dict} onLeave={onLeave} />;
   } else if (state.phase === "results") {
-    screen = <Results key={state.round.id} state={state} controller={controller} />;
+    screen = <Results key={state.round.id} state={state} controller={controller} onLeave={onLeave} />;
   } else {
-    screen = <Game state={state} controller={controller} dict={dict} />;
+    screen = <Game state={state} controller={controller} dict={dict} onLeave={onLeave} />;
   }
   return (
     <>
