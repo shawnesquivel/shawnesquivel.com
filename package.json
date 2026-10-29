@@ -10,7 +10,9 @@
     "sanitize:hackathon-data": "node sanitize-hackathon-data.mjs",
     "test:agency": "vitest run --config vitest.agency.config.ts",
     "test:agency:e2e": "next build && vitest run --config vitest.agency.e2e.config.ts",
-    "agency:keys:create": "tsx --env-file-if-exists=.env.local scripts/agency-create-api-key.mts"
+    "agency:keys:create": "tsx --env-file-if-exists=.env.local scripts/agency-create-api-key.mts",
+    "test:boggled": "vitest run --config vitest.boggled.config.ts",
+    "test:boggled:e2e": "tsx tests/boggled/e2e/solo.mts && tsx tests/boggled/e2e/two-player.mts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.1.0",
