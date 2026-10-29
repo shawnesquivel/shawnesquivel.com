@@ -15,7 +15,7 @@ await page.screenshot({ path: `${SHOTS}/01-home.png` });
 await page.getByTestId("solo").click();
 await page.getByTestId("lobby").waitFor();
 await page.getByText("Start round").waitFor({ timeout: 20000 });
-await page.evaluate(() => (window as any).__boggled.updateSettings({ duration: 20 }));
+await page.evaluate(() => window.__boggled.updateSettings({ duration: 20 }));
 await page.screenshot({ path: `${SHOTS}/02-solo-lobby.png` });
 await page.getByTestId("start").click();
 

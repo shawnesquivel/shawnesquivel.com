@@ -3,6 +3,15 @@ import path from "node:path";
 import type { Page } from "playwright";
 import { solve, type Board } from "../../../src/lib/boggled/board";
 import { Dictionary } from "../../../src/lib/boggled/dictionary";
+import type { RoomController, RoomState } from "../../../src/lib/boggled/room";
+
+declare global {
+  interface Window {
+    __boggled: RoomController;
+  }
+}
+
+export const roomState = (page: Page): Promise<RoomState> => page.evaluate(() => window.__boggled.getState());
 
 export const BASE = process.env.BOGGLED_URL ?? "http://localhost:3000";
 export const SHOTS = process.env.BOGGLED_SHOTS ?? "/opt/cursor/artifacts/screenshots";
