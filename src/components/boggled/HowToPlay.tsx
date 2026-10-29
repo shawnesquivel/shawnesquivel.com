@@ -110,18 +110,19 @@ const SLIDES: Slide[] = [
   },
   {
     title: "Be original: ×2",
-    body: "Words nobody else found score double. Words you both found score normally.",
+    body: "With 3 or more players, words nobody else found score double. Head-to-head, every word scores normally.",
     loop: 8,
     demo: (t) => (
-      <div className="grid w-full grid-cols-2 gap-3">
+      <div className="grid w-full grid-cols-3 gap-2">
         {[
-          { who: "🦊 You", words: [["TONE", "+2", "shared"], ["STARE", "×2 +6", "unique"]], total: t > 2 ? 8 : t > 1 ? 2 : 0 },
-          { who: "🐼 Rival", words: [["TONE", "+2", "shared"], ["LAKE", "×2 +4", "unique"]], total: t > 3 ? 6 : t > 1 ? 2 : 0 },
+          { who: "🦊 You", words: [["TONE", "+2", "shared"], ["STARE", "+6", "unique"]], total: t > 2 ? 8 : t > 1 ? 2 : 0 },
+          { who: "🐼", words: [["TONE", "+2", "shared"], ["LAKE", "+4", "unique"]], total: t > 3 ? 6 : t > 1 ? 2 : 0 },
+          { who: "🐸", words: [["TONE", "+2", "shared"], ["SEA", "+2", "unique"]], total: t > 4 ? 4 : t > 1 ? 2 : 0 },
         ].map((col, c) => (
-          <div key={col.who} className="bg-panel flex flex-col gap-1.5 p-2">
+          <div key={col.who} className="bg-panel flex min-w-0 flex-col gap-1.5 p-1.5 text-sm">
             <div className="flex items-center justify-between font-semibold">
               <span>{col.who}</span>
-              <span className="bg-title text-2xl tabular-nums">{col.total}</span>
+              <span className="bg-title text-xl tabular-nums">{col.total}</span>
             </div>
             {col.words.map(([w, p, k], i) => (
               <WordChip key={w} word={w} points={p} kind={k as "unique" | "shared"} show={t > (i === 0 ? 1 : 2 + c)} />

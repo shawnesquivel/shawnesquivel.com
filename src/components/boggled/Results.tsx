@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { RoomController, RoomState } from "@/lib/boggled/room";
-import { compareWords, DANGER_BOOST, LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
+import { compareWords, DANGER_BOOST, DOUBLE_UNIQUE_MIN_PLAYERS, LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
 import { seriesStatus } from "@/lib/boggled/series";
 import { sound } from "@/lib/boggled/sound";
 import type { Member } from "@/lib/boggled/transport";
@@ -11,7 +11,7 @@ import { BattleLog, BestsPanel, MissedWords, SeriesPanel } from "./ResultsExtras
 
 const VICTORY = ["Transcendent", "Glorious", "Stupendous", "Legendary", "Magnificent", "Flawless", "Spectacular"];
 
-type Step = { word: string; base: number; finders: string[]; unique: boolean };
+type Step = { word: string; base: number; points: number; finders: string[]; unique: boolean };
 
 function AnimatedNumber({ value }: { value: number }) {
   const [shown, setShown] = useState(value);
@@ -46,6 +46,7 @@ export default function Results({
   const outcome = state.outcome;
   const result = outcome?.result;
   const solo = round.players.length === 1;
+  const doubled = round.players.length >= DOUBLE_UNIQUE_MIN_PLAYERS;
 
   const members = useMemo(() => {
     const map = new Map<string, Member>();
@@ -58,7 +59,7 @@ export default function Results({
     const byWord = new Map<string, Step>();
     for (const p of result.players) {
       for (const w of p.words) {
-        const s = byWord.get(w.word) ?? { word: w.word, base: w.base, finders: [], unique: w.unique };
+        const s = byWord.get(w.word) ?? { word: w.word, base: w.base, points: w.points, finders: [], unique: w.unique };
         s.finders.push(p.id);
         byWord.set(w.word, s);
       }
@@ -80,7 +81,7 @@ export default function Results({
       if (step < steps.length) {
         const delay = Math.max(140, Math.min(650, 14000 / Math.max(1, steps.length)));
         timer = setTimeout(() => {
-          sound.reveal(step, steps[step].unique);
+          sound.reveal(step, steps[step].points > steps[step].base);
           setStep((s) => s + 1);
         }, delay);
       } else {
@@ -117,7 +118,7 @@ export default function Results({
   const revealed = steps.slice(0, step);
   const showBonus = stage === "bonus" || stage === "podium";
   const scoreFor = (id: string) =>
-    revealed.reduce((sum, s) => (s.finders.includes(id) ? sum + (s.unique ? s.base * 2 : s.base) : sum), 0) +
+    revealed.reduce((sum, s) => (s.finders.includes(id) ? sum + s.points : sum), 0) +
     (showBonus && result.longestWinners.includes(id) ? LONGEST_WORD_BONUS : 0) +
     (showBonus ? (result.players.find((p) => p.id === id)?.dangerBonus ?? 0) : 0);
 
@@ -176,7 +177,13 @@ export default function Results({
 
       {!solo && stage !== "podium" && (
         <p className="-mt-2 text-center text-sm opacity-80">
-          <b className="text-[var(--gold)]">×2</b> only one player found it · dimmed = both found it
+          {doubled ? (
+            <>
+              <b className="text-[var(--gold)]">×2</b> only one player found it · dimmed = shared
+            </>
+          ) : (
+            "Bright = only you found it · dimmed = both found it"
+          )}
         </p>
       )}
 
@@ -225,7 +232,7 @@ export default function Results({
                   <div key={s.word} className={`bg-reveal ${solo ? "" : s.unique ? "unique" : "shared"}`}>
                     <span className="bg-reveal-word truncate">{s.word}</span>
                     <span className="shrink-0 text-sm">
-                      {!solo && s.unique ? <b className="text-[var(--gold)]">×2 </b> : null}+{s.unique && !solo ? s.base * 2 : s.base}
+                      {s.points > s.base ? <b className="text-[var(--gold)]">×2 </b> : null}+{s.points}
                     </span>
                   </div>
                 ))}

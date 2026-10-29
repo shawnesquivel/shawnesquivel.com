@@ -98,7 +98,7 @@ describe("scoring", () => {
     expect(wordPoints("queen")).toBe(3);
   });
 
-  it("doubles unique words and awards the longest word bonus in multiplayer", () => {
+  it("awards the longest word bonus but does not double unique words head-to-head", () => {
     const result = scoreRound(
       [
         { id: "a", words: ["cat", "cats", "crate", "CAT"] },
@@ -108,16 +108,33 @@ describe("scoring", () => {
     );
     const a = result.players.find((p) => p.id === "a")!;
     const b = result.players.find((p) => p.id === "b")!;
-    // a: cat 1 (shared) + cats 2*2 + crate 3*2 = 11, + longest tie 3
-    expect(a.wordPoints).toBe(11);
-    // b: cat 1 + tear 2*2 + rates 3*2 = 11, + longest tie 3
-    expect(b.wordPoints).toBe(11);
+    // a: cat 1 + cats 2 + crate 3 = 6, + longest tie 3
+    expect(a.wordPoints).toBe(6);
+    // b: cat 1 + tear 2 + rates 3 = 6, + longest tie 3
+    expect(b.wordPoints).toBe(6);
+    expect(a.words.find((w) => w.word === "crate")!.unique).toBe(true);
     expect(result.longestLength).toBe(5);
     expect(result.longestWinners.sort()).toEqual(["a", "b"]);
-    expect(a.total).toBe(14);
+    expect(a.total).toBe(9);
     expect(a.rank).toBe(1);
     expect(b.rank).toBe(1);
     expect(a.words.map((w) => w.word)).toEqual(["crate", "cats", "cat"]);
+  });
+
+  it("doubles unique words with 3 or more players", () => {
+    const result = scoreRound(
+      [
+        { id: "a", words: ["cat", "cats", "crate"] },
+        { id: "b", words: ["cat", "tear"] },
+        { id: "c", words: ["cat", "tear"] },
+      ],
+      { longestWordBonus: false },
+    );
+    const [a, b] = ["a", "b"].map((id) => result.players.find((p) => p.id === id)!);
+    // a: cat 1 (shared) + cats 2×2 + crate 3×2 = 11
+    expect(a.wordPoints).toBe(11);
+    // b: cat 1 + tear 2 (shared with c) = 3
+    expect(b.wordPoints).toBe(3);
   });
 
   it("does not double or award bonus in solo play", () => {
@@ -134,6 +151,6 @@ describe("scoring", () => {
       { longestWordBonus: false, isValid: (w) => dict.has(w) },
     );
     expect(result.players[0].words.map((w) => w.word)).toEqual(["cat"]);
-    expect(result.players[0].total).toBe(2);
+    expect(result.players[0].total).toBe(1);
   });
 });
