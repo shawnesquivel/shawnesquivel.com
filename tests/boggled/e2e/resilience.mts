@@ -9,12 +9,13 @@ const state = roomState;
 
 console.log("Resilience");
 await a.goto(`${BASE}/boggled`);
+await a.getByTestId("menu-create").click();
 await setName(a, "Host");
 await a.getByTestId("create").click();
 const code = (await a.getByTestId("room-code").textContent())!.trim();
 await b.goto(`${BASE}/boggled?room=${code}`);
 await setName(b, "Guest");
-await b.getByTestId("join-invite").click();
+await b.getByTestId("join").click();
 await a.waitForFunction(() => window.__boggled.getState().roster.length === 2, null, { timeout: 15000 });
 await a.getByText("Start round").waitFor({ timeout: 20000 });
 await a.evaluate(() => window.__boggled.updateSettings({ duration: 12 }));

@@ -11,9 +11,10 @@ export type Settings = {
   duration: number;
   minLength: 3 | 4;
   longestBonus: boolean;
+  powerUps: boolean;
 };
 
-export const DEFAULT_SETTINGS: Settings = { size: 4, duration: 120, minLength: 3, longestBonus: true };
+export const DEFAULT_SETTINGS: Settings = { size: 4, duration: 120, minLength: 3, longestBonus: true, powerUps: true };
 
 export type Round = {
   id: string;
@@ -33,7 +34,11 @@ export type RoundOutcome = {
   allWords: number;
 };
 
-export type Tally = Record<string, { points: number; wins: number }>;
+export type TallyEntry = { points: number; wins: number; name: string; emoji: string };
+export type Tally = Record<string, TallyEntry>;
+
+export type Toast = { id: string; text: string; kind: "earned" | "launch" | "hit" | "brag"; at: number };
+export type Reaction = { id: string; emoji: string; from: string; at: number };
 
 export type RoomState = {
   room: string | null;
@@ -49,12 +54,24 @@ export type RoomState = {
   finals: Record<string, string[]>;
   outcome: RoundOutcome | null;
   tally: Tally;
+  roundsPlayed: number;
+  bombs: number;
+  // tile index -> Date.now() when the block lifts
+  blocked: Record<number, number>;
+  toasts: Toast[];
+  reactions: Reaction[];
 };
 
 const COUNTDOWN_MS = 3500;
 const COLLECT_TIMEOUT_MS = 6000;
 const LATE_FINAL_WINDOW_MS = 120_000;
 const TIMES_UP_MIN_MS = 1500;
+export const BOMB_WORD_LENGTH = 6;
+export const BOMB_MS = 5000;
+export const MAX_BOMBS = 3;
+const BRAG_LENGTH = 7;
+const TOAST_MS = 2600;
+const REACTION_MS = 3200;
 
 export function computeHost(roster: Member[], fallback: string): string {
   const sorted = [...roster].sort((a, b) => a.joinedAt - b.joinedAt || a.id.localeCompare(b.id));
@@ -68,7 +85,7 @@ export class RoomController {
   private dict: Dictionary | null = null;
   private ticker: ReturnType<typeof setInterval> | null = null;
   private lastFinalSent = 0;
-  private roundContributions = new Map<string, Tally>();
+  private roundContributions = new Map<string, Record<string, { points: number; wins: number }>>();
   private startResends: ReturnType<typeof setTimeout>[] = [];
 
   constructor(room: string | null, me: Member) {
@@ -87,6 +104,11 @@ export class RoomController {
       finals: {},
       outcome: null,
       tally: {},
+      roundsPlayed: 0,
+      bombs: 0,
+      blocked: {},
+      toasts: [],
+      reactions: [],
     };
   }
 
@@ -178,6 +200,15 @@ export class RoomController {
     this.startResends = [800, 2000].map((ms) => setTimeout(() => this.send({ type: "start", round }), ms));
   }
 
+  // Solo only: there's nobody to wait for, so the round can just end now.
+  endEarly() {
+    const { round, phase } = this.state;
+    if (!round || round.players.length !== 1 || (phase !== "playing" && phase !== "countdown")) return;
+    const now = serverNow();
+    this.set({ round: { ...round, startsAt: Math.min(round.startsAt, now), endsAt: now } });
+    this.tick();
+  }
+
   backToLobby() {
     if (!this.isHost) return;
     this.set({ phase: "lobby" });
@@ -193,6 +224,56 @@ export class RoomController {
     this.set({ myWords: next, progress: { ...this.state.progress, [this.state.me.id]: next.length } });
     this.persistWords(round.id, next);
     this.send({ type: "progress", roundId: round.id, count: next.length });
+
+    const multiplayer = round.players.length > 1;
+    if (multiplayer && round.settings.powerUps && word.length >= BOMB_WORD_LENGTH) {
+      if (this.state.bombs < MAX_BOMBS) {
+        this.set({ bombs: this.state.bombs + 1 });
+        this.toast("💣 Bomb earned! Tap it to block a letter on a rival's board", "earned");
+      }
+    }
+    if (multiplayer && word.length >= BRAG_LENGTH) this.send({ type: "brag", roundId: round.id, length: word.length });
+  }
+
+  bombTargets(): Member[] {
+    const { round, roster, me } = this.state;
+    if (!round) return [];
+    const present = new Set(roster.map((m) => m.id));
+    return round.players.filter((p) => p.id !== me.id && present.has(p.id));
+  }
+
+  useBomb(): Member | null {
+    const { round, bombs, phase } = this.state;
+    if (!round || phase !== "playing" || bombs <= 0) return null;
+    const targets = this.bombTargets();
+    if (!targets.length) return null;
+    const target = targets[Math.floor(Math.random() * targets.length)];
+    const tile = Math.floor(Math.random() * round.board.tiles.length);
+    this.send({ type: "bomb", roundId: round.id, target: target.id, tile });
+    this.set({ bombs: bombs - 1 });
+    this.toast(`💥 Bombed ${target.name}!`, "launch");
+    return target;
+  }
+
+  react(emoji: string) {
+    this.addReaction(emoji, this.state.me.id);
+    this.send({ type: "react", emoji });
+  }
+
+  dismissToast(id: string) {
+    this.set({ toasts: this.state.toasts.filter((t) => t.id !== id) });
+  }
+
+  private toast(text: string, kind: Toast["kind"]) {
+    this.set({ toasts: [...this.state.toasts.slice(-2), { id: randomId(6), text, kind, at: Date.now() }] });
+  }
+
+  private addReaction(emoji: string, from: string) {
+    this.set({ reactions: [...this.state.reactions.slice(-11), { id: randomId(6), emoji, from, at: Date.now() }] });
+  }
+
+  private memberName(id: string) {
+    return this.state.roster.find((m) => m.id === id)?.name ?? this.state.round?.players.find((m) => m.id === id)?.name ?? "Someone";
   }
 
   // ---- internals ----
@@ -220,6 +301,9 @@ export class RoomController {
       progress: { [this.state.me.id]: myWords.length },
       finals: {},
       outcome: null,
+      bombs: 0,
+      blocked: {},
+      toasts: [],
       phase: serverNow() < round.startsAt ? "countdown" : "playing",
     });
     this.tick();
@@ -241,6 +325,7 @@ export class RoomController {
             phase: s.phase,
             finals: s.finals,
             tally: s.tally,
+            roundsPlayed: s.roundsPlayed,
           });
         }
         if (s.round && (s.phase === "collecting" || s.phase === "results") && this.isParticipant(s.round)) {
@@ -251,7 +336,10 @@ export class RoomController {
         if (msg.from !== s.hostId) break;
         const round = msg.round as Round | null;
         const patch: Partial<RoomState> = { settings: msg.settings as Settings };
-        if (Object.keys(s.tally).length === 0) patch.tally = msg.tally as Tally;
+        if (Object.keys(s.tally).length === 0) {
+          patch.tally = (msg.tally as Tally) ?? {};
+          patch.roundsPlayed = (msg.roundsPlayed as number) ?? 0;
+        }
         this.set(patch);
         if (round && round.id !== s.round?.id) {
           this.beginRound(round);
@@ -274,6 +362,22 @@ export class RoomController {
         break;
       case "progress":
         if (msg.roundId === s.round?.id) this.set({ progress: { ...s.progress, [msg.from]: msg.count as number } });
+        break;
+      case "bomb": {
+        if (msg.roundId !== s.round?.id || msg.target !== s.me.id || s.phase !== "playing") break;
+        const tile = msg.tile as number;
+        this.set({ blocked: { ...s.blocked, [tile]: Date.now() + BOMB_MS } });
+        this.toast(`💣 ${this.memberName(msg.from)} bombed your board!`, "hit");
+        break;
+      }
+      case "brag":
+        if (msg.roundId === s.round?.id && s.phase === "playing") {
+          const n = msg.length as number;
+          this.toast(`🔥 ${this.memberName(msg.from)} found ${n === 8 || n === 11 || n === 18 ? "an" : "a"} ${n}-letter word!`, "brag");
+        }
+        break;
+      case "react":
+        this.addReaction(String(msg.emoji).slice(0, 16), msg.from);
         break;
       case "final": {
         if (msg.roundId !== s.round?.id) break;
@@ -302,7 +406,21 @@ export class RoomController {
     this.send({ type: "final", roundId: round.id, words: myWords, have: Object.keys(finals).concat(me.id) });
   }
 
+  private prune() {
+    const now = Date.now();
+    const s = this.state;
+    const toasts = s.toasts.filter((t) => now - t.at < TOAST_MS);
+    const reactions = s.reactions.filter((r) => now - r.at < REACTION_MS);
+    const blockedEntries = Object.entries(s.blocked).filter(([, until]) => until > now);
+    const patch: Partial<RoomState> = {};
+    if (toasts.length !== s.toasts.length) patch.toasts = toasts;
+    if (reactions.length !== s.reactions.length) patch.reactions = reactions;
+    if (blockedEntries.length !== Object.keys(s.blocked).length) patch.blocked = Object.fromEntries(blockedEntries);
+    if (Object.keys(patch).length) this.set(patch);
+  }
+
   private tick() {
+    this.prune();
     const s = this.state;
     const round = s.round;
     if (!round || s.phase === "lobby") return;
@@ -357,20 +475,25 @@ export class RoomController {
       missed = all.filter((w) => !found.has(w)).sort((a, b) => b.length - a.length || a.localeCompare(b)).slice(0, 15);
     }
 
-    const contribution: Tally = {};
-    if (result.players.length > 1) {
+    const multiplayer = result.players.length > 1;
+    const contribution: Record<string, { points: number; wins: number }> = {};
+    if (multiplayer) {
       for (const p of result.players) contribution[p.id] = { points: p.total, wins: p.rank === 1 ? 1 : 0 };
     }
     const tally: Tally = structuredClone(this.state.tally);
+    const firstTime = !this.roundContributions.has(round.id);
     const prev = this.roundContributions.get(round.id) ?? {};
     for (const [id, c] of Object.entries(prev)) {
-      tally[id] = { points: (tally[id]?.points ?? 0) - c.points, wins: (tally[id]?.wins ?? 0) - c.wins };
+      if (tally[id]) tally[id] = { ...tally[id], points: tally[id].points - c.points, wins: tally[id].wins - c.wins };
     }
     for (const [id, c] of Object.entries(contribution)) {
-      tally[id] = { points: (tally[id]?.points ?? 0) + c.points, wins: (tally[id]?.wins ?? 0) + c.wins };
+      const member = round.players.find((p) => p.id === id)!;
+      const base = tally[id] ?? { points: 0, wins: 0, name: member.name, emoji: member.emoji };
+      tally[id] = { points: base.points + c.points, wins: base.wins + c.wins, name: member.name, emoji: member.emoji };
     }
     this.roundContributions.set(round.id, contribution);
+    const roundsPlayed = this.state.roundsPlayed + (firstTime && multiplayer ? 1 : 0);
 
-    this.set({ outcome: { roundId: round.id, result, missed, allWords }, tally });
+    this.set({ outcome: { roundId: round.id, result, missed, allWords }, tally, roundsPlayed });
   }
 }

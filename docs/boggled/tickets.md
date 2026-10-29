@@ -43,7 +43,21 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | ID | Ticket | Status | Notes |
 | --- | --- | --- | --- |
 | BOG-16 | Playwright e2e: solo (touch + mouse + tap), 2 players on local Supabase, packet loss at the buzzer, host migration | done | `tests/boggled/e2e/*.mts` |
-| BOG-17 | Deploy via Vercel (PR preview), document env vars | doing | Needs `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in Vercel (Production + Preview). Then test on two real phones. |
+| BOG-17 | Deploy via Vercel (PR preview), document env vars | done | Env vars set in Vercel (Production + Preview). |
+
+## Phase 6 — v2: party features
+
+| ID | Ticket | Status | Notes |
+| --- | --- | --- | --- |
+| BOG-18 | Session scoreboard: wins + points carried across rounds in a room, shown in lobby and results from round 1 | done | `tally`/`roundsPlayed` in `room.ts`; joiners adopt the host's tally via `state` |
+| BOG-19 | Leader banter: fun headline + title badge for whoever has the most wins | done | `src/lib/boggled/banter.ts` (unit tested) |
+| BOG-20 | 💣 Bomb power-up: a 6+ letter word earns a bomb (max 3); it blocks a random tile on a random rival's board for 5 s | done | Host toggle "Power-ups". Blocked tiles can't be swiped through. |
+| BOG-21 | Brags (7+ letter word toasts the rivals) and emoji reactions that float up on everyone's screen | done | `Extras.tsx` |
+| BOG-22 | Friendlier settings: board/timer/word-length cards and toggle switches | done | |
+| BOG-23 | Step-based home: Practice solo / Create a room / Join a room → code → name + emoji. Invite links skip to the name step. Any emoji can be typed in. | done | `Home.tsx` |
+| BOG-25 | "?" button beside the sound toggle opens an animated how-to-play walkthrough (6 slides) | done | `HowToPlay.tsx` |
+| BOG-26 | Solo: "✕ End" button mid-round → confirm sheet (End & see my score / Quit to home / Keep playing); 🏠 Home on solo results | done | `RoomController.endEarly()` (solo only) |
+| BOG-24 | e2e: power-ups (bomb earn/use/block/expiry), reactions, scoreboard across 2 rounds | done | `tests/boggled/e2e/power-ups.mts` |
 
 ## Later
 
@@ -57,3 +71,9 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-L6 | Profanity-aware dictionary tuning, definitions on tap | later |
 | BOG-L7 | Real-phone QA pass: iOS Safari silent switch, backgrounding mid-round, Android Chrome haptics | later |
 | BOG-L8 | Music loops (lobby / round) | later |
+| BOG-L9 | More power-ups: ❄️ freeze a rival's timer input for 3 s, 🌀 scramble a rival's board, 🔄 rotate your own board, 💡 hint (reveal a word's first 2 letters) | later |
+| BOG-L10 | Daily puzzle: same seeded board for everyone each day + shareable emoji result | later |
+| BOG-L11 | Themed rounds: bonus points for words in a category (food, animals), or a "golden tile" worth ×2 | later |
+| BOG-L12 | Streaks + rivalry stats ("Gf has beaten you 4 times in a row"), persisted per pair | later |
+| BOG-L14 | "Danger mode" host toggle grouping all the fight features (bombs, sabotage, trash talk, final-30s chaos). Ideas: 30s warning, sabotage power-ups, steals, trash talk, comeback mechanics | later |
+| BOG-L13 | Sudden-death tiebreaker round (30 s) when the session is tied | later |
