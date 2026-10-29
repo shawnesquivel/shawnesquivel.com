@@ -53,6 +53,8 @@ export type RoomState = {
 
 const COUNTDOWN_MS = 3500;
 const COLLECT_TIMEOUT_MS = 6000;
+const LATE_FINAL_WINDOW_MS = 120_000;
+const TIMES_UP_MIN_MS = 1500;
 
 export function computeHost(roster: Member[], fallback: string): string {
   const sorted = [...roster].sort((a, b) => a.joinedAt - b.joinedAt || a.id.localeCompare(b.id));
@@ -303,8 +305,18 @@ export class RoomController {
   private tick() {
     const s = this.state;
     const round = s.round;
-    if (!round || s.phase === "lobby" || s.phase === "results") return;
+    if (!round || s.phase === "lobby") return;
     const now = serverNow();
+
+    if (s.phase === "results") {
+      // Someone's list missed the cutoff (phone asleep, dropped packet): keep asking, results update when it lands.
+      const present = new Set(s.roster.map((m) => m.id));
+      const missing = round.players.some((p) => present.has(p.id) && !s.finals[p.id]);
+      if (missing && now < round.endsAt + LATE_FINAL_WINDOW_MS && Date.now() - this.lastFinalSent >= 2000) {
+        this.sendFinal(true);
+      }
+      return;
+    }
 
     if (s.phase === "countdown" && now >= round.startsAt) this.set({ phase: "playing" });
 
@@ -318,7 +330,8 @@ export class RoomController {
       if (Date.now() - this.lastFinalSent >= 1000) this.sendFinal(true);
       const present = new Set(this.state.roster.map((m) => m.id));
       const waiting = round.players.filter((p) => present.has(p.id) && !this.state.finals[p.id]);
-      if (waiting.length === 0 || now >= round.endsAt + COLLECT_TIMEOUT_MS) {
+      const allIn = waiting.length === 0 && now >= round.endsAt + TIMES_UP_MIN_MS;
+      if (allIn || now >= round.endsAt + COLLECT_TIMEOUT_MS) {
         this.set({ phase: "results" });
         this.computeOutcome();
       }

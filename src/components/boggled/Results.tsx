@@ -161,6 +161,12 @@ export default function Results({ state, controller }: { state: RoomState; contr
         </div>
       )}
 
+      {!solo && stage !== "podium" && (
+        <p className="-mt-2 text-center text-sm opacity-80">
+          <b className="text-[var(--gold)]">×2</b> only one player found it · dimmed = both found it
+        </p>
+      )}
+
       {showBonus && hasBonus && (
         <div className="bg-banner bg-panel px-4 py-3 text-center" data-testid="longest-bonus">
           <div className="text-sm opacity-80">📏 Longest word</div>
@@ -174,12 +180,16 @@ export default function Results({ state, controller }: { state: RoomState; contr
       <div className="grid min-h-0 flex-1 gap-3" style={{ gridTemplateColumns: `repeat(${Math.min(columns.length, 4)}, minmax(0, 1fr))` }}>
         {columns.map((p) => {
           const mine = revealed.filter((s) => s.finders.includes(p.id)).reverse();
+          const top = Math.max(...columns.map((c) => scoreFor(c.id)));
+          const leading = !solo && top > 0 && scoreFor(p.id) === top;
           return (
-            <div key={p.id} className="bg-col bg-panel p-3" data-testid={`col-${p.id}`}>
+            <div key={p.id} className={`bg-col bg-panel p-3 ${leading ? "leading" : ""}`} data-testid={`col-${p.id}`}>
               <div className="mb-2 flex items-center gap-2">
                 <span className="text-3xl">{p.emoji}</span>
                 <div className="min-w-0">
-                  <div className="truncate font-semibold">{name(p.id)}</div>
+                  <div className="truncate font-semibold">
+                    {name(p.id)} {leading && "👑"}
+                  </div>
                   <div className="bg-score" data-testid="score">
                     <AnimatedNumber value={scoreFor(p.id)} />
                   </div>

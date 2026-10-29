@@ -49,8 +49,8 @@ No database tables. The game is **deterministic and peer-validated**, so no game
 
 ### Code layout
 
-- `src/lib/boggled/` — pure engine (`dice.ts`, `board.ts`, `solver.ts`, `scoring.ts`, `rng.ts`, `dictionary.ts`), sound (`sound.ts`), realtime transport (`transport.ts`), room protocol (`protocol.ts`).
-- `src/components/boggled/` — React UI (`BoggledApp.tsx` orchestrates screens; `Grid.tsx` handles input; `Results.tsx` does the replay).
+- `src/lib/boggled/` — pure engine (`dice.ts`, `board.ts` incl. solver, `scoring.ts`, `rng.ts`, `dictionary.ts`), sound (`sound.ts`), clock sync (`clock.ts`), realtime transport (`transport.ts`), room protocol/state machine (`room.ts`, `RoomController`).
+- `src/components/boggled/` — React UI (`BoggledApp.tsx` home + routing between screens; `Lobby.tsx`; `Game.tsx` round screen; `Grid.tsx` swipe/tap input; `Results.tsx` replay + podium).
 - `src/app/boggled/` — route + layout. `src/app/api/boggled/time/route.ts` — clock sync.
 - `public/boggled/words.txt` — ENABLE word list (public domain), ~170k words.
 - `tests/boggled/` — unit + e2e.
@@ -77,14 +77,40 @@ Solo play works with no backend at all.
 | Page scroll / pull-to-refresh / zoom while swiping | `touch-action: none`, `overscroll-behavior: none`, no-zoom viewport, `user-select: none` on the game |
 | Dictionary size | Plain text, lazy-loaded, gzip by Vercel CDN (~0.5 MB over the wire), parsed into a `Set` |
 
+## Deploying
+
+Vercel serves everything; Supabase Realtime carries the multiplayer messages. Add these to the Vercel project (Production **and** Preview), then redeploy:
+
+| Variable | Value |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL (same as `SUPABASE_URL`) |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase **publishable/anon** key (never the secret key) |
+
+Supabase dashboard → Realtime → Settings: leave "Allow public access" enabled (channels are public; room codes are the only gate). No tables or migrations are needed.
+
+Without the variables, `/boggled` still works for solo play, and rooms fall back to same-browser tabs with a visible warning.
+
 ## Running locally
 
 ```bash
-npm run dev                 # http://localhost:3000/boggled
-npm run test:boggled        # engine unit tests
-npx supabase start          # local Realtime for multiplayer
+npx supabase start          # local Realtime (Docker). Only Realtime is needed.
 # .env.local:
 # NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
-# NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<anon key from `npx supabase status`>
-npm run test:boggled:e2e    # 2-player Playwright run (needs the dev server + Supabase)
+# NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<PUBLISHABLE_KEY from `npx supabase status`>
+npm run dev                 # http://localhost:3000/boggled
+npm run test:boggled        # engine unit tests (Vitest)
+npm run test:boggled:e2e    # Playwright: solo on an emulated iPhone + 2-player round over Supabase
+npx tsx tests/boggled/e2e/resilience.mts   # packet loss at the buzzer + host leaving
 ```
+
+E2E scripts drive `window.__boggled` (the `RoomController`, exposed in non-production builds only) to shorten timers and inspect state. Screenshots/videos land in `/opt/cursor/artifacts/` (override with `BOGGLED_SHOTS` / `BOGGLED_VIDEOS`).
+
+Docker-in-VM gotcha: if containers can't reach each other (Supabase fails with `DbSetupError` / Realtime "connection not available"), switch to legacy iptables (`update-alternatives --set iptables /usr/sbin/iptables-legacy`) and restart `dockerd`.
+
+## Verified so far
+
+- Engine: 12 unit tests.
+- Solo on emulated iPhone 13: mouse swipes, real touch-event swipes (no page scroll), tap mode, `Qu` tile, duplicate/invalid feedback, final score.
+- Two players (iPhone 13 + Pixel 7) over local Supabase Realtime: create/join by code and invite link, roster, host settings sync, identical board and end time, live opponent word counts, identical results on both phones, unique ×2 + longest bonus math, guest reload → rejoins as same player.
+- Resilience: guest's messages dropped over the buzzer → host shows results, then recovers the guest's words; host leaves → guest promoted.
+- **Not yet verified**: real phones, hosted Supabase project, iOS Safari audio quirks.

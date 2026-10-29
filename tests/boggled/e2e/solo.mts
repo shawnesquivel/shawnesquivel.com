@@ -1,6 +1,6 @@
 import { mkdirSync } from "node:fs";
 import { chromium, devices } from "playwright";
-import { assert, BASE, readBoard, setName, SHOTS, swipe, wordsOn } from "./helpers.mts";
+import { assert, BASE, readBoard, setName, SHOTS, swipe, wordsOn } from "./helpers.mjs";
 
 mkdirSync(SHOTS, { recursive: true });
 const browser = await chromium.launch();
@@ -41,8 +41,28 @@ assert(
   `all swiped words were accepted (${picks.map(([w]) => w).join(", ")})`,
 );
 
+// real touch events (what a phone sends), not mouse
+const cdp = await ctx.newCDPSession(page);
+const [touchWord, touchPath] = words.find(([w]) => !picks.some(([p]) => p === w) && w.length >= 4)!;
+const pts = [];
+for (const i of touchPath) {
+  const bx = (await page.locator(`[data-tile="${i}"]`).boundingBox())!;
+  pts.push({ x: bx.x + bx.width / 2, y: bx.y + bx.height / 2 });
+}
+await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [pts[0]] });
+for (let k = 1; k < pts.length; k++) {
+  for (let s = 1; s <= 6; s++) {
+    const x = pts[k - 1].x + ((pts[k].x - pts[k - 1].x) * s) / 6;
+    const y = pts[k - 1].y + ((pts[k].y - pts[k - 1].y) * s) / 6;
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x, y }] });
+  }
+}
+await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+assert((await page.locator("[data-testid=found] span").allTextContents()).includes(touchWord), `touch swipe accepted "${touchWord}"`);
+assert((await page.evaluate(() => window.scrollY)) === 0, "page did not scroll during the swipe");
+
 // tap mode: tap each tile, then tap the last one again to submit
-const [tapWord, tapPath] = words.find(([w]) => !picks.some(([p]) => p === w) && w.length >= 4)!;
+const [tapWord, tapPath] = words.find(([w]) => !picks.some(([p]) => p === w) && w !== touchWord && w.length >= 4)!;
 for (const i of tapPath) await page.locator(`[data-tile="${i}"]`).click();
 await page.locator(`[data-tile="${tapPath[tapPath.length - 1]}"]`).click();
 const found2 = await page.locator("[data-testid=found] span").allTextContents();
