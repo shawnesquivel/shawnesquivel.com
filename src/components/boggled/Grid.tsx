@@ -11,6 +11,7 @@ type Props = {
   disabled?: boolean;
   hideLetters?: boolean;
   blocked?: ReadonlySet<number>;
+  flipped?: ReadonlySet<number>;
   classify: (word: string) => "good" | "dup" | null;
   onSubmit: (word: string) => SubmitResult;
   onPathChange?: (word: string) => void;
@@ -21,7 +22,7 @@ const MOVE_HIT_RADIUS = 0.36;
 
 const NONE: ReadonlySet<number> = new Set();
 
-export default function Grid({ board, disabled, hideLetters, blocked = NONE, classify, onSubmit, onPathChange }: Props) {
+export default function Grid({ board, disabled, hideLetters, blocked = NONE, flipped = NONE, classify, onSubmit, onPathChange }: Props) {
   const [path, setPathState] = useState<number[]>([]);
   const [flash, setFlash] = useState<{ tiles: number[]; kind: string; key: number } | null>(null);
   const pathRef = useRef<number[]>([]);
@@ -161,6 +162,7 @@ export default function Grid({ board, disabled, hideLetters, blocked = NONE, cla
                   !selected ? flashing : "",
                   hideLetters ? "hidden-letter" : "",
                   isBlocked ? "blocked" : "",
+                  flipped.has(i) && !isBlocked ? "flipped" : "",
                 ].join(" ")}
                 data-blocked={isBlocked || undefined}
                 style={{ fontSize }}

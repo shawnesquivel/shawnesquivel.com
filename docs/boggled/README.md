@@ -20,7 +20,15 @@ Taken from the Boggle Party help center (Netflix, 2026):
 
 Party extras (v2, ours, not Netflix):
 - **Session scoreboard**: every multiplayer round adds wins (rank 1, ties all win) and points to a per-room tally shown in the lobby and results, with a banter headline and a title badge for the leader (`banter.ts`).
-- **💣 Bomb**: a 6+ letter word earns a bomb (max 3, multiplayer only, host toggle "Power-ups"). Using it blocks one random tile on one random present rival's board for 5 s. Blocked tiles can't be swiped through.
+- **☠️ Danger mode** (host toggle, on by default):
+  - 6+ letter words earn attacks, alternating 💣 bomb (blocks 1 random rival tile for 5 s, can't be swiped through) and 🙃 flip (2 rival tiles pink + upside down for 6 s). Max 3 each.
+  - 🛡️ Shield: 3 words within 10 s. Quiet icon (tap to explain); auto-blocks the next attack; attacker is told.
+  - Halftime: whoever is behind gets a free 💣.
+  - Danger zone (last 15 s): red glow + siren; words found then add a bonus of ceil(10% of their points). Sent as `late` with the final word list.
+  - Battle log on results.
+- **Halftime reveal** (all multiplayer): rival scores show 🙈 until halftime, then live points.
+- **Best-of series** (host setting): Bo3/Bo5. `Round.series = {id, game, length}`; every client records round winners in `seriesRecords`; first strictly ahead with a majority (or after N games) is champion; ties go to sudden death. Champion adds 🏅 to the tally.
+- **Personal bests** (localStorage, per board+timer) and near misses on results.
 - **Brags**: a 7+ letter word pops a toast on rivals' screens ("Shawn found a 7-letter word!").
 - **Reactions**: 8 emoji buttons in the lobby and results that float up on everyone's screen.
 
@@ -52,7 +60,7 @@ No database tables. The game is **deterministic and peer-validated**, so no game
 3. When the timer ends each client broadcasts `final {roundId, words}` and **re-broadcasts every second** until every present player's list has been received (Broadcast is at-most-once, so retries matter). After a 6 s cap, missing players count as zero words.
 4. Every client computes the same results from the same inputs (`scoreRound`), so there's nothing to cheat-proof beyond "friends playing together".
 5. Late joiners / phones waking up send `hello`; the host answers with `state` (phase, board, timers, last results, session tally).
-6. Fire-and-forget events: `bomb {roundId, target, tile}` (only the target acts on it), `brag {roundId, length}`, `react {emoji}`. Losing one is harmless, so they're not retried.
+6. Fire-and-forget events: `attack {roundId, id, weapon, target, tiles}` (everyone logs it, only the target applies it), `shielded {attackId, attacker}`, `brag {roundId, length}`, `react {emoji}`. Losing one is harmless, so they're not retried.
 
 ### Code layout
 
@@ -108,7 +116,7 @@ npm run dev                 # http://localhost:3000/boggled
 npm run test:boggled        # engine unit tests (Vitest)
 npm run test:boggled:e2e    # Playwright: solo on an emulated iPhone + 2-player round over Supabase
 npx tsx tests/boggled/e2e/resilience.mts   # packet loss at the buzzer + host leaving
-npx tsx tests/boggled/e2e/power-ups.mts    # bomb, reactions, scoreboard over 2 rounds
+npx tsx tests/boggled/e2e/power-ups.mts    # danger mode, series, bests, reactions, scoreboard
 ```
 
 E2E scripts drive `window.__boggled` (the `RoomController`, exposed in non-production builds only) to shorten timers and inspect state. Screenshots/videos land in `/opt/cursor/artifacts/` (override with `BOGGLED_SHOTS` / `BOGGLED_VIDEOS`).
@@ -117,9 +125,10 @@ Docker-in-VM gotcha: if containers can't reach each other (Supabase fails with `
 
 ## Verified so far
 
-- Engine: 16 unit tests (incl. banter).
+- Engine: 21 unit tests (incl. banter, series, bests, danger bonus).
 - Solo on emulated iPhone 13: mouse swipes, real touch-event swipes (no page scroll), tap mode, `Qu` tile, duplicate/invalid feedback, final score.
 - Two players (iPhone 13 + Pixel 7) over local Supabase Realtime: create/join by code and invite link, roster, host settings sync, identical board and end time, live opponent word counts, identical results on both phones, unique ×2 + longest bonus math, guest reload → rejoins as same player.
 - Resilience: guest's messages dropped over the buzzer → host shows results, then recovers the guest's words; host leaves → guest promoted.
 - v2 (2 emulated phones, local Supabase): new home flow (menu → code → name, invite link → name, typed emoji avatar), reactions arrive on the other phone, 6+ letter word earns a bomb, rival's tile blocked ~5 s and unusable, scoreboard tallies match on both phones and accumulate over 2 rounds, banter + title badge.
+- v3 (2 emulated phones): shield earned/explained/blocks a bomb, bomb + flip land on the rival, halftime reveal + comeback bomb, danger-zone bonus identical on both phones, battle log, best-of-3 → champion + 🏅, personal-best panel, solo end-early.
 - **Not yet verified**: real phones, hosted Supabase project, iOS Safari audio quirks.

@@ -2,10 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { RoomController, RoomState } from "@/lib/boggled/room";
-import { compareWords, LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
+import { compareWords, DANGER_BOOST, LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
+import { seriesStatus } from "@/lib/boggled/series";
 import { sound } from "@/lib/boggled/sound";
 import type { Member } from "@/lib/boggled/transport";
 import { ReactionBar, Scoreboard } from "./Extras";
+import { BattleLog, BestsPanel, SeriesPanel } from "./ResultsExtras";
 
 const VICTORY = ["Transcendent", "Glorious", "Stupendous", "Legendary", "Magnificent", "Flawless", "Spectacular"];
 
@@ -66,7 +68,8 @@ export default function Results({
 
   const [step, setStep] = useState(0);
   const [stage, setStage] = useState<"intro" | "reveal" | "bonus" | "podium">("intro");
-  const hasBonus = !!result && result.longestWinners.length > 0;
+  const hasDanger = !!result && result.players.some((p) => p.dangerBonus > 0);
+  const hasBonus = !!result && (result.longestWinners.length > 0 || hasDanger);
 
   useEffect(() => {
     if (!result) return;
@@ -115,7 +118,8 @@ export default function Results({
   const showBonus = stage === "bonus" || stage === "podium";
   const scoreFor = (id: string) =>
     revealed.reduce((sum, s) => (s.finders.includes(id) ? sum + (s.unique ? s.base * 2 : s.base) : sum), 0) +
-    (showBonus && result.longestWinners.includes(id) ? LONGEST_WORD_BONUS : 0);
+    (showBonus && result.longestWinners.includes(id) ? LONGEST_WORD_BONUS : 0) +
+    (showBonus ? (result.players.find((p) => p.id === id)?.dangerBonus ?? 0) : 0);
 
   const columns = round.players.filter((p) => result.players.some((r) => r.id === p.id));
   const winners = result.players.filter((p) => p.rank === 1);
@@ -123,6 +127,7 @@ export default function Results({
   const adjective = VICTORY[(outcome!.roundId.charCodeAt(0) + outcome!.roundId.charCodeAt(1)) % VICTORY.length];
   const name = (id: string) => (id === state.me.id ? "You" : members.get(id)?.name ?? "?");
   const isHost = state.hostId === state.me.id;
+  const seriesOver = !!round.series && !!seriesStatus(state.seriesRecords, round.series).champion;
 
   return (
     <div className="bg-screen gap-4" data-testid="results">
@@ -175,7 +180,19 @@ export default function Results({
         </p>
       )}
 
-      {showBonus && hasBonus && (
+      {showBonus && hasDanger && (
+        <div className="bg-banner bg-panel bg-danger-panel px-4 py-3 text-center" data-testid="danger-bonus">
+          <div className="text-sm opacity-80">☠️ Danger zone +{Math.round(DANGER_BOOST * 100)}%</div>
+          <div className="text-sm font-semibold">
+            {result.players
+              .filter((p) => p.dangerBonus > 0)
+              .map((p) => `${name(p.id)} +${p.dangerBonus}`)
+              .join(" · ")}
+          </div>
+        </div>
+      )}
+
+      {showBonus && result.longestWinners.length > 0 && (
         <div className="bg-banner bg-panel px-4 py-3 text-center" data-testid="longest-bonus">
           <div className="text-sm opacity-80">📏 Longest word</div>
           <div className="bg-title text-2xl uppercase">{longestWord}</div>
@@ -234,13 +251,16 @@ export default function Results({
             </div>
           )}
 
+          <BestsPanel state={state} round={round} outcome={outcome!} />
+          {!solo && <SeriesPanel state={state} round={round} />}
+          {!solo && <BattleLog state={state} round={round} />}
           {!solo && <Scoreboard state={state} />}
           {!solo && <ReactionBar controller={controller} />}
 
           {isHost ? (
             <div className="flex gap-3">
               <button className="bg-btn bg-btn-primary flex-1" onClick={() => controller.startRound()} data-testid="play-again">
-                Play again
+                {round.series ? (seriesOver ? "New series" : "Next game →") : "Play again"}
               </button>
               <button className="bg-btn bg-btn-ghost" onClick={() => controller.backToLobby()}>
                 Settings

@@ -1,7 +1,8 @@
-// Bomb power-up, reactions and the session scoreboard across two rounds. Needs local Supabase like two-player.mts.
+// Danger mode (bomb, flip, shield, halftime, danger zone, battle log), best-of-3 series, personal bests,
+// reactions and the session scoreboard. Needs local Supabase like two-player.mts.
 import { mkdirSync } from "node:fs";
-import { chromium, devices } from "playwright";
-import { assert, BASE, readBoard, roomState, setName, SHOTS, swipe, wordsOn } from "./helpers.mjs";
+import { chromium, devices, type Page } from "playwright";
+import { assert, BASE, roomState, setName, SHOTS, swipe, wordsOn } from "./helpers.mjs";
 
 mkdirSync(SHOTS, { recursive: true });
 const browser = await chromium.launch();
@@ -9,7 +10,7 @@ const a = await (await browser.newContext({ ...devices["iPhone 13"] })).newPage(
 const b = await (await browser.newContext({ ...devices["Pixel 7"] })).newPage();
 for (const [n, p] of [["A", a], ["B", b]] as const) p.on("pageerror", (e) => console.error(`pageerror ${n}:`, e.message));
 
-console.log("Power-ups, reactions, scoreboard");
+console.log("Danger mode, series, bests, reactions, scoreboard");
 await a.goto(`${BASE}/boggled`);
 await a.getByTestId("menu-create").click();
 await setName(a, "Shawn");
@@ -26,63 +27,115 @@ await a.getByTestId("reaction-bar").getByLabel("React 😂").click();
 await b.locator(".bg-reaction").first().waitFor({ timeout: 5000 });
 assert((await b.locator(".bg-reaction").first().textContent())!.includes("😂"), "reaction floats up on the other phone");
 
-assert((await b.getByTestId("opt-powerups").getAttribute("aria-checked")) === "true", "power-ups default on");
+assert((await b.getByTestId("opt-danger").getAttribute("aria-checked")) === "true", "danger mode defaults on");
 await a.getByTestId("opt-size").getByText("5×5").click();
-await a.evaluate(() => window.__boggled.updateSettings({ duration: 25 }));
-await b.waitForFunction(() => window.__boggled.getState().settings.duration === 25 && window.__boggled.getState().settings.size === 5);
+await a.getByTestId("opt-series").getByText("Best of 3").click();
+await a.evaluate(() => window.__boggled.updateSettings({ duration: 45 }));
+await b.waitForFunction(() => {
+  const s = window.__boggled.getState().settings;
+  return s.duration === 45 && s.size === 5 && s.series === 3;
+});
 await a.screenshot({ path: `${SHOTS}/20-settings.png`, fullPage: true });
 
-async function playRound(round: number) {
-  await a.getByTestId("start").or(a.getByTestId("play-again")).click();
-  await Promise.all([a.locator(".bg-overlay").waitFor({ state: "detached", timeout: 10000 }), b.getByTestId("game").waitFor()]);
-  await b.locator(".bg-overlay").waitFor({ state: "detached", timeout: 10000 });
-  const words = wordsOn(await readBoard(a));
-  const long = words.find(([w]) => w.length >= 6);
-  assert(long, `round ${round}: board has a 6+ letter word (${long?.[0]})`);
-  if (round === 1) {
-    assert(!(await a.getByTestId("bomb").isVisible()), "no bomb before a 6-letter word");
-    await swipe(a, long[1]);
-    await a.getByTestId("bomb").waitFor({ timeout: 3000 });
-    assert(true, `"${long[0]}" earns a bomb`);
-    await a.screenshot({ path: `${SHOTS}/21-bomb-earned.png` });
-    await a.getByTestId("bomb").click({ force: true });
-    await b.locator("[data-blocked]").waitFor({ timeout: 3000 });
-    const blockedAt = Date.now();
-    const tile = Number(await b.locator("[data-blocked]").getAttribute("data-tile"));
-    assert((await b.locator("[data-blocked]").count()) === 1, `rival's tile ${tile} is blocked`);
-    assert((await b.getByTestId("toasts").textContent())!.includes("bombed your board"), "rival is told who bombed them");
-    await b.screenshot({ path: `${SHOTS}/22-bombed.png` });
-    assert(!(await a.getByTestId("bomb").isVisible()), "bomb is used up");
-    const through = wordsOn((await roomState(b)).round!.board).find(([, p]) => p.includes(tile));
-    if (through) {
-      await swipe(b, through[1]);
-      const got = (await roomState(b)).myWords;
-      assert(!got.includes(through[0]), `blocked tile can't be used ("${through[0]}" rejected; accepted: ${got.join(",") || "none"})`);
-    }
-    await b.locator("[data-blocked]").waitFor({ state: "detached", timeout: 7000 });
-    const lasted = Date.now() - blockedAt;
-    assert(lasted > 3500 && lasted < 6500, `block lifts after ~5s (${lasted}ms)`);
-  }
-  for (const [w, p] of words.filter(([w]) => w.length <= 4).slice(0, round === 1 ? 6 : 2)) {
-    if (!(await roomState(a)).myWords.includes(w)) await swipe(a, p);
-  }
-  await Promise.all([a.getByTestId("podium").waitFor({ timeout: 60000 }), b.getByTestId("podium").waitFor({ timeout: 60000 })]);
-}
+const board = async (p: Page) => (await roomState(p)).round!.board;
+const unused = async (p: Page, pred: (w: string) => boolean) => {
+  const mine = (await roomState(p)).myWords;
+  return wordsOn(await board(p)).filter(([w]) => pred(w) && !mine.includes(w));
+};
 
-await playRound(1);
-await b.getByTestId("scoreboard").waitFor();
-assert((await roomState(b)).roundsPlayed === 1, "round 1 counted");
-const shawn = () => a.evaluate(() => window.__boggled.getState().tally[window.__boggled.getState().me.id]);
-const after1 = await shawn();
-await playRound(2);
-await a.waitForFunction(() => window.__boggled.getState().roundsPlayed === 2);
-const after2 = await shawn();
-assert(after2.wins === 2 && after2.points > after1.points, `wins and points accumulate across rounds (${after2.wins} wins, ${after2.points} pts)`);
+// ---- game 1 ----
+await a.getByTestId("start").click();
+await Promise.all([a.locator(".bg-overlay").waitFor({ state: "detached", timeout: 10000 }), b.locator(".bg-overlay").waitFor({ state: "detached", timeout: 10000 })]);
+assert((await b.getByTestId("series-chip").textContent()) === "Game 1 · Bo3", "series chip shows Game 1 of a best of 3");
+
+for (const [, path] of (await unused(a, (w) => w.length <= 4)).slice(0, 3)) await swipe(a, path);
+assert((await b.locator(".bg-chip", { hasText: "Shawn" }).textContent())!.includes("🙈"), "rival's score is hidden before halftime");
+await a.getByTestId("shield").waitFor({ timeout: 2000 });
+assert(true, "3 quick words earn a quiet 🛡️ shield");
+await a.getByTestId("shield").click();
+assert((await a.getByTestId("shield-info").textContent())!.includes("blocks the next"), "tapping the shield explains it");
+await a.screenshot({ path: `${SHOTS}/25-shield-info.png` });
+await a.getByTestId("shield-info").click();
+
+const [w1, p1] = (await unused(a, (w) => w.length >= 6))[0];
+await swipe(a, p1);
+await a.getByTestId("bomb").waitFor({ timeout: 3000 });
+assert(true, `"${w1}" earns a bomb`);
+await a.getByTestId("bomb").click({ force: true });
+await b.locator("[data-blocked]").waitFor({ timeout: 3000 });
+const blockedAt = Date.now();
+const tile = Number(await b.locator("[data-blocked]").getAttribute("data-tile"));
+assert((await b.getByTestId("toasts").textContent())!.includes("bombed your board"), `rival's tile ${tile} is blocked and they're told who did it`);
+await b.screenshot({ path: `${SHOTS}/22-bombed.png` });
+const through = wordsOn(await board(b)).find(([, p]) => p.includes(tile));
+if (through) {
+  await swipe(b, through[1]);
+  assert(!(await roomState(b)).myWords.includes(through[0]), `blocked tile can't be used ("${through[0]}" rejected)`);
+}
+await b.locator("[data-blocked]").waitFor({ state: "detached", timeout: 7000 });
+const lasted = Date.now() - blockedAt;
+assert(lasted > 3500 && lasted < 6500, `block lifts after ~5s (${lasted}ms)`);
+
+const [w2, p2] = (await unused(a, (w) => w.length >= 6))[0];
+await swipe(a, p2);
+await a.getByTestId("flip").waitFor({ timeout: 3000 });
+assert(true, `the next long word ("${w2}") earns a flip`);
+await a.getByTestId("flip").click({ force: true });
+await b.locator(".bg-tile.flipped").first().waitFor({ timeout: 3000 });
+assert((await b.locator(".bg-tile.flipped").count()) === 2, "flip turns 2 of the rival's letters upside down");
+await b.waitForTimeout(500);
+await b.screenshot({ path: `${SHOTS}/26-flipped.png` });
+
+const [wb, pb] = (await unused(b, (w) => w.length >= 6))[0];
+await swipe(b, pb);
+await b.getByTestId("bomb").waitFor({ timeout: 3000 });
+await b.getByTestId("bomb").click({ force: true });
+await a.getByTestId("toasts").getByText("shield blocked").waitFor({ timeout: 3000 });
+assert((await a.locator("[data-blocked]").count()) === 0, `Gf's bomb (from "${wb}") bounces off Shawn's shield`);
+assert(!(await a.getByTestId("shield").isVisible()), "the shield is used up");
+await b.getByTestId("toasts").getByText("blocked your bomb").waitFor({ timeout: 3000 });
+
+await b.waitForFunction(() => window.__boggled.getState().halftime, null, { timeout: 30000 });
+await b.waitForTimeout(300);
+const chip = (await b.locator(".bg-chip", { hasText: "Shawn" }).textContent())!;
+assert(!chip.includes("🙈") && /\d/.test(chip), `scores reveal at halftime (${chip.trim()})`);
+await b.screenshot({ path: `${SHOTS}/27-halftime.png` });
+
+await a.getByTestId("danger-zone").waitFor({ timeout: 30000 });
+const [late, pl] = (await unused(a, () => true))[0];
+await swipe(a, pl);
+assert((await roomState(a)).myLate.includes(late), `"${late}" counts as a danger-zone word`);
+await a.screenshot({ path: `${SHOTS}/28-danger-zone.png` });
+
+await Promise.all([a.getByTestId("podium").waitFor({ timeout: 60000 }), b.getByTestId("podium").waitFor({ timeout: 60000 })]);
+const shawnId = (await roomState(a)).me.id;
+const r1 = (await roomState(b)).outcome!.result.players.find((p) => p.id === shawnId)!;
+assert(r1.dangerBonus >= 1, `danger zone bonus +${r1.dangerBonus} is in the score both phones computed`);
+const log = (await a.getByTestId("battle-log").textContent())!;
+assert((await a.locator(".bg-feed-row").count()) === 3 && log.includes("blocked"), "battle log lists all 3 attacks incl. the shield block");
+assert(await a.getByTestId("bests").isVisible(), "personal best panel shows");
+assert((await b.getByTestId("series").textContent())!.includes("Game 1"), "series tracker shows after game 1");
+await a.getByTestId("battle-log").scrollIntoViewIfNeeded();
+await a.screenshot({ path: `${SHOTS}/29-battle-log.png`, fullPage: true });
+
+// ---- game 2: Shawn wins again → series champion ----
+await a.evaluate(() => window.__boggled.updateSettings({ duration: 15 }));
+await a.getByTestId("play-again").click();
+await a.locator(".bg-overlay").waitFor({ state: "detached", timeout: 10000 });
+assert((await a.getByTestId("series-chip").textContent()) === "Game 2 · Bo3", "next game continues the series");
+for (const [, path] of (await unused(a, (w) => w.length <= 5)).slice(0, 3)) await swipe(a, path);
+await Promise.all([a.getByTestId("podium").waitFor({ timeout: 60000 }), b.getByTestId("podium").waitFor({ timeout: 60000 })]);
+await b.getByTestId("champion").waitFor();
+assert((await b.getByTestId("champion").textContent())!.includes("SHAWN"), "Shawn is crowned series champion on Gf's phone");
+const tally = (await roomState(a)).tally[shawnId];
+assert(tally.series === 1 && tally.wins === 2, "scoreboard counts the series win (🏅) and both round wins");
+assert((await a.getByTestId("play-again").textContent()) === "New series", "host can start a new series");
 const banter = await b.getByTestId("banter").textContent();
 assert(banter!.includes("Shawn"), `leader banter: "${banter}"`);
-assert((await b.locator(".bg-title-badge").textContent()) === "Letter Legend", "leader gets a title badge");
-await b.getByTestId("scoreboard").scrollIntoViewIfNeeded();
-await b.screenshot({ path: `${SHOTS}/23-scoreboard-2-rounds.png` });
+await b.getByTestId("series").scrollIntoViewIfNeeded();
+await b.screenshot({ path: `${SHOTS}/30-series-champion.png` });
+await b.getByTestId("bests").scrollIntoViewIfNeeded();
+await b.screenshot({ path: `${SHOTS}/31-bests-near-miss.png` });
 await a.getByText("Settings").click();
 await a.getByTestId("scoreboard").waitFor();
 await a.screenshot({ path: `${SHOTS}/24-lobby-scoreboard.png`, fullPage: true });

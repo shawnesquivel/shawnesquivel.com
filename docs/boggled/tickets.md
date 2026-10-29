@@ -57,6 +57,13 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-23 | Step-based home: Practice solo / Create a room / Join a room → code → name + emoji. Invite links skip to the name step. Any emoji can be typed in. | done | `Home.tsx` |
 | BOG-25 | "?" button beside the sound toggle opens an animated how-to-play walkthrough (6 slides) | done | `HowToPlay.tsx` |
 | BOG-26 | Solo: "✕ End" button mid-round → confirm sheet (End & see my score / Quit to home / Keep playing); 🏠 Home on solo results | done | `RoomController.endEarly()` (solo only) |
+| BOG-27 | Personal bests (per board+timer, longest word, most words; localStorage) + near misses ("lost by 2", big words nobody found) | done | `bests.ts`, `ResultsExtras.tsx` |
+| BOG-28 | Battle log (kill feed) on results: every attack with time, attacker, target, shield blocks | done | |
+| BOG-29 | 🙃 Flip attack: 2 rival letters turn pink + upside down for 6 s. Long words alternate bomb → flip | done | |
+| BOG-30 | Halftime: rival scores hidden (🙈) until halftime, then revealed with a whistle; in Danger mode whoever's behind gets a free 💣 | done | |
+| BOG-31 | Best-of-3/5 series: Game N chip, pips + match point, series champion banner, 🏅 on scoreboard, ties = sudden death | done | `series.ts` |
+| BOG-32 | 🛡️ Shield: 3 words in 10 s; quiet icon, tap to explain; auto-blocks the next attack | done | |
+| BOG-33 | ☠️ Danger mode setting (replaces Power-ups): attacks, shields, halftime comeback, last 15 s = +10% (ceil of late points) with siren + red glow | done | |
 | BOG-24 | e2e: power-ups (bomb earn/use/block/expiry), reactions, scoreboard across 2 rounds | done | `tests/boggled/e2e/power-ups.mts` |
 
 ## Later
@@ -75,5 +82,5 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-L10 | Daily puzzle: same seeded board for everyone each day + shareable emoji result | later |
 | BOG-L11 | Themed rounds: bonus points for words in a category (food, animals), or a "golden tile" worth ×2 | later |
 | BOG-L12 | Streaks + rivalry stats ("Gf has beaten you 4 times in a row"), persisted per pair | later |
-| BOG-L14 | "Danger mode" host toggle grouping all the fight features (bombs, sabotage, trash talk, final-30s chaos). Ideas: 30s warning, sabotage power-ups, steals, trash talk, comeback mechanics | later |
+| BOG-L14 | More Danger mode: ❄️ freeze, 🫳 steal a word, 🌫️ fog, quick taunts, revenge button, combos | later |
 | BOG-L13 | Sudden-death tiebreaker round (30 s) when the session is tied | later |
