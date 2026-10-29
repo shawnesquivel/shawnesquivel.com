@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { applyRound, bestKey, loadBests, saveBests } from "@/lib/boggled/bests";
 import type { Round, RoomState, RoundOutcome } from "@/lib/boggled/room";
 import { wordPoints } from "@/lib/boggled/scoring";
@@ -181,6 +181,35 @@ export function BestsPanel({ state, round, outcome }: { state: RoomState; round:
             ))}
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+export function MissedWords({ words, total, title }: { words: string[]; total: number; title: string }) {
+  const [open, setOpen] = useState(false);
+  const [overflows, setOverflows] = useState(false);
+  const measure = useCallback((el: HTMLDivElement | null) => {
+    if (!el) return;
+    const ro = new ResizeObserver(() => setOverflows(el.scrollHeight > el.clientHeight + 1));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  if (!words.length) return null;
+  return (
+    <div className="bg-panel p-3" data-testid="missed">
+      <div className="mb-2 text-sm opacity-80">
+        {title} ({total} on the board):
+      </div>
+      <div ref={measure} className={`bg-found ${open ? "" : "bg-clamp-2"}`} data-testid="missed-list">
+        {words.map((w) => (
+          <span key={w}>{w}</span>
+        ))}
+      </div>
+      {(overflows || open) && (
+        <button className="mt-2 w-full text-center text-sm font-semibold text-[var(--gold)]" onClick={() => setOpen(!open)} data-testid="missed-toggle">
+          {open ? "Show less ▴" : `Show all ${words.length} ▾`}
+        </button>
       )}
     </div>
   );

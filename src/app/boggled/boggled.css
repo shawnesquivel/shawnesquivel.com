@@ -222,6 +222,11 @@ body:has(.boggled) {
   font-size: 0.85rem;
   text-transform: uppercase;
 }
+.bg-found.bg-clamp-2 {
+  /* two rows of chips: 2 × (0.85rem text × line-height + 4px padding) + 6px gap */
+  max-height: calc(2 * (0.85rem * 1.5 + 4px) + 6px);
+  overflow: hidden;
+}
 .bg-found span:first-child {
   animation: bg-pop 0.35s ease;
 }

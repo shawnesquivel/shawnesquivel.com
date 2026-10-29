@@ -16,7 +16,7 @@ await page.screenshot({ path: `${SHOTS}/01-home.png` });
 await page.getByTestId("solo").click();
 await page.getByTestId("lobby").waitFor();
 await page.getByText("Start round").waitFor({ timeout: 20000 });
-await page.evaluate(() => window.__boggled.updateSettings({ duration: 20 }));
+await page.evaluate(() => window.__boggled.updateSettings({ duration: 20, danger: false }));
 await page.screenshot({ path: `${SHOTS}/02-solo-lobby.png` });
 await page.getByTestId("start").click();
 
@@ -89,6 +89,18 @@ await page.screenshot({ path: `${SHOTS}/06-solo-reveal.png` });
 await page.getByTestId("podium").waitFor({ timeout: 30000 });
 await page.waitForTimeout(800);
 await page.screenshot({ path: `${SHOTS}/07-solo-results.png`, fullPage: true });
+const missedList = page.getByTestId("missed-list");
+const collapsedH = (await missedList.boundingBox())!.height;
+const chipH = (await missedList.locator("span").first().boundingBox())!.height;
+assert(collapsedH < chipH * 2.6, `missed words start collapsed to 2 rows (${Math.round(collapsedH)}px, chip ${Math.round(chipH)}px)`);
+await page.getByTestId("missed-toggle").click();
+assert((await missedList.boundingBox())!.height > collapsedH * 1.5, "Show all expands the missed words");
+await page.screenshot({ path: `${SHOTS}/07b-missed-expanded.png`, fullPage: true });
+await page.getByTestId("missed-toggle").click();
+const buttons = await page.locator("[data-testid=home-button], [data-testid=settings-button], [data-testid=play-again]").evaluateAll((els) =>
+  els.map((e) => [e.getAttribute("data-testid"), e.getBoundingClientRect().left] as const),
+);
+assert(buttons.sort((x, y) => x[1] - y[1]).at(-1)![0] === "play-again", "Play again is the right-most button");
 const score = Number(await page.getByTestId("score").first().textContent());
 const expected = [...found2].reduce((s, w) => s + w.length - 2, 0);
 assert(score === expected, `final score ${score} equals sum of word points ${expected}`);
@@ -109,7 +121,7 @@ await page.getByTestId("end-early").click();
 await page.getByTestId("end-score").click();
 await page.getByTestId("podium").waitFor({ timeout: 30000 });
 assert(Number(await page.getByTestId("score").first().textContent()) === early[0].length - 2, `"End & see my score" jumps to results with the words so far`);
-await page.getByTestId("home-button").click();
+await page.getByTestId("home-button").evaluate((el: HTMLElement) => el.click());
 await page.getByTestId("menu").waitFor();
 assert(true, "Home button on solo results returns to the menu");
 

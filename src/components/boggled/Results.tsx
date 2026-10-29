@@ -7,7 +7,7 @@ import { seriesStatus } from "@/lib/boggled/series";
 import { sound } from "@/lib/boggled/sound";
 import type { Member } from "@/lib/boggled/transport";
 import { ReactionBar, Scoreboard } from "./Extras";
-import { BattleLog, BestsPanel, SeriesPanel } from "./ResultsExtras";
+import { BattleLog, BestsPanel, MissedWords, SeriesPanel } from "./ResultsExtras";
 
 const VICTORY = ["Transcendent", "Glorious", "Stupendous", "Legendary", "Magnificent", "Flawless", "Spectacular"];
 
@@ -238,18 +238,7 @@ export default function Results({
 
       {stage === "podium" && (
         <>
-          {outcome!.missed.length > 0 && (
-            <div className="bg-panel p-3">
-              <div className="mb-2 text-sm opacity-80">
-                {solo ? "Words you missed" : "Words nobody found"} ({outcome!.allWords} on the board):
-              </div>
-              <div className="bg-found">
-                {outcome!.missed.map((w) => (
-                  <span key={w}>{w}</span>
-                ))}
-              </div>
-            </div>
-          )}
+          <MissedWords words={outcome!.missed} total={outcome!.allWords} title={solo ? "Words you missed" : "Words nobody found"} />
 
           <BestsPanel state={state} round={round} outcome={outcome!} />
           {!solo && <SeriesPanel state={state} round={round} />}
@@ -259,17 +248,17 @@ export default function Results({
 
           {isHost ? (
             <div className="flex gap-3">
-              <button className="bg-btn bg-btn-primary flex-1" onClick={() => controller.startRound()} data-testid="play-again">
-                {round.series ? (seriesOver ? "New series" : "Next game →") : "Play again"}
-              </button>
-              <button className="bg-btn bg-btn-ghost" onClick={() => controller.backToLobby()}>
-                Settings
-              </button>
               {solo && (
-                <button className="bg-btn bg-btn-ghost" onClick={onLeave} aria-label="Home" data-testid="home-button">
+                <button className="bg-btn bg-btn-ghost w-14 px-0" onClick={onLeave} aria-label="Home" data-testid="home-button">
                   🏠
                 </button>
               )}
+              <button className="bg-btn bg-btn-ghost w-14 px-0" onClick={() => controller.backToLobby()} aria-label="Settings" data-testid="settings-button">
+                ⚙️
+              </button>
+              <button className="bg-btn bg-btn-primary flex-1" onClick={() => controller.startRound()} data-testid="play-again">
+                {round.series ? (seriesOver ? "New series" : "Next game →") : "Play again"}
+              </button>
             </div>
           ) : (
             <p className="text-center opacity-80">Waiting for {name(state.hostId)} to start the next round…</p>

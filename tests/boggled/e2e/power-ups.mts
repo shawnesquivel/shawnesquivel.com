@@ -136,7 +136,7 @@ await b.getByTestId("series").scrollIntoViewIfNeeded();
 await b.screenshot({ path: `${SHOTS}/30-series-champion.png` });
 await b.getByTestId("bests").scrollIntoViewIfNeeded();
 await b.screenshot({ path: `${SHOTS}/31-bests-near-miss.png` });
-await a.getByText("Settings").click();
+await a.getByTestId("settings-button").click();
 await a.getByTestId("scoreboard").waitFor();
 await a.screenshot({ path: `${SHOTS}/24-lobby-scoreboard.png`, fullPage: true });
 

@@ -640,7 +640,7 @@ export class RoomController {
       const found = new Set(players.flatMap((p) => p.words));
       const all = [...solve(round.board, dict, minLength).keys()];
       allWords = all.length;
-      missed = all.filter((w) => !found.has(w)).sort((a, b) => b.length - a.length || a.localeCompare(b)).slice(0, 15);
+      missed = all.filter((w) => !found.has(w)).sort((a, b) => b.length - a.length || a.localeCompare(b));
     }
 
     const multiplayer = result.players.length > 1;
