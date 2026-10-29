@@ -74,5 +74,5 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-L10 | Daily puzzle: same seeded board for everyone each day + shareable emoji result | later |
 | BOG-L11 | Themed rounds: bonus points for words in a category (food, animals), or a "golden tile" worth ×2 | later |
 | BOG-L12 | Streaks + rivalry stats ("Gf has beaten you 4 times in a row"), persisted per pair | later |
-| BOG-L14 | "Danger mode" host toggle grouping all the fight features (bombs, sabotage, trash talk, final-30s chaos). Brainstorm in PR #19 discussion | later |
+| BOG-L14 | "Danger mode" host toggle grouping all the fight features (bombs, sabotage, trash talk, final-30s chaos). Ideas: 30s warning, sabotage power-ups, steals, trash talk, comeback mechanics | later |
 | BOG-L13 | Sudden-death tiebreaker round (30 s) when the session is tied | later |
