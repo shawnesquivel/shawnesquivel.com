@@ -552,6 +552,63 @@ body:has(.boggled) {
   animation: bg-slide 0.25s ease;
 }
 
+/* ---------- how to play ---------- */
+
+.bg-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgb(10 4 40 / 0.7);
+  backdrop-filter: blur(4px);
+  animation: bg-fade 0.2s ease;
+}
+@keyframes bg-fade {
+  from { opacity: 0; }
+}
+.bg-modal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(100%, 420px);
+  max-height: 100%;
+  overflow-y: auto;
+  border-radius: 24px;
+  padding: 14px 16px 16px;
+  background: radial-gradient(120% 80% at 50% 0%, var(--bg-2) 0%, var(--bg-1) 70%);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.5);
+  animation: bg-banner 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.bg-mini-board {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+.bg-finger {
+  position: absolute;
+  z-index: 3;
+  font-size: 2.2rem;
+  transform: translate(-30%, -10%);
+  transition: left 0.45s ease, top 0.45s ease, opacity 0.2s;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 4px rgb(0 0 0 / 0.4));
+}
+.bg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.3);
+  transition: width 0.2s, background-color 0.2s;
+}
+.bg-dot.on {
+  width: 22px;
+  background: var(--gold);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .boggled *,
   .boggled *::before {

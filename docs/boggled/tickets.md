@@ -55,6 +55,7 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-21 | Brags (7+ letter word toasts the rivals) and emoji reactions that float up on everyone's screen | done | `Extras.tsx` |
 | BOG-22 | Friendlier settings: board/timer/word-length cards and toggle switches | done | |
 | BOG-23 | Step-based home: Practice solo / Create a room / Join a room → code → name + emoji. Invite links skip to the name step. Any emoji can be typed in. | done | `Home.tsx` |
+| BOG-25 | "?" button beside the sound toggle opens an animated how-to-play walkthrough (6 slides) | done | `HowToPlay.tsx` |
 | BOG-24 | e2e: power-ups (bomb earn/use/block/expiry), reactions, scoreboard across 2 rounds | done | `tests/boggled/e2e/power-ups.mts` |
 
 ## Later
@@ -73,4 +74,5 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-L10 | Daily puzzle: same seeded board for everyone each day + shareable emoji result | later |
 | BOG-L11 | Themed rounds: bonus points for words in a category (food, animals), or a "golden tile" worth ×2 | later |
 | BOG-L12 | Streaks + rivalry stats ("Gf has beaten you 4 times in a row"), persisted per pair | later |
+| BOG-L14 | "Danger mode" host toggle grouping all the fight features (bombs, sabotage, trash talk, final-30s chaos). Brainstorm in PR #19 discussion | later |
 | BOG-L13 | Sudden-death tiebreaker round (30 s) when the session is tied | later |

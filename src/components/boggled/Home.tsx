@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { sound } from "@/lib/boggled/sound";
+import HowToPlay from "./HowToPlay";
 
 export const EMOJIS = [
   "🦊", "🐼", "🐸", "🐙", "🦄", "🐯", "🐵", "🐧", "🦉", "🐢", "🐝", "🐨",
@@ -88,6 +89,7 @@ export default function Home({
   const [step, setStep] = useState<Step>(invite ? "join" : "menu");
   const [code, setCode] = useState(invite);
   const [muted, setMuted] = useState(sound.muted);
+  const [help, setHelp] = useState(false);
   const nameOk = identity.name.trim().length > 0;
   const go = (next: Step) => {
     sound.unlock();
@@ -104,6 +106,10 @@ export default function Home({
         ) : (
           <span />
         )}
+        <div className="flex gap-2">
+        <button className="bg-btn bg-btn-ghost w-11 px-0 py-2 text-base font-bold" aria-label="How to play" onClick={() => setHelp(true)} data-testid="help">
+          ?
+        </button>
         <button
           className="bg-btn bg-btn-ghost px-3 py-2 text-base"
           aria-label={muted ? "Unmute" : "Mute"}
@@ -116,6 +122,7 @@ export default function Home({
         >
           {muted ? "🔇" : "🔊"}
         </button>
+        </div>
       </div>
 
       <div className="text-center">
@@ -221,17 +228,12 @@ export default function Home({
       {dictError && <p className="text-center text-sm text-[var(--bad)]">Couldn&apos;t load the word list. Check your connection and reload.</p>}
 
       {step === "menu" && (
-        <details className="bg-panel mt-auto p-4 text-sm">
-          <summary className="font-semibold">How to play</summary>
-          <ul className="mt-2 list-disc space-y-1 pl-5 opacity-90">
-            <li>Swipe across touching letters (diagonals count) to make words. Or tap letters one by one and tap the last one again.</li>
-            <li>Each tile once per word. 3+ letters.</li>
-            <li>3 letters = 1 pt, 4 = 2, 5 = 3, +1 per extra letter.</li>
-            <li>Words nobody else found score double. Longest word gets +3.</li>
-            <li>Find a 6+ letter word to earn a 💣 bomb: it blocks a random letter on a rival&apos;s board for 5 seconds.</li>
-          </ul>
-        </details>
+        <button className="bg-btn bg-btn-ghost mt-auto" onClick={() => setHelp(true)}>
+          ❓ How to play
+        </button>
       )}
+
+      {help && <HowToPlay onClose={() => setHelp(false)} />}
     </div>
   );
 }
