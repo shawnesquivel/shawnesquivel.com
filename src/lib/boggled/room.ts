@@ -37,7 +37,7 @@ export type RoundOutcome = {
 export type TallyEntry = { points: number; wins: number; name: string; emoji: string };
 export type Tally = Record<string, TallyEntry>;
 
-export type Toast = { id: string; text: string; kind: "bomb" | "brag" | "info"; at: number };
+export type Toast = { id: string; text: string; kind: "earned" | "launch" | "hit" | "brag"; at: number };
 export type Reaction = { id: string; emoji: string; from: string; at: number };
 
 export type RoomState = {
@@ -220,7 +220,7 @@ export class RoomController {
     if (multiplayer && round.settings.powerUps && word.length >= BOMB_WORD_LENGTH) {
       if (this.state.bombs < MAX_BOMBS) {
         this.set({ bombs: this.state.bombs + 1 });
-        this.toast("💣 Bomb earned! Tap it to block a letter on a rival's board", "bomb");
+        this.toast("💣 Bomb earned! Tap it to block a letter on a rival's board", "earned");
       }
     }
     if (multiplayer && word.length >= BRAG_LENGTH) this.send({ type: "brag", roundId: round.id, length: word.length });
@@ -242,7 +242,7 @@ export class RoomController {
     const tile = Math.floor(Math.random() * round.board.tiles.length);
     this.send({ type: "bomb", roundId: round.id, target: target.id, tile });
     this.set({ bombs: bombs - 1 });
-    this.toast(`💥 Bombed ${target.name}!`, "bomb");
+    this.toast(`💥 Bombed ${target.name}!`, "launch");
     return target;
   }
 
@@ -358,12 +358,13 @@ export class RoomController {
         if (msg.roundId !== s.round?.id || msg.target !== s.me.id || s.phase !== "playing") break;
         const tile = msg.tile as number;
         this.set({ blocked: { ...s.blocked, [tile]: Date.now() + BOMB_MS } });
-        this.toast(`💣 ${this.memberName(msg.from)} bombed your board!`, "bomb");
+        this.toast(`💣 ${this.memberName(msg.from)} bombed your board!`, "hit");
         break;
       }
       case "brag":
         if (msg.roundId === s.round?.id && s.phase === "playing") {
-          this.toast(`🔥 ${this.memberName(msg.from)} found a ${msg.length as number}-letter word!`, "brag");
+          const n = msg.length as number;
+          this.toast(`🔥 ${this.memberName(msg.from)} found ${n === 8 || n === 11 || n === 18 ? "an" : "a"} ${n}-letter word!`, "brag");
         }
         break;
       case "react":

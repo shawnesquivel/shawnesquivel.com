@@ -1,39 +1,92 @@
 "use client";
 
-import { useState } from "react";
-import type { RoomController, RoomState, Settings } from "@/lib/boggled/room";
+import { useState, type ReactNode } from "react";
+import { BOMB_WORD_LENGTH, type RoomController, type RoomState, type Settings } from "@/lib/boggled/room";
+import { LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
+import { ReactionBar, Scoreboard } from "./Extras";
 
-function Choice<T extends string | number | boolean>({
+type Option<T> = { value: T; label: string; sub?: string; icon?: ReactNode };
+
+function Cards<T extends string | number>({
   label,
   value,
   options,
   onChange,
   disabled,
+  testId,
 }: {
   label: string;
   value: T;
-  options: { value: T; label: string }[];
+  options: Option<T>[];
   onChange: (v: T) => void;
   disabled: boolean;
+  testId: string;
 }) {
   return (
     <div>
-      <div className="mb-1.5 text-sm opacity-75">{label}</div>
-      <div className="flex flex-wrap gap-2">
+      <div className="mb-1.5 text-sm font-semibold opacity-80">{label}</div>
+      <div className="flex gap-2" data-testid={testId}>
         {options.map((o) => (
           <button
             key={String(o.value)}
-            className="bg-chip"
+            className="bg-opt"
             aria-pressed={o.value === value}
-            disabled={disabled && o.value !== value}
-            style={disabled && o.value !== value ? { opacity: 0.35 } : undefined}
-            onClick={() => !disabled && onChange(o.value)}
+            disabled={disabled}
+            onClick={() => onChange(o.value)}
           >
-            {o.label}
+            {o.icon}
+            <span>{o.label}</span>
+            {o.sub && <span className="bg-opt-sub">{o.sub}</span>}
           </button>
         ))}
       </div>
     </div>
+  );
+}
+
+function Toggle({
+  icon,
+  title,
+  sub,
+  on,
+  onChange,
+  disabled,
+  testId,
+}: {
+  icon: string;
+  title: string;
+  sub: string;
+  on: boolean;
+  onChange: (v: boolean) => void;
+  disabled: boolean;
+  testId: string;
+}) {
+  return (
+    <button
+      className="bg-toggle-row"
+      role="switch"
+      aria-checked={on}
+      disabled={disabled}
+      onClick={() => onChange(!on)}
+      data-testid={testId}
+    >
+      <span className="text-3xl">{icon}</span>
+      <span className="min-w-0 flex-1">
+        <span className="block font-bold">{title}</span>
+        <span className="block text-xs opacity-75">{sub}</span>
+      </span>
+      <span className={`bg-toggle ${on ? "on" : ""}`} />
+    </button>
+  );
+}
+
+function MiniGrid({ size }: { size: number }) {
+  return (
+    <span className="bg-mini-grid" style={{ gridTemplateColumns: `repeat(${size}, 1fr)` }}>
+      {Array.from({ length: size * size }, (_, i) => (
+        <span key={i} />
+      ))}
+    </span>
   );
 }
 
@@ -116,58 +169,77 @@ export default function Lobby({
         )}
       </div>
 
-      <div className="bg-panel flex flex-col gap-4 p-4">
-        <Choice
+      <Scoreboard state={state} />
+
+      <div className="bg-panel flex flex-col gap-4 p-4" data-testid="settings">
+        <div className="flex items-center justify-between">
+          <div className="bg-title text-lg">⚙️ Game settings</div>
+          {!isHost && <span className="text-xs opacity-70">{host?.name ?? "The host"} picks these</span>}
+        </div>
+        <Cards
           label="Board"
+          testId="opt-size"
           value={s.size}
           disabled={!isHost}
           options={[
-            { value: 4, label: "4×4" },
-            { value: 5, label: "5×5" },
+            { value: 4, label: "4×4", sub: "Classic", icon: <MiniGrid size={4} /> },
+            { value: 5, label: "5×5", sub: "Big Boggle", icon: <MiniGrid size={5} /> },
           ]}
           onChange={(size) => set({ size })}
         />
-        <Choice
+        <Cards
           label="Timer"
+          testId="opt-duration"
           value={s.duration}
           disabled={!isHost}
           options={[
-            { value: 60, label: "1 min" },
-            { value: 90, label: "1:30" },
-            { value: 120, label: "2 min" },
-            { value: 180, label: "3 min" },
+            { value: 60, label: "1:00", sub: "⚡ Blitz" },
+            { value: 90, label: "1:30", sub: "Quick" },
+            { value: 120, label: "2:00", sub: "Classic" },
+            { value: 180, label: "3:00", sub: "🐢 Chill" },
           ]}
           onChange={(duration) => set({ duration })}
         />
-        <Choice
+        <Cards
           label="Shortest word"
+          testId="opt-min"
           value={s.minLength}
           disabled={!isHost}
           options={[
-            { value: 3, label: "3 letters" },
-            { value: 4, label: "4 letters" },
+            { value: 3, label: "3+ letters", sub: "Friendly" },
+            { value: 4, label: "4+ letters", sub: "Hardcore" },
           ]}
           onChange={(minLength) => set({ minLength })}
         />
-        <Choice
-          label="Longest word bonus (+3)"
-          value={s.longestBonus}
+        <Toggle
+          icon="📏"
+          title="Longest word bonus"
+          sub={`+${LONGEST_WORD_BONUS} points for the longest word of the round`}
+          on={s.longestBonus}
           disabled={!isHost}
-          options={[
-            { value: true, label: "On" },
-            { value: false, label: "Off" },
-          ]}
           onChange={(longestBonus) => set({ longestBonus })}
+          testId="opt-longest"
+        />
+        <Toggle
+          icon="💣"
+          title="Power-ups"
+          sub={`Find a ${BOMB_WORD_LENGTH}+ letter word to earn a bomb that blocks a rival's letter`}
+          on={s.powerUps}
+          disabled={!isHost}
+          onChange={(powerUps) => set({ powerUps })}
+          testId="opt-powerups"
         />
       </div>
 
-      <div className="mt-auto">
+      {state.roster.length > 1 && <ReactionBar controller={controller} />}
+
+      <div className="sticky bottom-3 mt-auto">
         {isHost ? (
           <button className="bg-btn bg-btn-primary w-full text-xl" disabled={!dictReady} onClick={() => controller.startRound()} data-testid="start">
             {dictReady ? "Start round" : "Loading words…"}
           </button>
         ) : (
-          <p className="text-center text-lg opacity-85">Waiting for {host?.name ?? "the host"} to start…</p>
+          <p className="bg-panel py-3 text-center text-lg">Waiting for {host?.name ?? "the host"} to start…</p>
         )}
       </div>
     </div>

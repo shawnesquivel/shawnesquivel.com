@@ -10,6 +10,7 @@ type Props = {
   board: Board;
   disabled?: boolean;
   hideLetters?: boolean;
+  blocked?: ReadonlySet<number>;
   classify: (word: string) => "good" | "dup" | null;
   onSubmit: (word: string) => SubmitResult;
   onPathChange?: (word: string) => void;
@@ -18,7 +19,9 @@ type Props = {
 // Moves only register inside this fraction of a cell (radius) so diagonal swipes don't clip neighbours.
 const MOVE_HIT_RADIUS = 0.36;
 
-export default function Grid({ board, disabled, hideLetters, classify, onSubmit, onPathChange }: Props) {
+const NONE: ReadonlySet<number> = new Set();
+
+export default function Grid({ board, disabled, hideLetters, blocked = NONE, classify, onSubmit, onPathChange }: Props) {
   const [path, setPathState] = useState<number[]>([]);
   const [flash, setFlash] = useState<{ tiles: number[]; kind: string; key: number } | null>(null);
   const pathRef = useRef<number[]>([]);
@@ -50,6 +53,7 @@ export default function Grid({ board, disabled, hideLetters, classify, onSubmit,
     const col = Math.floor(x / cell);
     const row = Math.floor(y / cell);
     if (col < 0 || row < 0 || col >= size || row >= size) return null;
+    if (blocked.has(row * size + col)) return null;
     if (strict) {
       const dx = x - (col + 0.5) * cell;
       const dy = y - (row + 0.5) * cell;
@@ -61,6 +65,10 @@ export default function Grid({ board, disabled, hideLetters, classify, onSubmit,
   const submit = () => {
     const current = pathRef.current;
     if (!current.length) return;
+    if (current.some((i) => blocked.has(i))) {
+      setPath([]);
+      return;
+    }
     const word = pathWord(board, current);
     const result = onSubmit(word);
     const kind = result === "valid" ? "flash-good" : result === "dup" ? "flash-dup" : result === "invalid" ? "flash-bad" : "";
@@ -91,6 +99,11 @@ export default function Grid({ board, disabled, hideLetters, classify, onSubmit,
 
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
     if (!gesture.current.active || disabled) return;
+    if (pathRef.current.some((i) => blocked.has(i))) {
+      setPath([]);
+      gesture.current.active = false;
+      return;
+    }
     const events = e.nativeEvent.getCoalescedEvents?.() ?? [e.nativeEvent];
     for (const ev of events) {
       const t = hit(ev.clientX, ev.clientY, true);
@@ -133,7 +146,8 @@ export default function Grid({ board, disabled, hideLetters, classify, onSubmit,
     >
       <div className="bg-grid" style={{ gridTemplateColumns: `repeat(${size}, 1fr)`, gridTemplateRows: `repeat(${size}, 1fr)` }}>
         {board.tiles.map((letter, i) => {
-          const selected = path.includes(i);
+          const isBlocked = blocked.has(i);
+          const selected = !isBlocked && path.includes(i);
           const flashing = flash && flash.tiles.includes(i) ? flash.kind : "";
           return (
             <div key={i} style={{ padding: "6%" }}>
@@ -146,10 +160,14 @@ export default function Grid({ board, disabled, hideLetters, classify, onSubmit,
                   selected && live ? live : "",
                   !selected ? flashing : "",
                   hideLetters ? "hidden-letter" : "",
+                  isBlocked ? "blocked" : "",
                 ].join(" ")}
+                data-blocked={isBlocked || undefined}
                 style={{ fontSize }}
               >
-                {letter === "QU" ? (
+                {isBlocked ? (
+                  <span className="bg-bomb-tile">💣</span>
+                ) : letter === "QU" ? (
                   <span>
                     Q<span style={{ fontSize: "0.6em" }}>u</span>
                   </span>

@@ -6,6 +6,7 @@ import type { Dictionary } from "@/lib/boggled/dictionary";
 import type { RoomController, RoomState } from "@/lib/boggled/room";
 import { wordPoints } from "@/lib/boggled/scoring";
 import { sound } from "@/lib/boggled/sound";
+import { Toasts } from "./Extras";
 import Grid, { type SubmitResult } from "./Grid";
 
 type Feedback = { text: string; kind: "good" | "dup" | "bad" | ""; key: number };
@@ -91,6 +92,8 @@ export default function Game({
   const ss = String(remaining % 60).padStart(2, "0");
   const present = new Set(state.roster.map((m) => m.id));
   const waitingFor = round.players.filter((p) => present.has(p.id) && !state.finals[p.id]);
+  const blocked = new Set(Object.keys(state.blocked).map(Number));
+  const canBomb = playing && state.bombs > 0 && controller.bombTargets().length > 0;
 
   return (
     <div className="bg-screen gap-3" data-testid="game">
@@ -136,10 +139,27 @@ export default function Game({
         board={round.board}
         disabled={!playing}
         hideLetters={phase === "countdown"}
+        blocked={blocked}
         classify={classify}
         onSubmit={onSubmit}
         onPathChange={setLive}
       />
+
+      {canBomb && (
+        <button
+          className="bg-btn bg-bomb-btn mx-auto"
+          onClick={() => {
+            sound.unlock();
+            controller.useBomb();
+            navigator.vibrate?.(30);
+          }}
+          data-testid="bomb"
+        >
+          💣 Bomb a rival{state.bombs > 1 ? ` ×${state.bombs}` : ""}
+        </button>
+      )}
+
+      <Toasts state={state} controller={controller} />
 
       <div className="bg-found min-h-0 flex-1 overflow-y-auto pt-2" data-testid="found">
         {state.myWords.map((w) => (

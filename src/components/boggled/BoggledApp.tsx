@@ -6,11 +6,12 @@ import { loadDictionary, type Dictionary } from "@/lib/boggled/dictionary";
 import { RoomController } from "@/lib/boggled/room";
 import { randomId } from "@/lib/boggled/rng";
 import { sound } from "@/lib/boggled/sound";
+import { FloatingReactions, useRoomEffects } from "./Extras";
 import Game from "./Game";
+import Home, { EMOJIS, normalizeCode, type Identity } from "./Home";
 import Lobby from "./Lobby";
 import Results from "./Results";
 
-const EMOJIS = ["🦊", "🐼", "🐸", "🐙", "🦄", "🐯", "🐵", "🐧", "🦉", "🐢", "🐝", "🐨", "🐶", "🐱", "🦖", "🍄"];
 const CODE_ALPHABET = "BCDFGHJKLMNPQRSTVWXZ";
 
 function newRoomCode() {
@@ -18,11 +19,6 @@ function newRoomCode() {
   return Array.from(bytes, (b) => CODE_ALPHABET[b % CODE_ALPHABET.length]).join("");
 }
 
-function normalizeCode(code: string) {
-  return code.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4);
-}
-
-type Identity = { id: string; name: string; emoji: string };
 
 function loadIdentity(): Identity {
   let id = sessionStorage.getItem("boggled:id");
@@ -72,31 +68,37 @@ function RoomView({
     if (rosterSize > prevRoster) sound.join();
   }
   useWakeLock(true);
+  useRoomEffects(state);
 
+  let screen;
   if (state.phase === "lobby" || !state.round) {
-    return <Lobby state={state} controller={controller} dictReady={!!dict} onLeave={onLeave} />;
+    screen = <Lobby state={state} controller={controller} dictReady={!!dict} onLeave={onLeave} />;
+  } else if (state.phase === "results") {
+    screen = <Results key={state.round.id} state={state} controller={controller} />;
+  } else {
+    screen = <Game state={state} controller={controller} dict={dict} />;
   }
-  if (state.phase === "results") return <Results key={state.round.id} state={state} controller={controller} />;
-  return <Game state={state} controller={controller} dict={dict} />;
+  return (
+    <>
+      {screen}
+      <FloatingReactions state={state} />
+    </>
+  );
 }
 
 export default function BoggledApp() {
   const [identity, setIdentity] = useState<Identity | null>(null);
   const [dict, setDict] = useState<Dictionary | null>(null);
   const [dictError, setDictError] = useState(false);
-  const [joinCode, setJoinCode] = useState("");
   const [invite, setInvite] = useState("");
   const [controller, setController] = useState<RoomController | null>(null);
-  const [muted, setMuted] = useState(false);
 
   useEffect(() => {
     // Client-only state (storage, URL) has to load after hydration.
     /* eslint-disable react-hooks/set-state-in-effect */
     setIdentity(loadIdentity());
-    setMuted(sound.muted);
     const fromUrl = normalizeCode(new URLSearchParams(location.search).get("room") ?? "");
     setInvite(fromUrl.length === 4 ? fromUrl : "");
-    setJoinCode(fromUrl);
     /* eslint-enable react-hooks/set-state-in-effect */
     void syncClock();
     loadDictionary().then(setDict, () => setDictError(true));
@@ -135,7 +137,6 @@ export default function BoggledApp() {
   const leave = () => {
     controller?.stop();
     setController(null);
-    setJoinCode("");
     setInvite("");
     history.replaceState(null, "", "/boggled");
   };
@@ -144,112 +145,15 @@ export default function BoggledApp() {
 
   if (controller) return <RoomView controller={controller} dict={dict} onLeave={leave} />;
 
-  const code = normalizeCode(joinCode);
-  const nameOk = identity.name.trim().length > 0;
-
   return (
-    <div className="bg-screen gap-5" data-testid="home">
-      <div className="flex justify-end">
-        <button
-          className="bg-btn bg-btn-ghost px-3 py-2 text-base"
-          aria-label={muted ? "Unmute" : "Mute"}
-          onClick={() => {
-            sound.setMuted(!muted);
-            setMuted(!muted);
-            sound.unlock();
-            if (muted) sound.join();
-          }}
-        >
-          {muted ? "🔇" : "🔊"}
-        </button>
-      </div>
-
-      <div className="text-center">
-        <div className="mb-2 flex justify-center gap-1.5">
-          {"BOGGLED".split("").map((l, i) => (
-            <span
-              key={i}
-              className="bg-tile bg-title flex h-11 w-11 text-2xl"
-              style={{ transform: `rotate(${(i % 2 ? 1 : -1) * (3 + (i % 3))}deg)` }}
-            >
-              {l}
-            </span>
-          ))}
-        </div>
-        <div className="bg-title text-xl opacity-90">online</div>
-      </div>
-
-      <div className="bg-panel flex flex-col gap-4 p-4">
-        <label className="flex flex-col gap-1.5">
-          <span className="text-sm opacity-75">Your name</span>
-          <input
-            className="rounded-xl bg-white px-4 py-3 text-lg font-semibold text-[#2a1670] outline-none"
-            maxLength={16}
-            placeholder="e.g. Mama"
-            value={identity.name}
-            onChange={(e) => updateIdentity({ name: e.target.value })}
-            data-testid="name"
-          />
-        </label>
-        <div>
-          <div className="mb-1.5 text-sm opacity-75">Pick a buddy</div>
-          <div className="grid grid-cols-8 gap-1.5">
-            {EMOJIS.map((e) => (
-              <button
-                key={e}
-                className="rounded-xl py-1 text-2xl"
-                style={{ background: e === identity.emoji ? "rgb(255 255 255 / 0.9)" : "rgb(255 255 255 / 0.1)" }}
-                onClick={() => updateIdentity({ emoji: e })}
-                aria-label={`Avatar ${e}`}
-              >
-                {e}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        {invite ? (
-          <button className="bg-btn bg-btn-primary text-xl" disabled={!nameOk} onClick={() => enter(invite)} data-testid="join-invite">
-            Join room {invite}
-          </button>
-        ) : (
-          <button className="bg-btn bg-btn-primary text-xl" disabled={!nameOk} onClick={() => enter(newRoomCode())} data-testid="create">
-            Create a room
-          </button>
-        )}
-        <div className="flex gap-2">
-          <input
-            className="w-0 flex-1 rounded-2xl bg-white/15 px-4 py-3 text-center text-xl font-bold tracking-[0.3em] uppercase outline-none placeholder:tracking-normal placeholder:text-white/50"
-            placeholder="Room code"
-            value={joinCode}
-            maxLength={4}
-            autoCapitalize="characters"
-            autoCorrect="off"
-            onChange={(e) => setJoinCode(normalizeCode(e.target.value))}
-            data-testid="code"
-          />
-          <button className="bg-btn" disabled={!nameOk || code.length !== 4} onClick={() => enter(code)} data-testid="join">
-            Join
-          </button>
-        </div>
-        <button className="bg-btn bg-btn-ghost" disabled={!nameOk} onClick={() => enter(null)} data-testid="solo">
-          Practice solo
-        </button>
-        {!nameOk && <p className="text-center text-sm opacity-75">Enter your name to play</p>}
-        {dictError && <p className="text-center text-sm text-[var(--bad)]">Couldn&apos;t load the word list. Check your connection and reload.</p>}
-      </div>
-
-      <details className="bg-panel mt-auto p-4 text-sm">
-        <summary className="font-semibold">How to play</summary>
-        <ul className="mt-2 list-disc space-y-1 pl-5 opacity-90">
-          <li>Swipe across touching letters (diagonals count) to make words. Or tap letters one by one and tap the last one again.</li>
-          <li>Each tile once per word. 3+ letters.</li>
-          <li>3 letters = 1 pt, 4 = 2, 5 = 3, +1 per extra letter.</li>
-          <li>Words nobody else found score double. Longest word gets +3.</li>
-        </ul>
-      </details>
-    </div>
+    <Home
+      key={invite}
+      identity={identity}
+      onIdentity={updateIdentity}
+      invite={invite}
+      onEnter={enter}
+      dictError={dictError}
+      newRoomCode={newRoomCode}
+    />
   );
 }

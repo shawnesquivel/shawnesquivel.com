@@ -5,6 +5,7 @@ import type { RoomController, RoomState } from "@/lib/boggled/room";
 import { compareWords, LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
 import { sound } from "@/lib/boggled/sound";
 import type { Member } from "@/lib/boggled/transport";
+import { ReactionBar, Scoreboard } from "./Extras";
 
 const VICTORY = ["Transcendent", "Glorious", "Stupendous", "Legendary", "Magnificent", "Flawless", "Spectacular"];
 
@@ -114,7 +115,6 @@ export default function Results({ state, controller }: { state: RoomState; contr
   const adjective = VICTORY[(outcome!.roundId.charCodeAt(0) + outcome!.roundId.charCodeAt(1)) % VICTORY.length];
   const name = (id: string) => (id === state.me.id ? "You" : members.get(id)?.name ?? "?");
   const isHost = state.hostId === state.me.id;
-  const tallyRounds = Object.values(state.tally).reduce((sum, t) => sum + t.wins, 0) >= 2;
 
   return (
     <div className="bg-screen gap-4" data-testid="results">
@@ -226,23 +226,8 @@ export default function Results({ state, controller }: { state: RoomState; contr
             </div>
           )}
 
-          {!solo && tallyRounds && (
-            <div className="bg-panel p-3 text-sm">
-              <div className="mb-1 opacity-80">Session</div>
-              {Object.entries(state.tally)
-                .sort((a, b) => b[1].wins - a[1].wins || b[1].points - a[1].points)
-                .map(([id, t]) => (
-                  <div key={id} className="flex justify-between">
-                    <span>
-                      {members.get(id)?.emoji} {name(id)}
-                    </span>
-                    <span>
-                      {t.wins} 🏆 · {t.points} pts
-                    </span>
-                  </div>
-                ))}
-            </div>
-          )}
+          {!solo && <Scoreboard state={state} />}
+          {!solo && <ReactionBar controller={controller} />}
 
           {isHost ? (
             <div className="flex gap-3">

@@ -16,6 +16,7 @@ const state = roomState;
 
 console.log("Two-player room");
 await a.goto(`${BASE}/boggled`);
+await a.getByTestId("menu-create").click();
 await setName(a, "Shawn");
 await a.getByTestId("create").click();
 const code = (await a.getByTestId("room-code").textContent())!.trim();
@@ -23,9 +24,15 @@ assert(/^[A-Z]{4}$/.test(code), `room created with code ${code}`);
 assert(a.url().includes(`room=${code}`), "invite link is in the URL");
 assert((await state(a)).status === "connected" || (await a.waitForFunction(() => window.__boggled.getState().status === "connected")), "host connected to Supabase Realtime");
 
-await b.goto(`${BASE}/boggled?room=${code}`);
+await b.goto(`${BASE}/boggled`);
+await b.getByTestId("menu-join").click();
+await b.getByTestId("code").fill(code.toLowerCase());
+await b.getByTestId("code-next").click();
 await setName(b, "Gf");
-await b.getByTestId("join-invite").click();
+await b.getByTestId("emoji-input").fill("🧋");
+assert((await b.getByLabel("Selected avatar").textContent()) === "🧋", "any typed emoji can be the avatar");
+await b.screenshot({ path: `${SHOTS}/09-join-name-step.png` });
+await b.getByTestId("join").click();
 await a.locator("[data-testid=roster] li").nth(1).waitFor({ timeout: 15000 });
 await b.locator("[data-testid=roster] li").nth(1).waitFor({ timeout: 15000 });
 assert(true, "both players see each other in the roster");
@@ -98,10 +105,17 @@ assert(totalB === expectB, `guest score ${totalB} = ${expectB}`);
 const shownA = await a.locator(`[data-testid=col-${sa.me.id}] [data-testid=score]`).textContent();
 assert(Number(shownA) === totalA, "animated score lands on the final total");
 
+await a.getByTestId("scoreboard").waitFor();
+const [ta, tb] = [(await state(a)).tally, (await state(b)).tally];
+assert(JSON.stringify(ta) === JSON.stringify(tb) && Object.keys(ta).length === 2, "session scoreboard matches on both phones");
+assert((await a.getByTestId("banter").textContent())!.length > 5, `leader banter shows: "${await a.getByTestId("banter").textContent()}"`);
+await a.getByTestId("scoreboard").scrollIntoViewIfNeeded();
+await a.screenshot({ path: `${SHOTS}/17-scoreboard.png` });
+
 // Next round: the guest reloads (phone woke up / refreshed) and must rejoin the same room.
 await b.reload();
 await setName(b, "Gf");
-await b.getByTestId("join-invite").click();
+await b.getByTestId("join").click();
 await a.locator("[data-testid=col-" + sa.me.id + "]").waitFor();
 await a.waitForFunction(() => window.__boggled.getState().roster.length === 2, null, { timeout: 15000 });
 await a.getByTestId("play-again").click();

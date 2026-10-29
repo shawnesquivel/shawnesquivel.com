@@ -1,6 +1,6 @@
 import { mkdirSync } from "node:fs";
 import { chromium, devices } from "playwright";
-import { assert, BASE, readBoard, setName, SHOTS, swipe, wordsOn } from "./helpers.mjs";
+import { assert, BASE, readBoard, SHOTS, swipe, wordsOn } from "./helpers.mjs";
 
 mkdirSync(SHOTS, { recursive: true });
 const browser = await chromium.launch();
@@ -10,7 +10,8 @@ page.on("pageerror", (e) => console.error("pageerror:", e.message));
 
 console.log("Solo round on iPhone 13");
 await page.goto(`${BASE}/boggled`);
-await setName(page, "Shawn");
+await page.getByTestId("menu").waitFor();
+await page.waitForTimeout(400);
 await page.screenshot({ path: `${SHOTS}/01-home.png` });
 await page.getByTestId("solo").click();
 await page.getByTestId("lobby").waitFor();

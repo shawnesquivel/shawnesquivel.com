@@ -117,6 +117,50 @@ class SoundEngine {
     }
   }
 
+  private noise(start: number, dur: number, vol: number, from: number, to: number) {
+    if (!this.ctx || !this.master || this.muted) return;
+    const ctx = this.ctx;
+    const t = ctx.currentTime + start;
+    const buffer = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * dur), ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(from, t);
+    filter.frequency.exponentialRampToValueAtTime(to, t + dur);
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(vol, t);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.master);
+    src.start(t);
+  }
+
+  bombEarned() {
+    [0, 7, 12].forEach((s, i) => this.tone(this.note(s, 440), i * 0.07, 0.16, { wave: "square", vol: 0.09 }));
+  }
+
+  bombLaunch() {
+    this.tone(300, 0, 0.35, { wave: "sawtooth", vol: 0.1, slideTo: 1400 });
+  }
+
+  bombHit() {
+    this.tone(120, 0, 0.5, { wave: "sine", vol: 0.5, slideTo: 40 });
+    this.noise(0, 0.7, 0.6, 3000, 120);
+  }
+
+  brag() {
+    this.tone(this.note(0, 392), 0, 0.1, { wave: "triangle", vol: 0.15 });
+    this.tone(this.note(5, 392), 0.09, 0.2, { wave: "triangle", vol: 0.15 });
+  }
+
+  pop() {
+    this.tone(500, 0, 0.08, { wave: "sine", vol: 0.2, slideTo: 1100 });
+  }
+
   join() {
     this.tone(660, 0, 0.1, { wave: "sine", vol: 0.2 });
     this.tone(990, 0.08, 0.14, { wave: "sine", vol: 0.2 });
