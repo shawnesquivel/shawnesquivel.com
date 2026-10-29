@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { serverNow } from "@/lib/boggled/clock";
 import type { Dictionary } from "@/lib/boggled/dictionary";
-import type { RoomController, RoomState } from "@/lib/boggled/room";
-import { wordPoints } from "@/lib/boggled/scoring";
+import { SHIELD_COMBO, SHIELD_WINDOW_MS, type RoomController, type RoomState, type Weapon } from "@/lib/boggled/room";
+import { DANGER_BOOST, wordPoints } from "@/lib/boggled/scoring";
 import { sound } from "@/lib/boggled/sound";
 import { Toasts } from "./Extras";
 import Grid, { type SubmitResult } from "./Grid";
@@ -27,6 +27,7 @@ export default function Game({
   const [live, setLive] = useState("");
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [confirmEnd, setConfirmEnd] = useState(false);
+  const [shieldInfo, setShieldInfo] = useState(false);
   const solo = round.players.length === 1;
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSecond = useRef<number | null>(null);
@@ -86,7 +87,7 @@ export default function Game({
     }
     controller.addWord(word);
     sound.valid(word.length);
-    showFeedback(`${word.toUpperCase()} +${wordPoints(word)}`, "good");
+    showFeedback(`${word.toUpperCase()} +${wordPoints(word)}${state.dangerZone ? " ☠️" : ""}`, "good");
     return "valid";
   };
 
@@ -97,13 +98,25 @@ export default function Game({
   const present = new Set(state.roster.map((m) => m.id));
   const waitingFor = round.players.filter((p) => present.has(p.id) && !state.finals[p.id]);
   const blocked = new Set(Object.keys(state.blocked).map(Number));
-  const canBomb = playing && state.bombs > 0 && controller.bombTargets().length > 0;
+  const flipped = new Set(Object.keys(state.flipped).map(Number));
+  const canAttack = playing && controller.attackTargets().length > 0;
+  const weapons: { weapon: Weapon; label: string }[] = [
+    { weapon: "bomb", label: "💣 Bomb" },
+    { weapon: "flip", label: "🙃 Flip" },
+  ];
+  const fire = (weapon: Weapon) => {
+    sound.unlock();
+    controller.attack(weapon);
+    navigator.vibrate?.(30);
+  };
+  const series = round.series;
+  const danger = state.dangerZone && phase === "playing";
 
   return (
-    <div className="bg-screen gap-3" data-testid="game">
+    <div className={`bg-screen gap-3 ${danger ? "bg-danger" : ""}`} data-testid="game">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <div className={`bg-timer text-xl ${phase === "playing" && remaining <= 10 ? "urgent" : ""}`} data-testid="timer">
+          <div className={`bg-timer text-xl ${phase === "playing" && (remaining <= 10 || danger) ? "urgent" : ""}`} data-testid="timer">
             ⏱ {mm}:{ss}
           </div>
           {solo && phase !== "collecting" && (
@@ -111,7 +124,18 @@ export default function Game({
               ✕ End
             </button>
           )}
+          {series && (
+            <span className="bg-chip text-xs" data-testid="series-chip">
+              Game {series.game} · Bo{series.length}
+            </span>
+          )}
         </div>
+        <div className="flex items-center gap-2">
+        {state.powers.shield > 0 && (
+          <button className="bg-shield-chip" aria-label="Shield" onClick={() => setShieldInfo((v) => !v)} data-testid="shield">
+            🛡️
+          </button>
+        )}
         <div className="text-right">
           <div className="text-2xl font-bold leading-none" data-testid="my-score">
             {myPoints}
@@ -121,7 +145,15 @@ export default function Game({
             {state.myWords.length} {state.myWords.length === 1 ? "word" : "words"}
           </div>
         </div>
+        </div>
       </div>
+
+      {shieldInfo && state.powers.shield > 0 && (
+        <button className="bg-shield-info bg-step px-3 py-2 text-left text-sm" onClick={() => setShieldInfo(false)} data-testid="shield-info">
+          <b>🛡️ Shield ready.</b> It automatically blocks the next bomb or flip thrown at you. You earn one by finding {SHIELD_COMBO} words
+          within {SHIELD_WINDOW_MS / 1000} seconds. <span className="opacity-60">Tap to close</span>
+        </button>
+      )}
 
       {round.players.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-1">
@@ -133,7 +165,17 @@ export default function Game({
             >
               <span className="text-lg leading-none">{p.emoji}</span>
               <span className="max-w-24 truncate">{p.id === state.me.id ? "You" : p.name}</span>
-              <span className="rounded-full bg-black/25 px-2 tabular-nums">{state.progress[p.id] ?? 0}</span>
+              {p.id === state.me.id ? (
+                <span className="rounded-full bg-black/25 px-2 tabular-nums">{myPoints}</span>
+              ) : state.halftime ? (
+                <span key="pts" className="bg-banner rounded-full bg-black/25 px-2 tabular-nums" title="Points so far (before ×2)">
+                  {state.livePoints[p.id] ?? 0}
+                </span>
+              ) : (
+                <span className="rounded-full bg-black/25 px-2" title="Scores reveal at halftime">
+                  🙈
+                </span>
+              )}
               {!present.has(p.id) && <span title="Disconnected">📵</span>}
             </div>
           ))}
@@ -153,31 +195,38 @@ export default function Game({
         disabled={!playing}
         hideLetters={phase === "countdown"}
         blocked={blocked}
+        flipped={flipped}
         classify={classify}
         onSubmit={onSubmit}
         onPathChange={setLive}
       />
 
-      {canBomb && (
-        <button
-          className="bg-btn bg-bomb-btn mx-auto"
-          onClick={() => {
-            sound.unlock();
-            controller.useBomb();
-            navigator.vibrate?.(30);
-          }}
-          data-testid="bomb"
-        >
-          💣 Bomb a rival{state.bombs > 1 ? ` ×${state.bombs}` : ""}
-        </button>
+      {canAttack && (state.powers.bomb > 0 || state.powers.flip > 0) && (
+        <div className="flex justify-center gap-2">
+          {weapons
+            .filter((w) => state.powers[w.weapon] > 0)
+            .map((w) => (
+              <button key={w.weapon} className={`bg-btn bg-attack-btn ${w.weapon}`} onClick={() => fire(w.weapon)} data-testid={w.weapon}>
+                {w.label}
+                {state.powers[w.weapon] > 1 ? ` ×${state.powers[w.weapon]}` : ""}
+              </button>
+            ))}
+        </div>
       )}
 
-      <Toasts state={state} controller={controller} />
+      {danger && (
+        <div className="-mb-2 text-center text-xs font-bold tracking-wide text-[#ff9fb2]" data-testid="danger-zone">
+          ☠️ DANGER ZONE · +{Math.round(DANGER_BOOST * 100)}% ON EVERY WORD
+        </div>
+      )}
 
-      <div className="bg-found min-h-0 flex-1 overflow-y-auto pt-2" data-testid="found">
-        {state.myWords.map((w) => (
-          <span key={w}>{w}</span>
-        ))}
+      <div className="relative min-h-0 flex-1">
+        <div className="bg-found absolute inset-0 overflow-y-auto pt-2" data-testid="found">
+          {state.myWords.map((w) => (
+            <span key={w}>{w}</span>
+          ))}
+        </div>
+        <Toasts state={state} controller={controller} />
       </div>
 
       {!participant && phase !== "collecting" && (

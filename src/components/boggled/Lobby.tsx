@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { BOMB_WORD_LENGTH, type RoomController, type RoomState, type Settings } from "@/lib/boggled/room";
-import { LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
+import { BOMB_WORD_LENGTH, DANGER_ZONE_MS, type RoomController, type RoomState, type Settings } from "@/lib/boggled/room";
+import { DANGER_BOOST, LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
 import { ReactionBar, Scoreboard } from "./Extras";
 
 type Option<T> = { value: T; label: string; sub?: string; icon?: ReactNode };
@@ -220,14 +220,28 @@ export default function Lobby({
           onChange={(longestBonus) => set({ longestBonus })}
           testId="opt-longest"
         />
-        <Toggle
-          icon="💣"
-          title="Power-ups"
-          sub={`Find a ${BOMB_WORD_LENGTH}+ letter word to earn a bomb that blocks a rival's letter`}
-          on={s.powerUps}
+        {state.room && (
+        <Cards
+          label="Match"
+          testId="opt-series"
+          value={s.series}
           disabled={!isHost}
-          onChange={(powerUps) => set({ powerUps })}
-          testId="opt-powerups"
+          options={[
+            { value: 0, label: "Single", sub: "Round by round" },
+            { value: 3, label: "Best of 3", sub: "First to 2" },
+            { value: 5, label: "Best of 5", sub: "First to 3" },
+          ]}
+          onChange={(series) => set({ series })}
+        />
+        )}
+        <Toggle
+          icon="☠️"
+          title="Danger mode"
+          sub={`Attacks (${BOMB_WORD_LENGTH}+ letters earns 💣 / 🙃), 🛡️ shields, a free 💣 if you're behind at halftime, and +${Math.round(DANGER_BOOST * 100)}% on words in the last ${DANGER_ZONE_MS / 1000}s`}
+          on={s.danger}
+          disabled={!isHost}
+          onChange={(danger) => set({ danger })}
+          testId="opt-danger"
         />
       </div>
 

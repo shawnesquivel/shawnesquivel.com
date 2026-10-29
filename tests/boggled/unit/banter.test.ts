@@ -3,8 +3,8 @@ import { leaderLine, leaderTitle, standings } from "@/lib/boggled/banter";
 
 const t = (aWins: number, bWins: number, aPts = 10, bPts = 5) =>
   standings({
-    a: { name: "Mama", emoji: "🦊", wins: aWins, points: aPts },
-    b: { name: "Toy", emoji: "🐼", wins: bWins, points: bPts },
+    a: { name: "Mama", emoji: "🦊", wins: aWins, points: aPts, series: 0 },
+    b: { name: "Toy", emoji: "🐼", wins: bWins, points: bPts, series: 0 },
   });
 
 describe("banter", () => {

@@ -21,6 +21,16 @@ export function useRoomEffects(state: RoomState) {
         sound.bombHit();
         navigator.vibrate?.([60, 40, 120]);
       }
+      if (t.kind === "flip-hit") {
+        sound.flipHit();
+        navigator.vibrate?.([40, 30, 40]);
+      }
+      if (t.kind === "shield" || t.kind === "blocked") sound.shieldBlock();
+      if (t.kind === "halftime") sound.whistle();
+      if (t.kind === "danger") {
+        sound.siren();
+        navigator.vibrate?.([100, 60, 100]);
+      }
     }
     for (const r of state.reactions) {
       if (seen.current.has(r.id)) continue;
@@ -118,7 +128,10 @@ export function Scoreboard({ state }: { state: RoomState }) {
                 {top && <span className="bg-title-badge">{leaderTitle(t.wins)}</span>}
               </span>
               <span className="text-right tabular-nums">
-                <span className="block text-lg font-bold">{t.wins} 🏆</span>
+                <span className="block text-lg font-bold">
+                  {t.series > 0 && <span className="mr-1.5 text-sm">{t.series} 🏅</span>}
+                  {t.wins} 🏆
+                </span>
                 <span className="block text-xs opacity-75">{t.points} pts</span>
               </span>
             </li>

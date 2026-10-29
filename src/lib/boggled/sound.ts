@@ -157,6 +157,33 @@ class SoundEngine {
     this.tone(this.note(5, 392), 0.09, 0.2, { wave: "triangle", vol: 0.15 });
   }
 
+  flipHit() {
+    this.tone(900, 0, 0.25, { wave: "triangle", vol: 0.18, slideTo: 200 });
+    this.tone(200, 0.2, 0.25, { wave: "triangle", vol: 0.18, slideTo: 900 });
+  }
+
+  shieldBlock() {
+    this.tone(1760, 0, 0.35, { wave: "square", vol: 0.08 });
+    this.tone(2637, 0.02, 0.4, { wave: "sine", vol: 0.15 });
+  }
+
+  whistle() {
+    this.tone(2100, 0, 0.18, { wave: "sine", vol: 0.15 });
+    this.tone(2100, 0.24, 0.45, { wave: "sine", vol: 0.15, slideTo: 2300 });
+  }
+
+  siren() {
+    for (let i = 0; i < 3; i++) {
+      this.tone(600, i * 0.5, 0.25, { wave: "sawtooth", vol: 0.07, slideTo: 900 });
+      this.tone(900, i * 0.5 + 0.25, 0.25, { wave: "sawtooth", vol: 0.07, slideTo: 600 });
+    }
+  }
+
+  champion() {
+    this.fanfare();
+    [0, 4, 7, 12, 16, 19, 24].forEach((s, i) => this.tone(this.note(s, 523.25), 1.5 + i * 0.08, 0.5, { wave: "triangle", vol: 0.14 }));
+  }
+
   pop() {
     this.tone(500, 0, 0.08, { wave: "sine", vol: 0.2, slideTo: 1100 });
   }
