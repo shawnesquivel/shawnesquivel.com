@@ -13,7 +13,7 @@ Taken from the Boggle Party help center (Netflix, 2026):
 - A word chains adjacent tiles (8 directions), each tile used at most once per word.
 - Minimum length 3 (host can set 4).
 - Points: 3 letters = 1, 4 = 2, 5 = 3, +1 per extra letter (`Qu` counts as two letters).
-- **Unique word**: in multiplayer, a word nobody else found scores **double**.
+- **Unique word**: with 3 or more players, a word nobody else found scores **double**. Head-to-head (2 players) every word scores normally, since ×2 would just double the gap.
 - No penalty for invalid words, no speed bonus.
 - **Longest word bonus** (not in Netflix rules, requested by Shawn): +3 to the player(s) with the strictly longest valid word. Host toggle, on by default.
 - Timer: 60 / 90 / 120 / 180 s.
@@ -128,7 +128,7 @@ Docker-in-VM gotcha: if containers can't reach each other (Supabase fails with `
 
 - Engine: 21 unit tests (incl. banter, series, bests, danger bonus).
 - Solo on emulated iPhone 13: mouse swipes, real touch-event swipes (no page scroll), tap mode, `Qu` tile, duplicate/invalid feedback, final score.
-- Two players (iPhone 13 + Pixel 7) over local Supabase Realtime: create/join by code and invite link, roster, host settings sync, identical board and end time, live opponent word counts, identical results on both phones, unique ×2 + longest bonus math, guest reload → rejoins as same player.
+- Two players (iPhone 13 + Pixel 7) over local Supabase Realtime: create/join by code and invite link, roster, host settings sync, identical board and end time, live opponent word counts, identical results on both phones, head-to-head scoring (no ×2) + longest bonus math, guest reload → rejoins as same player.
 - Resilience: guest's messages dropped over the buzzer → host shows results, then recovers the guest's words; host leaves → guest promoted.
 - v2 (2 emulated phones, local Supabase): new home flow (menu → code → name, invite link → name, typed emoji avatar), reactions arrive on the other phone, 6+ letter word earns a bomb, rival's tile blocked ~5 s and unusable, scoreboard tallies match on both phones and accumulate over 2 rounds, banter + title badge.
 - v3 (2 emulated phones): shield earned/explained/blocks a bomb, bomb + flip land on the rival, halftime reveal, danger-zone bonus identical on both phones, battle log, best-of-3 → champion + 🏅, personal-best panel, solo end-early.

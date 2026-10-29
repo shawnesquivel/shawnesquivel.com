@@ -53,9 +53,9 @@ describe("danger zone bonus", () => {
       { longestWordBonus: false, dangerBoost: 0.1 },
     );
     const a = r.players.find((p) => p.id === "a")!;
-    // late points: stone 3×2 + cat 1×2 = 8 → ceil(0.8) = 1
+    // late points: stone 3 + cat 1 = 4 → ceil(0.4) = 1 (no ×2 head-to-head)
     expect(a.dangerBonus).toBe(1);
-    expect(a.total).toBe(6 + 2 + 1 + 1);
+    expect(a.total).toBe(3 + 1 + 1 + 1);
     expect(scoreRound([{ id: "a", words: ["stone"], late: ["stone"] }], { longestWordBonus: false }).players[0].dangerBonus).toBe(0);
   });
 });
