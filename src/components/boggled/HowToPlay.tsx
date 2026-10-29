@@ -90,7 +90,7 @@ const SLIDES: Slide[] = [
     title: "Longer words, more points",
     body: (
       <>
-        Every extra letter is +1. Prefer tapping? Tap letters one at a time, then tap the last one again to submit. <b>Qu</b> counts as 2 letters.
+        Every extra letter is +1. Fill the ⚡ combo ring (4 words in 4 s) for bonus time in solo. Prefer tapping? Tap letters one at a time, then tap the last one again to submit. <b>Qu</b> counts as 2 letters.
       </>
     ),
     loop: 7,
@@ -150,7 +150,7 @@ const SLIDES: Slide[] = [
   },
   {
     title: "☠️ Danger mode",
-    body: `${BOMB_WORD_LENGTH}+ letter words earn a 💣 bomb (covers a rival's letter for 5 s) or a 🙃 flip (turns 2 letters upside down). 3 words in 10 s earns a 🛡️ shield. The last 15 s are worth +10%.`,
+    body: `${BOMB_WORD_LENGTH}+ letter words earn a 💣 bomb (covers a rival's letter for 5 s) or a 🙃 flip (turns 2 letters upside down). Fill the combo ring (4 words in 4 s) for a 🛡️ shield. The last 15 s are worth +10%.`,
     loop: 11,
     demo: (t) => (
       <div className="flex w-full flex-col items-center gap-2">

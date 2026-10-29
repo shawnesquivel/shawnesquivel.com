@@ -237,7 +237,7 @@ export default function Lobby({
         <Toggle
           icon="☠️"
           title="Danger mode"
-          sub={`Attacks (${BOMB_WORD_LENGTH}+ letters earns 💣 / 🙃), 🛡️ shields, a free 💣 if you're behind at halftime, and +${Math.round(DANGER_BOOST * 100)}% on words in the last ${DANGER_ZONE_MS / 1000}s`}
+          sub={`Attacks (${BOMB_WORD_LENGTH}+ letters earns 💣 / 🙃), 🛡️ combo shields, a free 💣 if you're behind at halftime, and +${Math.round(DANGER_BOOST * 100)}% on words in the last ${DANGER_ZONE_MS / 1000}s`}
           on={s.danger}
           disabled={!isHost}
           onChange={(danger) => set({ danger })}

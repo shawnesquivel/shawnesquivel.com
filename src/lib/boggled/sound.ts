@@ -184,6 +184,11 @@ class SoundEngine {
     [0, 4, 7, 12, 16, 19, 24].forEach((s, i) => this.tone(this.note(s, 523.25), 1.5 + i * 0.08, 0.5, { wave: "triangle", vol: 0.14 }));
   }
 
+  combo() {
+    [0, 4, 7, 12].forEach((st, i) => this.tone(this.note(st, 659.25), i * 0.05, 0.18, { wave: "triangle", vol: 0.16 }));
+    this.tone(this.note(19, 659.25), 0.22, 0.35, { wave: "sine", vol: 0.12 });
+  }
+
   pop() {
     this.tone(500, 0, 0.08, { wave: "sine", vol: 0.2, slideTo: 1100 });
   }

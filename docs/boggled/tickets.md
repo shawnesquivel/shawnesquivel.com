@@ -64,6 +64,7 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-31 | Best-of-3/5 series: Game N chip, pips + match point, series champion banner, 🏅 on scoreboard, ties = sudden death | done | `series.ts` |
 | BOG-32 | 🛡️ Shield: 3 words in 10 s; quiet icon, tap to explain; auto-blocks the next attack | done | |
 | BOG-33 | ☠️ Danger mode setting (replaces Power-ups): attacks, shields, halftime comeback, last 15 s = +10% (ceil of late points) with siren + red glow | done | |
+| BOG-34 | Combo ring (top right): fills clockwise a quarter per word; 4 words in 4 s = boost. Rewards capped against farming short words: multiplayer (Danger mode) → 🛡️ shield (max 1, ring shows it until used); solo → +5 s on the clock (max 3/round). Tap to explain | done | `ComboRing.tsx`, replaces "3 words in 10 s" shield rule |
 | BOG-24 | e2e: power-ups (bomb earn/use/block/expiry), reactions, scoreboard across 2 rounds | done | `tests/boggled/e2e/power-ups.mts` |
 
 ## Later

@@ -48,7 +48,7 @@ export type FeedEntry = { id: string; at: number; from: string; to: string; weap
 export type Toast = {
   id: string;
   text: string;
-  kind: "earned" | "launch" | "hit" | "flip-hit" | "shield" | "blocked" | "brag" | "halftime" | "danger" | "info";
+  kind: "earned" | "launch" | "hit" | "flip-hit" | "shield" | "blocked" | "brag" | "halftime" | "danger" | "combo" | "info";
   at: number;
 };
 export type Reaction = { id: string; emoji: string; from: string; at: number };
@@ -82,6 +82,11 @@ export type RoomState = {
   halftime: boolean;
   dangerZone: boolean;
   seriesRecords: SeriesRecords;
+  // Date.now() of each word still inside the combo window
+  combo: number[];
+  // Date.now() of the last time the ring filled (drives the burst animation)
+  comboBurst: number;
+  timeBoosts: number;
 };
 
 const COUNTDOWN_MS = 3500;
@@ -92,8 +97,12 @@ export const BOMB_WORD_LENGTH = 6;
 export const BOMB_MS = 5000;
 export const FLIP_MS = 6000;
 export const MAX_ATTACKS = 3;
-export const SHIELD_COMBO = 3;
-export const SHIELD_WINDOW_MS = 10_000;
+// Combo ring: COMBO_WORDS words inside COMBO_WINDOW_MS fills it. Rewards are capped so spamming short words
+// can't snowball: multiplayer gives a (defensive, max 1) shield, solo adds time a few times per round.
+export const COMBO_WORDS = 4;
+export const COMBO_WINDOW_MS = 4000;
+export const SOLO_TIME_BOOST_MS = 5000;
+export const MAX_TIME_BOOSTS = 3;
 export const DANGER_ZONE_MS = 15_000;
 const NO_POWERS: Powers = { bomb: 0, flip: 0, shield: 0 };
 const BRAG_LENGTH = 7;
@@ -114,7 +123,6 @@ export class RoomController {
   private lastFinalSent = 0;
   private roundContributions = new Map<string, Record<string, { points: number; wins: number; series: number }>>();
   private earned = 0;
-  private recentWords: number[] = [];
   private startResends: ReturnType<typeof setTimeout>[] = [];
 
   constructor(room: string | null, me: Member) {
@@ -145,6 +153,9 @@ export class RoomController {
       livePoints: {},
       halftime: false,
       dangerZone: false,
+      combo: [],
+      comboBurst: 0,
+      timeBoosts: 0,
       seriesRecords: {},
     };
   }
@@ -292,15 +303,34 @@ export class RoomController {
           this.toast(weapon === "bomb" ? "💣 Bomb earned! Tap it to block a rival's letter" : "🙃 Flip earned! Tap it to flip 2 of a rival's letters", "earned");
         }
       }
-      const now = Date.now();
-      this.recentWords = [...this.recentWords, now].filter((t) => now - t <= SHIELD_WINDOW_MS);
-      if (!powers.shield && this.recentWords.length >= SHIELD_COMBO) {
-        powers.shield = 1;
-        this.recentWords = [];
-      }
       this.set({ powers });
     }
+    this.bumpCombo(round);
     if (multiplayer && word.length >= BRAG_LENGTH) this.send({ type: "brag", roundId: round.id, length: word.length });
+  }
+
+  comboActive(): boolean {
+    const { round, powers, timeBoosts } = this.state;
+    if (!round || !this.isParticipant(round)) return false;
+    if (round.players.length === 1) return timeBoosts < MAX_TIME_BOOSTS;
+    return round.settings.danger && powers.shield === 0;
+  }
+
+  private bumpCombo(round: Round) {
+    if (!this.comboActive()) return;
+    const now = Date.now();
+    const combo = [...this.state.combo.filter((t) => now - t < COMBO_WINDOW_MS), now];
+    if (combo.length < COMBO_WORDS) {
+      this.set({ combo });
+      return;
+    }
+    if (round.players.length === 1) {
+      const boosted = { ...round, endsAt: round.endsAt + SOLO_TIME_BOOST_MS };
+      this.set({ round: boosted, combo: [], comboBurst: now, timeBoosts: this.state.timeBoosts + 1 });
+      this.toast(`⚡ Combo! +${SOLO_TIME_BOOST_MS / 1000} seconds`, "combo");
+    } else {
+      this.set({ powers: { ...this.state.powers, shield: 1 }, combo: [], comboBurst: now });
+    }
   }
 
   attackTargets(): Member[] {
@@ -379,7 +409,6 @@ export class RoomController {
   private beginRound(round: Round) {
     const myWords = this.restore("words", round.id);
     this.earned = 0;
-    this.recentWords = [];
     this.set({
       round,
       settings: round.settings,
@@ -397,6 +426,9 @@ export class RoomController {
       feed: [],
       halftime: false,
       dangerZone: false,
+      combo: [],
+      comboBurst: 0,
+      timeBoosts: 0,
       phase: serverNow() < round.startsAt ? "countdown" : "playing",
     });
     this.tick();
@@ -543,7 +575,9 @@ export class RoomController {
     const reactions = s.reactions.filter((r) => now - r.at < REACTION_MS);
     const blockedEntries = Object.entries(s.blocked).filter(([, until]) => until > now);
     const flippedEntries = Object.entries(s.flipped).filter(([, until]) => until > now);
+    const combo = s.combo.filter((t) => now - t < COMBO_WINDOW_MS);
     const patch: Partial<RoomState> = {};
+    if (combo.length !== s.combo.length) patch.combo = combo;
     if (flippedEntries.length !== Object.keys(s.flipped).length) patch.flipped = Object.fromEntries(flippedEntries);
     if (toasts.length !== s.toasts.length) patch.toasts = toasts;
     if (reactions.length !== s.reactions.length) patch.reactions = reactions;

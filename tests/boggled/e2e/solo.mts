@@ -109,8 +109,15 @@ assert(score === expected, `final score ${score} equals sum of word points ${exp
 await page.evaluate(() => window.__boggled.updateSettings({ duration: 180 }));
 await page.getByTestId("play-again").click();
 await page.locator(".bg-overlay").waitFor({ state: "detached", timeout: 6000 });
-const early = wordsOn(await readBoard(page))[0];
-await swipe(page, early[1]);
+const quick = wordsOn(await readBoard(page)).filter(([w]) => w.length <= 4).slice(0, 4);
+const endsBefore = await page.evaluate(() => window.__boggled.getState().round!.endsAt);
+for (const [, p] of quick) await swipe(page, p);
+await page.getByTestId("toasts").getByText("Combo!").waitFor({ timeout: 2000 });
+const endsAfter = await page.evaluate(() => window.__boggled.getState().round!.endsAt);
+assert(endsAfter - endsBefore === 5000, "solo: 4 words in 4 s fills the ⚡ ring and adds 5 seconds");
+await page.waitForTimeout(300);
+await page.screenshot({ path: `${SHOTS}/08a-solo-combo.png` });
+const early = [quick.map(([w]) => w).join(","), quick.reduce((n, [w]) => n + w.length - 2, 0)] as const;
 await page.getByTestId("end-early").click();
 await page.getByTestId("end-confirm").waitFor();
 await page.waitForTimeout(500);
@@ -120,7 +127,7 @@ assert(!(await page.getByTestId("end-confirm").isVisible()) && (await page.getBy
 await page.getByTestId("end-early").click();
 await page.getByTestId("end-score").click();
 await page.getByTestId("podium").waitFor({ timeout: 30000 });
-assert(Number(await page.getByTestId("score").first().textContent()) === early[0].length - 2, `"End & see my score" jumps to results with the words so far`);
+assert(Number(await page.getByTestId("score").first().textContent()) === early[1], `"End & see my score" jumps to results with the words so far`);
 await page.getByTestId("home-button").evaluate((el: HTMLElement) => el.click());
 await page.getByTestId("menu").waitFor();
 assert(true, "Home button on solo results returns to the menu");

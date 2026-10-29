@@ -22,7 +22,8 @@ Party extras (v2, ours, not Netflix):
 - **Session scoreboard**: every multiplayer round adds wins (rank 1, ties all win) and points to a per-room tally shown in the lobby and results, with a banter headline and a title badge for the leader (`banter.ts`).
 - **☠️ Danger mode** (host toggle, on by default):
   - 6+ letter words earn attacks, alternating 💣 bomb (blocks 1 random rival tile for 5 s, can't be swiped through) and 🙃 flip (2 rival tiles pink + upside down for 6 s). Max 3 each.
-  - 🛡️ Shield: 3 words within 10 s. Quiet icon (tap to explain); auto-blocks the next attack; attacker is told.
+  - 🛡️ Shield: earned by filling the combo ring (4 words within 4 s; ring in the top right fills clockwise, tap to explain). Max 1; auto-blocks the next attack; attacker is told.
+- **Combo ring in solo**: same ring, but filling it adds +5 s to the clock (max 3 per round).
   - Halftime: whoever is behind gets a free 💣.
   - Danger zone (last 15 s): red glow + siren; words found then add a bonus of ceil(10% of their points). Sent as `late` with the final word list.
   - Battle log on results.

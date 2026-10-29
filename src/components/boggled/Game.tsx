@@ -3,9 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { serverNow } from "@/lib/boggled/clock";
 import type { Dictionary } from "@/lib/boggled/dictionary";
-import { SHIELD_COMBO, SHIELD_WINDOW_MS, type RoomController, type RoomState, type Weapon } from "@/lib/boggled/room";
+import { type RoomController, type RoomState, type Weapon } from "@/lib/boggled/room";
 import { DANGER_BOOST, wordPoints } from "@/lib/boggled/scoring";
 import { sound } from "@/lib/boggled/sound";
+import ComboRing, { comboExplainer } from "./ComboRing";
 import { Toasts } from "./Extras";
 import Grid, { type SubmitResult } from "./Grid";
 
@@ -111,6 +112,7 @@ export default function Game({
   };
   const series = round.series;
   const danger = state.dangerZone && phase === "playing";
+  const showCombo = participant && (solo || round.settings.danger);
 
   return (
     <div className={`bg-screen gap-3 ${danger ? "bg-danger" : ""}`} data-testid="game">
@@ -131,11 +133,6 @@ export default function Game({
           )}
         </div>
         <div className="flex items-center gap-2">
-        {state.powers.shield > 0 && (
-          <button className="bg-shield-chip" aria-label="Shield" onClick={() => setShieldInfo((v) => !v)} data-testid="shield">
-            🛡️
-          </button>
-        )}
         <div className="text-right">
           <div className="text-2xl font-bold leading-none" data-testid="my-score">
             {myPoints}
@@ -145,13 +142,13 @@ export default function Game({
             {state.myWords.length} {state.myWords.length === 1 ? "word" : "words"}
           </div>
         </div>
+        {showCombo && <ComboRing state={state} solo={solo} onTap={() => setShieldInfo((v) => !v)} />}
         </div>
       </div>
 
-      {shieldInfo && state.powers.shield > 0 && (
-        <button className="bg-shield-info bg-step px-3 py-2 text-left text-sm" onClick={() => setShieldInfo(false)} data-testid="shield-info">
-          <b>🛡️ Shield ready.</b> It automatically blocks the next bomb or flip thrown at you. You earn one by finding {SHIELD_COMBO} words
-          within {SHIELD_WINDOW_MS / 1000} seconds. <span className="opacity-60">Tap to close</span>
+      {shieldInfo && showCombo && (
+        <button className="bg-shield-info bg-step px-3 py-2 text-left text-sm" onClick={() => setShieldInfo(false)} data-testid="combo-info">
+          {comboExplainer(state, solo)} <span className="opacity-60">Tap to close</span>
         </button>
       )}
 
