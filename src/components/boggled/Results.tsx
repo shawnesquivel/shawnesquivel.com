@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { click } from "@/lib/boggled/analytics";
+import { formatSecs } from "@/lib/boggled/modes";
 import type { RoomController, RoomState } from "@/lib/boggled/room";
 import { compareWords, DANGER_BOOST, DOUBLE_UNIQUE_MIN_PLAYERS, LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
 import { seriesStatus } from "@/lib/boggled/series";
 import { sound } from "@/lib/boggled/sound";
 import type { Member } from "@/lib/boggled/transport";
 import { ReactionBar, Scoreboard } from "./Extras";
-import { BattleLog, BestsPanel, BotLevelPanel, MissedWords, SeriesPanel } from "./ResultsExtras";
+import { BattleLog, BestsPanel, BotLevelPanel, DailyPanel, MissedWords, SeriesPanel, SurvivalPanel } from "./ResultsExtras";
 
 const VICTORY = ["Transcendent", "Glorious", "Stupendous", "Legendary", "Magnificent", "Flawless", "Spectacular"];
 
@@ -46,7 +48,8 @@ export default function Results({
   const outcome = state.outcome;
   const result = outcome?.result;
   const solo = round.players.length === 1;
-  const quick = !state.room;
+  const quick = state.mode === "quick";
+  const soloMode = !state.room;
   const doubled = round.players.length >= DOUBLE_UNIQUE_MIN_PLAYERS;
 
   const members = useMemo(() => {
@@ -141,7 +144,9 @@ export default function Results({
           </span>
           {solo ? (
             <>
-              <div className="bg-title text-2xl opacity-90">Round over!</div>
+              <div className="bg-title text-2xl opacity-90">
+                {outcome?.survival ? `You survived ${formatSecs(outcome.survival.survivedMs)}!` : round.daily ? "Daily Puzzle done!" : "Round over!"}
+              </div>
               <div className="bg-title text-5xl text-[var(--gold)]">{result.players[0]?.total ?? 0} points</div>
             </>
           ) : winners.length > 1 ? (
@@ -247,9 +252,11 @@ export default function Results({
       {stage === "podium" && (
         <>
           {quick && <BotLevelPanel state={state} round={round} outcome={outcome!} />}
+          {outcome?.daily && <DailyPanel daily={outcome.daily} words={result.players[0]?.words.length ?? 0} />}
+          {outcome?.survival && <SurvivalPanel survival={outcome.survival} />}
           <MissedWords words={outcome!.missed} total={outcome!.allWords} title={solo ? "Words you missed" : "Words nobody found"} />
 
-          <BestsPanel state={state} round={round} outcome={outcome!} />
+          {!round.survival && <BestsPanel state={state} round={round} outcome={outcome!} />}
           {!solo && <SeriesPanel state={state} round={round} />}
           {!solo && <BattleLog state={state} round={round} />}
           {!solo && <Scoreboard state={state} />}
@@ -257,17 +264,34 @@ export default function Results({
 
           {isHost ? (
             <div className="flex gap-3">
-              {quick ? (
-                <button className="bg-btn bg-btn-ghost w-14 px-0" onClick={onLeave} aria-label="Home" data-testid="home-button">
+              {soloMode ? (
+                <button className="bg-btn bg-btn-ghost w-14 px-0" onClick={() => { click("home"); onLeave(); }} aria-label="Home" data-testid="home-button">
                   🏠
                 </button>
               ) : (
-                <button className="bg-btn bg-btn-ghost w-14 px-0" onClick={() => controller.backToLobby()} aria-label="Settings" data-testid="settings-button">
+                <button className="bg-btn bg-btn-ghost w-14 px-0" onClick={() => { click("settings"); controller.backToLobby(); }} aria-label="Settings" data-testid="settings-button">
                   ⚙️
                 </button>
               )}
-              <button className="bg-btn bg-btn-primary flex-1" onClick={() => controller.startRound()} data-testid="play-again">
-                {quick ? "Rematch ⚡" : round.series ? (seriesOver ? "New series" : "Next game →") : "Play again"}
+              <button
+                className="bg-btn bg-btn-primary flex-1"
+                onClick={() => {
+                  click(soloMode ? "rematch" : round.series && !seriesOver ? "next_game" : "play_again");
+                  controller.startRound();
+                }}
+                data-testid="play-again"
+              >
+                {quick
+                  ? "Rematch ⚡"
+                  : round.daily
+                    ? "Practice again 🔁"
+                    : round.survival
+                      ? "Try again ⏳"
+                      : round.series
+                        ? seriesOver
+                          ? "New series"
+                          : "Next game →"
+                        : "Play again"}
               </button>
             </div>
           ) : (

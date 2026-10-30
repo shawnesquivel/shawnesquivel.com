@@ -1,5 +1,6 @@
 "use client";
 
+import { click, track } from "@/lib/boggled/analytics";
 import { useState, type ReactNode } from "react";
 import { BOMB_WORD_LENGTH, DANGER_ZONE_MS, isNoChill, type RoomController, type RoomState, type Settings } from "@/lib/boggled/room";
 import { DANGER_BOOST, LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
@@ -145,9 +146,13 @@ export default function Lobby({
 }) {
   const [copied, setCopied] = useState<"" | "code" | "link">("");
   const [editing, setEditing] = useState(false);
+  const [qr, setQr] = useState("");
   const isHost = state.hostId === state.me.id;
   const s = state.settings;
-  const set = (patch: Partial<Settings>) => controller.updateSettings(patch);
+  const set = (patch: Partial<Settings>) => {
+    for (const [key, value] of Object.entries(patch)) track("setting", { key, value: String(value) });
+    controller.updateSettings(patch);
+  };
   const host = state.roster.find((m) => m.id === state.hostId);
   const alone = state.roster.length < 2;
 
@@ -156,7 +161,19 @@ export default function Lobby({
     setTimeout(() => setCopied(""), 1600);
   };
 
+  const inviteUrl = () => `${location.origin}${location.pathname}?room=${state.room}`;
+
+  const showQr = async () => {
+    if (qr) return setQr("");
+    click("qr");
+    try {
+      const QR = await import("qrcode");
+      setQr(await QR.toString(inviteUrl(), { type: "svg", margin: 1, color: { dark: "#2a1670", light: "#ffffff" } }));
+    } catch {}
+  };
+
   const copyCode = async () => {
+    click("copy_code");
     try {
       await navigator.clipboard.writeText(state.room ?? "");
       flash("code");
@@ -166,7 +183,8 @@ export default function Lobby({
   };
 
   const share = async () => {
-    const url = `${location.origin}${location.pathname}?room=${state.room}`;
+    click("share_link");
+    const url = inviteUrl();
     try {
       if (navigator.share) {
         await navigator.share({ title: "Word Brawl", text: `Join my Word Brawl room: ${state.room}`, url });
@@ -180,7 +198,7 @@ export default function Lobby({
   return (
     <div className="bg-screen gap-4" data-testid="lobby">
       <div className="flex items-center justify-between">
-        <button className="bg-btn bg-btn-ghost px-3 py-2 text-base" onClick={onLeave}>
+        <button className="bg-btn bg-btn-ghost px-3 py-2 text-base" onClick={() => { click("home"); onLeave(); }}>
           ← Leave
         </button>
         {state.status !== "connected" && <span className="bg-chip text-sm">Reconnecting…</span>}
@@ -199,9 +217,20 @@ export default function Lobby({
         <div className="bg-title bg-selectable text-6xl tracking-[0.2em]" data-testid="room-code">
           {state.room}
         </div>
-        <button className={`bg-btn mt-3 w-full ${alone ? "bg-btn-primary" : "bg-btn-ghost"}`} onClick={share} data-testid="share">
-          {copied === "link" ? "✓ Link copied!" : "🔗 Share invite link"}
-        </button>
+        <div className="mt-3 flex gap-2">
+          <button className={`bg-btn flex-1 ${alone ? "bg-btn-primary" : "bg-btn-ghost"}`} onClick={share} data-testid="share">
+            {copied === "link" ? "✓ Link copied!" : "🔗 Share invite link"}
+          </button>
+          <button className="bg-btn bg-btn-ghost w-16 px-0 text-base" onClick={showQr} aria-label="Show QR code" aria-expanded={!!qr} data-testid="qr">
+            {qr ? "✕" : "QR"}
+          </button>
+        </div>
+        {qr && (
+          <div className="bg-qr mx-auto mt-3" data-testid="qr-code">
+            <div dangerouslySetInnerHTML={{ __html: qr }} />
+            <div className="mt-1 text-xs text-[#2a1670]">Scan with a phone camera to join</div>
+          </div>
+        )}
         {controller.transportKind === "local" && (
           <p className="mt-2 text-xs opacity-80">
             Online multiplayer isn&apos;t configured on this site yet, so rooms only work between tabs of this browser.
@@ -225,7 +254,7 @@ export default function Lobby({
                 {t && t.wins > 0 && <span className="text-sm opacity-80">{t.wins} 🏆</span>}
                 {m.id === state.hostId && <span title="Host">👑</span>}
                 {mine && (
-                  <button className="bg-chip px-2.5 py-1 text-sm" onClick={() => setEditing((v) => !v)} aria-label="Edit name" data-testid="edit-me">
+                  <button className="bg-chip px-2.5 py-1 text-sm" onClick={() => { if (!editing) click("rename"); setEditing((v) => !v); }} aria-label="Edit name" data-testid="edit-me">
                     ✏️
                   </button>
                 )}

@@ -719,6 +719,11 @@ body:has(.boggled) {
   color: #2a1670;
   border-color: transparent;
 }
+.bg-menu-btn.bg-menu-mini {
+  gap: 10px;
+  padding: 12px;
+  border-radius: 18px;
+}
 .bg-menu-icon {
   font-size: 2.2rem;
   line-height: 1;
@@ -925,4 +930,17 @@ body:has(.boggled) {
   border: 8px solid transparent;
   border-top: 0;
   border-bottom-color: #fff;
+}
+
+.bg-qr {
+  width: 200px;
+  padding: 10px;
+  border-radius: 18px;
+  background: #fff;
+  animation: bg-slide 0.25s ease;
+}
+.bg-qr svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
