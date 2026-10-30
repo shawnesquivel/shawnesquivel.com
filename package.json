@@ -12,7 +12,7 @@
     "test:agency:e2e": "next build && vitest run --config vitest.agency.e2e.config.ts",
     "agency:keys:create": "tsx --env-file-if-exists=.env.local scripts/agency-create-api-key.mts",
     "test:boggled": "vitest run --config vitest.boggled.config.ts",
-    "test:boggled:e2e": "tsx tests/boggled/e2e/solo.mts && tsx tests/boggled/e2e/two-player.mts && tsx tests/boggled/e2e/power-ups.mts"
+    "test:boggled:e2e": "tsx tests/boggled/e2e/solo.mts && tsx tests/boggled/e2e/two-player.mts && tsx tests/boggled/e2e/power-ups.mts && tsx tests/boggled/e2e/modes.mts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.1.0",
@@ -23,6 +23,7 @@
     "marked": "^17.0.3",
     "mcp-handler": "2.2.0",
     "next": "16.1.6",
+    "qrcode": "^1.5.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-tweet": "^3.3.1",
@@ -34,6 +35,7 @@
     "@modelcontextprotocol/client": "2.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "22.20.4",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

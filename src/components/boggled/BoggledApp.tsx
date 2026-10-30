@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { initAnalytics, setScreen, type Screen } from "@/lib/boggled/analytics";
 import { serverNow, syncClock } from "@/lib/boggled/clock";
 import { loadDictionary, type Dictionary } from "@/lib/boggled/dictionary";
+import type { SoloMode } from "@/lib/boggled/modes";
 import { RoomController } from "@/lib/boggled/room";
 import { randomId } from "@/lib/boggled/rng";
 import { sound } from "@/lib/boggled/sound";
@@ -10,7 +12,7 @@ import { FloatingReactions, useRoomEffects } from "./Extras";
 import Game from "./Game";
 import Home, { EMOJIS, normalizeCode, type Identity } from "./Home";
 import Lobby from "./Lobby";
-import QuickIntro from "./QuickIntro";
+import SoloIntro from "./QuickIntro";
 import Results from "./Results";
 
 const CODE_ALPHABET = "BCDFGHJKLMNPQRSTVWXZ";
@@ -74,13 +76,22 @@ function RoomView({
   }
   useWakeLock(true);
   useRoomEffects(state);
+  const tracked: Screen =
+    state.phase === "lobby" || !state.round
+      ? state.room
+        ? "lobby"
+        : (`intro_${state.mode}` as Screen)
+      : state.phase === "results"
+        ? "results"
+        : "game";
+  useEffect(() => setScreen(tracked), [tracked]);
 
   let screen;
   if (state.phase === "lobby" || !state.round) {
     screen = state.room ? (
       <Lobby state={state} controller={controller} dictReady={!!dict} onLeave={onLeave} onIdentity={onIdentity} />
     ) : (
-      <QuickIntro state={state} controller={controller} dictReady={!!dict} onLeave={onLeave} />
+      <SoloIntro state={state} controller={controller} dictReady={!!dict} onLeave={onLeave} />
     );
   } else if (state.phase === "results") {
     screen = <Results key={state.round.id} state={state} controller={controller} onLeave={onLeave} />;
@@ -101,6 +112,7 @@ export default function BoggledApp() {
   const [dictError, setDictError] = useState(false);
   const [invite, setInvite] = useState("");
   const [controller, setController] = useState<RoomController | null>(null);
+  const [autoplay, setAutoplay] = useState<SoloMode | null>(null);
 
   useEffect(() => {
     // Client-only state (storage, URL) has to load after hydration.
@@ -108,7 +120,10 @@ export default function BoggledApp() {
     setIdentity(loadIdentity());
     const fromUrl = normalizeCode(new URLSearchParams(location.search).get("room") ?? "");
     setInvite(fromUrl.length === 4 ? fromUrl : "");
+    const play = new URLSearchParams(location.search).get("play");
+    if (!fromUrl && (play === "daily" || play === "survival" || play === "quick")) setAutoplay(play);
     /* eslint-enable react-hooks/set-state-in-effect */
+    initAnalytics();
     void syncClock();
     loadDictionary().then(setDict, () => setDictError(true));
   }, []);
@@ -128,7 +143,7 @@ export default function BoggledApp() {
     });
   };
 
-  const enter = (room: string | null) => {
+  const enter = (room: string | null, mode: SoloMode = "quick") => {
     if (!identity) return;
     sound.unlock();
     let name = identity.name.trim();
@@ -139,7 +154,7 @@ export default function BoggledApp() {
     const joinedKey = `boggled:joined:${room ?? "solo"}`;
     const joinedAt = Number(sessionStorage.getItem(joinedKey)) || serverNow();
     sessionStorage.setItem(joinedKey, String(joinedAt));
-    const c = new RoomController(room, { id: identity.id, name, emoji: identity.emoji, joinedAt });
+    const c = new RoomController(room, { id: identity.id, name, emoji: identity.emoji, joinedAt }, mode);
     if (dict) c.setDictionary(dict);
     c.start();
     if (process.env.NODE_ENV !== "production") (window as unknown as { __boggled: RoomController }).__boggled = c;
@@ -151,6 +166,7 @@ export default function BoggledApp() {
     controller?.stop();
     setController(null);
     setInvite("");
+    setAutoplay(null);
     history.replaceState(null, "", location.pathname);
   };
 
@@ -169,6 +185,7 @@ export default function BoggledApp() {
       identity={identity}
       onIdentity={updateIdentity}
       invite={invite}
+      autoplay={autoplay}
       onEnter={enter}
       dictError={dictError}
       newRoomCode={newRoomCode}

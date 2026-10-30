@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { click, dailyRank, flush } from "@/lib/boggled/analytics";
 import { applyRound, bestKey, loadBests, saveBests } from "@/lib/boggled/bests";
 import { BOT, MAX_BOT_LEVEL, MIN_BOT_LEVEL, nextBotLevel, recordBotRound } from "@/lib/boggled/bot";
+import { dailyShareText, formatSecs, type DailyResult, type SurvivalResult } from "@/lib/boggled/modes";
 import type { Round, RoomState, RoundOutcome } from "@/lib/boggled/room";
 import { wordPoints } from "@/lib/boggled/scoring";
 import { seriesStatus } from "@/lib/boggled/series";
@@ -245,6 +247,67 @@ export function BotLevelPanel({ state, round, outcome }: { state: RoomState; rou
   return (
     <div className="bg-panel px-4 py-3 text-center font-semibold" data-testid="bot-level-change">
       {line}
+    </div>
+  );
+}
+
+export function DailyPanel({ daily, words }: { daily: DailyResult; words: number }) {
+  const [rank, setRank] = useState<{ players: number; beaten: number } | null>(null);
+  const [shared, setShared] = useState(false);
+  useEffect(() => {
+    flush();
+    let live = true;
+    const t = setTimeout(() => {
+      void dailyRank(daily.day, daily.firstScore).then((r) => live && r && r.players > 1 && setRank(r));
+    }, 1500);
+    return () => {
+      live = false;
+      clearTimeout(t);
+    };
+  }, [daily.day, daily.firstScore]);
+
+  const share = async () => {
+    click("share_daily");
+    const url = `${location.origin}${location.pathname}?play=daily`;
+    const text = dailyShareText(daily, words, url);
+    try {
+      if (navigator.share) await navigator.share({ text });
+      else {
+        await navigator.clipboard.writeText(text);
+        setShared(true);
+      }
+    } catch {}
+  };
+
+  const others = rank ? rank.players - 1 : 0;
+  return (
+    <div className="bg-panel flex flex-col gap-2 px-4 py-3 text-center" data-testid="daily-panel">
+      <div className="font-semibold">
+        {daily.first ? "📅 Today's score is locked in!" : `🔁 Practice run. Today's score stays ${daily.firstScore}.`}
+      </div>
+      <div className="flex justify-center gap-4 text-sm">
+        {daily.streak > 0 && <span>🔥 {daily.streak}-day streak</span>}
+        {rank && others > 0 && (
+          <span data-testid="daily-rank">
+            Beat {Math.round((rank.beaten / others) * 100)}% of {others} {others === 1 ? "player" : "players"}
+          </span>
+        )}
+      </div>
+      <button className="bg-btn bg-btn-ghost py-2 text-base" onClick={share} data-testid="share-daily">
+        {shared ? "Copied! Paste it to your friends" : "📣 Share today's score"}
+      </button>
+    </div>
+  );
+}
+
+export function SurvivalPanel({ survival }: { survival: SurvivalResult }) {
+  return (
+    <div className="bg-panel px-4 py-3 text-center font-semibold" data-testid="survival-panel">
+      {survival.isBest
+        ? `🏆 New best! Up from ${formatSecs(survival.prevBest)}.`
+        : survival.best > survival.survivedMs
+          ? `⏳ Your best is ${formatSecs(survival.best)}. Longer words buy more time.`
+          : `⏳ First run in the books. Longer words buy more time.`}
     </div>
   );
 }

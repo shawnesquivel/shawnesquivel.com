@@ -1,8 +1,22 @@
+import { track } from "./analytics";
 import { BOT, loadBotLevel, planBot, type BotPick } from "./bot";
 import { findPath, generateBoard, solve, type Board } from "./board";
 import { serverNow } from "./clock";
 import type { BoardSize } from "./dice";
 import type { Dictionary } from "./dictionary";
+import {
+  DAILY_SECONDS,
+  dailySeed,
+  dayKey,
+  recordDaily,
+  recordSurvival,
+  SURVIVAL_START_SECONDS,
+  survivalBonusMs,
+  type DailyResult,
+  type Mode,
+  type SoloMode,
+  type SurvivalResult,
+} from "./modes";
 import { randomId } from "./rng";
 import { DANGER_BOOST, scoreRound, wordPoints, type RoundResult } from "./scoring";
 import { seriesStatus, type SeriesRecords, type SeriesRef } from "./series";
@@ -22,6 +36,22 @@ export type Settings = {
 // "No chill" turns on Danger mode and the longest-word bonus together; chill is the default.
 export const DEFAULT_SETTINGS: Settings = { size: 4, duration: 120, minLength: 3, longestBonus: false, danger: false, series: 3 };
 export const QUICK_SETTINGS: Settings = { ...DEFAULT_SETTINGS, series: 0 };
+const QUICK_SETTINGS_KEY = "boggled:quickSettings";
+
+function loadQuickSettings(): Settings {
+  try {
+    const saved = JSON.parse(localStorage.getItem(QUICK_SETTINGS_KEY) ?? "{}");
+    return { ...QUICK_SETTINGS, ...saved, series: 0 };
+  } catch {
+    return QUICK_SETTINGS;
+  }
+}
+
+const SOLO_SETTINGS: Record<SoloMode, Settings> = {
+  quick: QUICK_SETTINGS,
+  daily: { ...QUICK_SETTINGS, duration: DAILY_SECONDS },
+  survival: { ...QUICK_SETTINGS, duration: SURVIVAL_START_SECONDS },
+};
 
 export function isNoChill(settings: Settings) {
   return settings.danger;
@@ -37,6 +67,9 @@ export type Round = {
   series?: SeriesRef;
   // Quick Start: the bot's level for this round
   bot?: { level: number };
+  // Daily Puzzle: the UTC day whose board this is
+  daily?: string;
+  survival?: boolean;
 };
 
 export type Phase = "lobby" | "countdown" | "playing" | "collecting" | "results";
@@ -46,6 +79,8 @@ export type RoundOutcome = {
   result: RoundResult;
   missed: string[];
   allWords: number;
+  daily?: DailyResult;
+  survival?: SurvivalResult;
 };
 
 export type TallyEntry = { points: number; wins: number; series: number; name: string; emoji: string };
@@ -64,6 +99,7 @@ export type Reaction = { id: string; emoji: string; from: string; at: number };
 
 export type RoomState = {
   room: string | null;
+  mode: Mode;
   me: Member;
   status: ConnectionStatus;
   roster: Member[];
@@ -135,16 +171,20 @@ export class RoomController {
   private startResends: ReturnType<typeof setTimeout>[] = [];
   private botPlan: BotPick[] = [];
   private botWords: string[] = [];
+  private botLate: string[] = [];
+  private endedEarly = false;
 
-  constructor(room: string | null, me: Member) {
+  constructor(room: string | null, me: Member, soloMode: SoloMode = "quick") {
     this.transport = createTransport(room);
+    const mode: Mode = room ? "room" : soloMode;
     this.state = {
       room,
+      mode,
       me,
       status: "connecting",
-      roster: room ? [me] : [me, BOT],
+      roster: mode === "quick" ? [me, BOT] : [me],
       hostId: me.id,
-      settings: room ? DEFAULT_SETTINGS : QUICK_SETTINGS,
+      settings: mode === "room" ? DEFAULT_SETTINGS : mode === "quick" ? loadQuickSettings() : SOLO_SETTINGS[mode],
       phase: "lobby",
       round: null,
       myWords: [],
@@ -188,6 +228,10 @@ export class RoomController {
   }
 
   get isQuick() {
+    return this.state.mode === "quick";
+  }
+
+  get isSolo() {
     return this.state.room === null;
   }
 
@@ -248,13 +292,19 @@ export class RoomController {
     const settings = { ...this.state.settings, ...patch };
     this.set({ settings });
     this.send({ type: "settings", settings });
+    if (this.isQuick) {
+      try {
+        localStorage.setItem(QUICK_SETTINGS_KEY, JSON.stringify(settings));
+      } catch {}
+    }
   }
 
   startRound() {
     if (!this.isHost) return;
     const settings = this.state.settings;
     const id = randomId(10);
-    const board = generateBoard(settings.size, id, this.dict ?? undefined);
+    const daily = this.state.mode === "daily" ? dayKey() : undefined;
+    const board = generateBoard(settings.size, daily ? dailySeed(daily) : id, this.dict ?? undefined);
     const startsAt = serverNow() + COUNTDOWN_MS;
     const round: Round = {
       id,
@@ -263,8 +313,10 @@ export class RoomController {
       endsAt: startsAt + settings.duration * 1000,
       settings,
       players: this.state.roster,
-      series: this.isQuick ? undefined : this.nextSeries(settings),
+      series: this.isSolo ? undefined : this.nextSeries(settings),
       bot: this.isQuick ? { level: loadBotLevel() } : undefined,
+      daily,
+      survival: this.state.mode === "survival" || undefined,
     };
     this.beginRound(round);
     // Broadcast is at-most-once; resending an idempotent start covers a dropped packet.
@@ -273,11 +325,12 @@ export class RoomController {
     this.startResends = [800, 2000].map((ms) => setTimeout(() => this.send({ type: "start", round }), ms));
   }
 
-  // Quick Start only: there's nobody to wait for, so the round can just end now.
+  // Solo only: there's nobody to wait for, so the round can just end now.
   endEarly() {
     const { round, phase } = this.state;
-    if (!round || !this.isQuick || (phase !== "playing" && phase !== "countdown")) return;
+    if (!round || !this.isSolo || (phase !== "playing" && phase !== "countdown")) return;
     const now = serverNow();
+    this.endedEarly = true;
     this.set({ round: { ...round, startsAt: Math.min(round.startsAt, now), endsAt: now } });
     this.tick();
   }
@@ -316,7 +369,7 @@ export class RoomController {
     this.send({ type: "progress", roundId: round.id, count: next.length, points });
 
     const multiplayer = round.players.length > 1;
-    if (multiplayer && round.settings.danger) {
+    if (multiplayer && round.settings.danger && !this.isQuick) {
       const powers = { ...this.state.powers };
       if (word.length >= BOMB_WORD_LENGTH) {
         // Alternate so both weapons show up: bomb, flip, bomb, ...
@@ -329,8 +382,9 @@ export class RoomController {
       }
       this.set({ powers });
     }
+    if (round.survival) this.set({ round: { ...round, endsAt: round.endsAt + survivalBonusMs(word) } });
     this.bumpCombo(round);
-    if (multiplayer && !this.isQuick && word.length >= BRAG_LENGTH) this.send({ type: "brag", roundId: round.id, length: word.length });
+    if (multiplayer && !this.isSolo && word.length >= BRAG_LENGTH) this.send({ type: "brag", roundId: round.id, length: word.length });
   }
 
   comboActive(): boolean {
@@ -348,6 +402,7 @@ export class RoomController {
       this.set({ combo });
       return;
     }
+    track("combo");
     if (this.isQuick) {
       const boosted = { ...round, endsAt: round.endsAt + SOLO_TIME_BOOST_MS };
       this.set({ round: boosted, combo: [], comboBurst: now, timeBoosts: this.state.timeBoosts + 1 });
@@ -361,7 +416,7 @@ export class RoomController {
     const { round, roster, me } = this.state;
     if (!round) return [];
     const present = new Set(roster.map((m) => m.id));
-    return round.players.filter((p) => p.id !== me.id && present.has(p.id));
+    return round.players.filter((p) => p.id !== me.id && p.id !== BOT.id && present.has(p.id));
   }
 
   attack(weapon: Weapon): Member | null {
@@ -386,6 +441,7 @@ export class RoomController {
   }
 
   react(emoji: string) {
+    track("react");
     this.addReaction(emoji, this.state.me.id);
     this.send({ type: "react", emoji });
   }
@@ -434,6 +490,8 @@ export class RoomController {
     const myWords = this.restore("words", round.id);
     this.earned = 0;
     this.botWords = [];
+    this.botLate = [];
+    this.endedEarly = false;
     this.botPlan =
       round.bot && this.dict
         ? planBot([...solve(round.board, this.dict, round.settings.minLength).keys()], round.bot.level, round.endsAt - round.startsAt, round.id)
@@ -460,6 +518,21 @@ export class RoomController {
       timeBoosts: 0,
       phase: serverNow() < round.startsAt ? "countdown" : "playing",
     });
+    if (this.isParticipant(round) && serverNow() < round.endsAt) {
+      const st = round.settings;
+      track("round_start", {
+        mode: this.state.mode,
+        players: round.players.length,
+        size: st.size,
+        duration: st.duration,
+        min: st.minLength,
+        no_chill: st.danger,
+        series: round.series?.length ?? 0,
+        game: round.series?.game,
+        bot_level: round.bot?.level,
+        host: this.isHost,
+      });
+    }
     this.tick();
   }
 
@@ -643,7 +716,7 @@ export class RoomController {
       let lates = mine ? { ...s.lates, [s.me.id]: s.myLate } : s.lates;
       if (round.bot) {
         finals = { ...finals, [BOT.id]: this.botWords };
-        lates = { ...lates, [BOT.id]: [] };
+        lates = { ...lates, [BOT.id]: this.botLate };
       }
       this.set({ phase: "collecting", finals, lates });
       this.sendFinal(true);
@@ -667,6 +740,7 @@ export class RoomController {
     while (this.botPlan.length && this.botPlan[0].at <= elapsed) found.push(this.botPlan.shift()!.word);
     if (!found.length) return;
     this.botWords = [...found.reverse(), ...this.botWords];
+    if (round.settings.danger && now >= round.endsAt - DANGER_ZONE_MS) this.botLate = [...found, ...this.botLate];
     const points = this.botWords.reduce((sum, w) => sum + wordPoints(w), 0);
     this.set({
       progress: { ...this.state.progress, [BOT.id]: this.botWords.length },
@@ -758,6 +832,29 @@ export class RoomController {
     this.roundContributions.set(round.id, contribution);
     const roundsPlayed = this.state.roundsPlayed + (firstTime && multiplayer ? 1 : 0);
 
-    this.set({ outcome: { roundId: round.id, result, missed, allWords }, tally, roundsPlayed, seriesRecords });
+    const me = result.players.find((p) => p.id === this.state.me.id);
+    const outcome: RoundOutcome = { roundId: round.id, result, missed, allWords };
+    if (me && round.daily) outcome.daily = recordDaily(round.id, round.daily, me.total);
+    if (me && round.survival) outcome.survival = recordSurvival(round.id, round.endsAt - round.startsAt);
+    this.set({ outcome, tally, roundsPlayed, seriesRecords });
+
+    if (firstTime && me) {
+      const bot = result.players.find((p) => p.id === BOT.id);
+      track("round_end", {
+        mode: this.state.mode,
+        players: result.players.length,
+        score: me.total,
+        words: me.words.length,
+        rank: me.rank,
+        won: multiplayer ? me.rank === 1 : undefined,
+        bot: bot ? (bot.rank === me.rank ? "tie" : me.rank < bot.rank ? "win" : "loss") : undefined,
+        bot_level: round.bot?.level,
+        ended_early: this.endedEarly,
+        secs: Math.round((Math.min(round.endsAt, serverNow()) - round.startsAt) / 1000),
+        survived: outcome.survival ? Math.round(outcome.survival.survivedMs / 1000) : undefined,
+        first: outcome.daily?.first,
+        day: round.daily,
+      });
+    }
   }
 }

@@ -106,7 +106,7 @@ const buttons = await page.locator("[data-testid=home-button], [data-testid=sett
   els.map((e) => [e.getAttribute("data-testid"), e.getBoundingClientRect().left] as const),
 );
 assert(buttons.sort((x, y) => x[1] - y[1]).at(-1)![0] === "play-again", "Rematch is the right-most button");
-assert(!buttons.some(([id]) => id === "settings-button"), "Quick Start results have no settings button");
+assert(["home-button", "settings-button"].every((t) => buttons.some(([id]) => id === t)), "Quick Start results have 🏠 and ⚙️");
 const meId = await page.evaluate(() => window.__boggled.getState().me.id);
 const score = Number(await page.locator(`[data-testid=col-${meId}] [data-testid=score]`).textContent());
 const res = (await page.evaluate(() => window.__boggled.getState().outcome!.result))!;
@@ -148,6 +148,36 @@ await page.getByTestId("end-early").click();
 await page.getByTestId("end-home").click();
 await page.getByTestId("menu").waitFor();
 assert(page.url().endsWith("/boggled"), "Quit to home mid-round returns to the menu");
+
+console.log("Quick Start settings");
+await page.getByTestId("solo").click();
+await page.getByTestId("quick-intro").waitFor();
+await page.getByTestId("opt-size").getByText("5×5").click();
+await page.getByTestId("opt-duration").getByText("1 min").click();
+await page.getByTestId("opt-chill").click();
+assert((await page.getByTestId("chill-explainer").textContent())!.includes("Longest word gets"), "No chill explains the bonuses");
+assert(!(await page.getByTestId("chill-explainer").textContent())!.includes("bombs"), "Quick Start No chill doesn't mention attacks");
+await page.waitForTimeout(300);
+await page.screenshot({ path: `${SHOTS}/02b-quick-settings.png`, fullPage: true });
+await page.getByTestId("leave").click();
+await page.reload();
+await page.getByTestId("solo").click();
+await page.getByTestId("quick-intro").waitFor();
+const kept = await page.evaluate(() => window.__boggled.getState().settings);
+assert(kept.size === 5 && kept.duration === 60 && kept.danger && kept.longestBonus && kept.series === 0, "Quick Start remembers its settings");
+await page.getByText("Start ⚡").waitFor({ timeout: 20000 });
+await page.getByTestId("start").click();
+await page.locator(".bg-overlay").waitFor({ state: "detached", timeout: 6000 });
+assert((await readBoard(page)).size === 5, "round uses the 5×5 board");
+const long = wordsOn(await readBoard(page)).filter(([w]) => w.length >= 6).slice(0, 2);
+for (const [, p] of long) await swipe(page, p);
+assert((await page.locator("[data-testid=bomb], [data-testid=flip]").count()) === 0, "no attacks against Dr. Hoot");
+await page.getByTestId("end-early").click();
+await page.getByTestId("end-score").click();
+await page.getByTestId("podium").waitFor({ timeout: 30000 });
+await page.getByTestId("settings-button").evaluate((el: HTMLElement) => el.click());
+await page.getByTestId("quick-intro").waitFor();
+assert(await page.getByTestId("settings").isVisible(), "⚙️ on results goes back to the Quick Start settings");
 
 await browser.close();
 console.log("Solo test passed");

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { track } from "@/lib/boggled/analytics";
 import { BOMB_WORD_LENGTH } from "@/lib/boggled/room";
 import { LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
 
@@ -192,11 +193,40 @@ const SLIDES: Slide[] = [
       </div>
     ),
   },
+  {
+    title: "Playing alone?",
+    body: (
+      <>
+        ⚡ <b>Quick Start</b> pits you against Dr. Hoot 🦉. 📅 <b>Daily Puzzle</b> gives everyone the same board each day, and your first try counts. ⏳{" "}
+        <b>Survival</b> starts you at 30 seconds, and every word adds time.
+      </>
+    ),
+    loop: 4,
+    demo: (t) => (
+      <div className="grid w-full grid-cols-3 gap-2 text-center">
+        {[
+          ["⚡", "Quick"],
+          ["📅", "Daily"],
+          ["⏳", "Survival"],
+        ].map(([e, n], i) => (
+          <div key={n} className={`bg-standing flex-col !gap-1 py-3 ${t % 3 === i ? "top" : ""}`}>
+            <span className="text-3xl">{e}</span>
+            <span className="text-sm font-semibold">{n}</span>
+          </div>
+        ))}
+      </div>
+    ),
+  },
 ];
 
 export default function HowToPlay({ onClose }: { onClose: () => void }) {
   const [slide, setSlide] = useState(0);
   const [tick, setTick] = useState(0);
+  const furthest = useRef(0);
+  useEffect(() => {
+    furthest.current = Math.max(furthest.current, slide + 1);
+  }, [slide]);
+  useEffect(() => () => track("howto", { slide: furthest.current, of: SLIDES.length }), []);
 
   useEffect(() => {
     const id = setInterval(() => setTick((t) => t + 1), TICK_MS);

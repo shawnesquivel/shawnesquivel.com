@@ -57,7 +57,7 @@ Phone A ─┐                        ┌─ Phone B
 Next.js page /boggled (client-only game) + /api/boggled/time (clock sync) + /boggled/words.txt (dictionary)
 ```
 
-No database tables. The game is **deterministic and peer-validated**, so no game server is needed:
+Gameplay uses no database tables (the only table is the optional, write-only analytics log, see `analytics.md`). The game is **deterministic and peer-validated**, so no game server is needed:
 
 1. The **host** (earliest-joined player still present; migrates automatically if they leave) owns settings and starts rounds by broadcasting `start {roundId, board, startsAt, endsAt, settings}`. Times are in server-clock ms (each client estimates its offset via `/api/boggled/time`).
 2. Every client validates its own words locally (path check + dictionary) and broadcasts a lightweight `progress {count}` so others see "N words".
@@ -71,6 +71,8 @@ No database tables. The game is **deterministic and peer-validated**, so no game
 - `src/lib/boggled/` — pure engine (`dice.ts`, `board.ts` incl. solver, `scoring.ts`, `rng.ts`, `dictionary.ts`), sound (`sound.ts`), clock sync (`clock.ts`), realtime transport (`transport.ts`), room protocol/state machine (`room.ts`, `RoomController`).
 - `src/components/boggled/` — React UI (`BoggledApp.tsx` identity + routing between screens; `Home.tsx` menu → code → name/emoji steps; `Extras.tsx` scoreboard, toasts, reactions; `Lobby.tsx`; `Game.tsx` round screen; `Grid.tsx` swipe/tap input; `Results.tsx` replay + podium).
 - `src/app/boggled/` — route + layout. `src/app/api/boggled/time/route.ts` — clock sync.
+- `src/lib/boggled/modes.ts` — Daily Puzzle (UTC-day seeded board, first-play lock, streak) and Survival (time bonus per word length). `analytics.ts` — batched, fire-and-forget event log. `site.ts` — canonical URL, titles, FAQ (shared by metadata, JSON-LD and the crawlable home content in `SeoContent.tsx`).
+- `src/app/boggled/stats/` — analytics dashboard.
 - `public/boggled/words.txt` — ENABLE word list (public domain), ~170k words.
 - `tests/boggled/` — unit + e2e.
 
@@ -105,7 +107,11 @@ Vercel serves everything; Supabase Realtime carries the multiplayer messages. Ad
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL (same as `SUPABASE_URL`) |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase **publishable/anon** key (never the secret key) |
 
-Supabase dashboard → Realtime → Settings: leave "Allow public access" enabled (channels are public; room codes are the only gate). No tables or migrations are needed.
+Supabase dashboard → Realtime → Settings: leave "Allow public access" enabled (channels are public; room codes are the only gate).
+
+Analytics (optional): run `supabase/migrations/20261030090000_boggled_analytics.sql` once in the Supabase SQL editor. Until then the game silently skips tracking and `/boggled/stats` shows setup steps. Dashboard: `/boggled/stats` (or `/stats` on the Word Brawl domain). Add `?notrack=1` to the game URL once on your own devices.
+
+SEO: the canonical URL comes from `NEXT_PUBLIC_WORDBRAWL_URL` (default `https://wordbrawl.vercel.app`). Set it when a custom domain is attached. On the game domain `/robots.txt` and `/sitemap.xml` are rewritten to the game's own versions.
 
 Without the variables, `/boggled` still works for solo play, and rooms fall back to same-browser tabs with a visible warning.
 

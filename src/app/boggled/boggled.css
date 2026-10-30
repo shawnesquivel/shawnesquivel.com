@@ -719,6 +719,11 @@ body:has(.boggled) {
   color: #2a1670;
   border-color: transparent;
 }
+.bg-menu-btn.bg-menu-mini {
+  gap: 10px;
+  padding: 12px;
+  border-radius: 18px;
+}
 .bg-menu-icon {
   font-size: 2.2rem;
   line-height: 1;
@@ -925,4 +930,99 @@ body:has(.boggled) {
   border: 8px solid transparent;
   border-top: 0;
   border-bottom-color: #fff;
+}
+
+.bg-qr {
+  width: 200px;
+  padding: 10px;
+  border-radius: 18px;
+  background: #fff;
+  animation: bg-slide 0.25s ease;
+}
+.bg-qr svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.bg-stats {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ---------- crawlable home content ---------- */
+
+.boggled:has([data-testid="lobby"], [data-testid="game"], [data-testid="results"], [data-testid$="-intro"]) .bg-seo {
+  display: none;
+}
+.bg-seo {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 8px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  line-height: 1.5;
+  -webkit-user-select: text;
+  user-select: text;
+}
+.bg-seo h1 {
+  font-size: 1.6rem;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.bg-seo h2 {
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+.bg-seo h3 {
+  font-weight: 700;
+}
+.bg-seo p,
+.bg-seo li {
+  opacity: 0.88;
+}
+.bg-seo-steps,
+.bg-seo-modes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bg-seo-steps li,
+.bg-seo-modes li,
+.bg-seo details {
+  background: var(--panel);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+.bg-seo-steps li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.bg-seo-num {
+  font-size: 1.8rem;
+}
+.bg-seo-list {
+  list-style: disc;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bg-seo details {
+  margin-bottom: 8px;
+}
+.bg-seo summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.bg-seo details p {
+  margin-top: 6px;
+}
+.bg-seo footer {
+  font-size: 0.8rem;
+  opacity: 0.7;
 }

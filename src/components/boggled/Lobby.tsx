@@ -1,5 +1,6 @@
 "use client";
 
+import { click, track } from "@/lib/boggled/analytics";
 import { useState, type ReactNode } from "react";
 import { BOMB_WORD_LENGTH, DANGER_ZONE_MS, isNoChill, type RoomController, type RoomState, type Settings } from "@/lib/boggled/room";
 import { DANGER_BOOST, LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
@@ -74,7 +75,60 @@ function Segmented<T extends string | number>({
   );
 }
 
-function ChillToggle({ noChill, onChange, disabled }: { noChill: boolean; onChange: (v: boolean) => void; disabled: boolean }) {
+export function SettingsFields({
+  settings: s,
+  disabled,
+  onChange: set,
+  quick = false,
+}: {
+  settings: Settings;
+  disabled: boolean;
+  onChange: (patch: Partial<Settings>) => void;
+  quick?: boolean;
+}) {
+  return (
+    <>
+        <Cards
+          label="Board"
+          testId="opt-size"
+          value={s.size}
+          disabled={disabled}
+          options={[
+            { value: 4, label: "4×4", sub: "Classic", icon: <MiniGrid size={4} /> },
+            { value: 5, label: "5×5", sub: "Big board", icon: <MiniGrid size={5} /> },
+          ]}
+          onChange={(size) => set({ size })}
+        />
+        <div className="flex gap-3">
+          <Segmented
+            label="⏱ Timer"
+            testId="opt-duration"
+            value={s.duration}
+            disabled={disabled}
+            options={[
+              { value: 60, label: "1 min" },
+              { value: 120, label: "2 min" },
+            ]}
+            onChange={(duration) => set({ duration })}
+          />
+          <Segmented
+            label="🔤 Shortest word"
+            testId="opt-min"
+            value={s.minLength}
+            disabled={disabled}
+            options={[
+              { value: 3, label: "3 letters" },
+              { value: 4, label: "4 letters" },
+            ]}
+            onChange={(minLength) => set({ minLength })}
+          />
+        </div>
+        <ChillToggle quick={quick} noChill={isNoChill(s)} disabled={disabled} onChange={(on) => set({ danger: on, longestBonus: on })} />
+    </>
+  );
+}
+
+function ChillToggle({ noChill, onChange, disabled, quick }: { noChill: boolean; onChange: (v: boolean) => void; disabled: boolean; quick: boolean }) {
   const [explain, setExplain] = useState(false);
   return (
     <div>
@@ -91,7 +145,9 @@ function ChillToggle({ noChill, onChange, disabled }: { noChill: boolean; onChan
         <span className="text-3xl">{noChill ? "🔥" : "🧘"}</span>
         <span className="min-w-0 flex-1">
           <span className="block font-bold">{noChill ? "No chill mode" : "Chill mode"}</span>
-          <span className="block text-xs opacity-75">{noChill ? "Attacks, shields and bonus points" : "Just you, the letters and the clock"}</span>
+          <span className="block text-xs opacity-75">
+            {noChill ? (quick ? "Longest-word and danger-zone bonuses" : "Attacks, shields and bonus points") : "Just you, the letters and the clock"}
+          </span>
         </span>
         <span className={`bg-toggle ${noChill ? "on" : ""}`} />
       </button>
@@ -101,9 +157,14 @@ function ChillToggle({ noChill, onChange, disabled }: { noChill: boolean; onChan
             <b>🧘 Chill mode.</b> Classic word hunt. Every word scores its length, nothing gets in your way.
           </div>
           <div className={`bg-mode-card ${noChill ? "current" : ""}`}>
-            <b>🔥 No chill mode.</b> {BOMB_WORD_LENGTH}+ letter words earn 💣 bombs and 🙃 flips to mess up a rival&apos;s board. A
-            quick combo earns a 🛡️ shield. Longest word gets +{LONGEST_WORD_BONUS}, and the last {DANGER_ZONE_MS / 1000}s are
-            worth +{Math.round(DANGER_BOOST * 100)}%.
+            <b>🔥 No chill mode.</b>{" "}
+            {quick ? null : (
+              <>
+                {BOMB_WORD_LENGTH}+ letter words earn 💣 bombs and 🙃 flips to mess up a rival&apos;s board. A quick combo earns a 🛡️
+                shield.{" "}
+              </>
+            )}
+            Longest word gets +{LONGEST_WORD_BONUS}, and the last {DANGER_ZONE_MS / 1000}s are worth +{Math.round(DANGER_BOOST * 100)}%.
           </div>
           <button className="self-end text-xs underline opacity-70" onClick={() => setExplain(false)}>
             Got it
@@ -145,9 +206,13 @@ export default function Lobby({
 }) {
   const [copied, setCopied] = useState<"" | "code" | "link">("");
   const [editing, setEditing] = useState(false);
+  const [qr, setQr] = useState("");
   const isHost = state.hostId === state.me.id;
   const s = state.settings;
-  const set = (patch: Partial<Settings>) => controller.updateSettings(patch);
+  const set = (patch: Partial<Settings>) => {
+    for (const [key, value] of Object.entries(patch)) track("setting", { key, value: String(value) });
+    controller.updateSettings(patch);
+  };
   const host = state.roster.find((m) => m.id === state.hostId);
   const alone = state.roster.length < 2;
 
@@ -156,7 +221,19 @@ export default function Lobby({
     setTimeout(() => setCopied(""), 1600);
   };
 
+  const inviteUrl = () => `${location.origin}${location.pathname}?room=${state.room}`;
+
+  const showQr = async () => {
+    if (qr) return setQr("");
+    click("qr");
+    try {
+      const QR = await import("qrcode");
+      setQr(await QR.toString(inviteUrl(), { type: "svg", margin: 1, color: { dark: "#2a1670", light: "#ffffff" } }));
+    } catch {}
+  };
+
   const copyCode = async () => {
+    click("copy_code");
     try {
       await navigator.clipboard.writeText(state.room ?? "");
       flash("code");
@@ -166,7 +243,8 @@ export default function Lobby({
   };
 
   const share = async () => {
-    const url = `${location.origin}${location.pathname}?room=${state.room}`;
+    click("share_link");
+    const url = inviteUrl();
     try {
       if (navigator.share) {
         await navigator.share({ title: "Word Brawl", text: `Join my Word Brawl room: ${state.room}`, url });
@@ -180,7 +258,7 @@ export default function Lobby({
   return (
     <div className="bg-screen gap-4" data-testid="lobby">
       <div className="flex items-center justify-between">
-        <button className="bg-btn bg-btn-ghost px-3 py-2 text-base" onClick={onLeave}>
+        <button className="bg-btn bg-btn-ghost px-3 py-2 text-base" onClick={() => { click("home"); onLeave(); }}>
           ← Leave
         </button>
         {state.status !== "connected" && <span className="bg-chip text-sm">Reconnecting…</span>}
@@ -199,9 +277,20 @@ export default function Lobby({
         <div className="bg-title bg-selectable text-6xl tracking-[0.2em]" data-testid="room-code">
           {state.room}
         </div>
-        <button className={`bg-btn mt-3 w-full ${alone ? "bg-btn-primary" : "bg-btn-ghost"}`} onClick={share} data-testid="share">
-          {copied === "link" ? "✓ Link copied!" : "🔗 Share invite link"}
-        </button>
+        <div className="mt-3 flex gap-2">
+          <button className={`bg-btn flex-1 ${alone ? "bg-btn-primary" : "bg-btn-ghost"}`} onClick={share} data-testid="share">
+            {copied === "link" ? "✓ Link copied!" : "🔗 Share invite link"}
+          </button>
+          <button className="bg-btn bg-btn-ghost w-16 px-0 text-base" onClick={showQr} aria-label="Show QR code" aria-expanded={!!qr} data-testid="qr">
+            {qr ? "✕" : "QR"}
+          </button>
+        </div>
+        {qr && (
+          <div className="bg-qr mx-auto mt-3" data-testid="qr-code">
+            <div dangerouslySetInnerHTML={{ __html: qr }} />
+            <div className="mt-1 text-xs text-[#2a1670]">Scan with a phone camera to join</div>
+          </div>
+        )}
         {controller.transportKind === "local" && (
           <p className="mt-2 text-xs opacity-80">
             Online multiplayer isn&apos;t configured on this site yet, so rooms only work between tabs of this browser.
@@ -225,7 +314,7 @@ export default function Lobby({
                 {t && t.wins > 0 && <span className="text-sm opacity-80">{t.wins} 🏆</span>}
                 {m.id === state.hostId && <span title="Host">👑</span>}
                 {mine && (
-                  <button className="bg-chip px-2.5 py-1 text-sm" onClick={() => setEditing((v) => !v)} aria-label="Edit name" data-testid="edit-me">
+                  <button className="bg-chip px-2.5 py-1 text-sm" onClick={() => { if (!editing) click("rename"); setEditing((v) => !v); }} aria-label="Edit name" data-testid="edit-me">
                     ✏️
                   </button>
                 )}
@@ -270,42 +359,7 @@ export default function Lobby({
           <div className="bg-title text-lg">⚙️ Game settings</div>
           {!isHost && <span className="text-xs opacity-70">{host?.name ?? "The host"} picks these</span>}
         </div>
-        <Cards
-          label="Board"
-          testId="opt-size"
-          value={s.size}
-          disabled={!isHost}
-          options={[
-            { value: 4, label: "4×4", sub: "Classic", icon: <MiniGrid size={4} /> },
-            { value: 5, label: "5×5", sub: "Big board", icon: <MiniGrid size={5} /> },
-          ]}
-          onChange={(size) => set({ size })}
-        />
-        <div className="flex gap-3">
-          <Segmented
-            label="⏱ Timer"
-            testId="opt-duration"
-            value={s.duration}
-            disabled={!isHost}
-            options={[
-              { value: 60, label: "1 min" },
-              { value: 120, label: "2 min" },
-            ]}
-            onChange={(duration) => set({ duration })}
-          />
-          <Segmented
-            label="🔤 Shortest word"
-            testId="opt-min"
-            value={s.minLength}
-            disabled={!isHost}
-            options={[
-              { value: 3, label: "3 letters" },
-              { value: 4, label: "4 letters" },
-            ]}
-            onChange={(minLength) => set({ minLength })}
-          />
-        </div>
-        <ChillToggle noChill={isNoChill(s)} disabled={!isHost} onChange={(on) => set({ danger: on, longestBonus: on })} />
+        <SettingsFields settings={s} disabled={!isHost} onChange={set} />
         <div>
           <Cards
             label="Match"
