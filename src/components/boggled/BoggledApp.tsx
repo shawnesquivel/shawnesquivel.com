@@ -10,9 +10,12 @@ import { FloatingReactions, useRoomEffects } from "./Extras";
 import Game from "./Game";
 import Home, { EMOJIS, normalizeCode, type Identity } from "./Home";
 import Lobby from "./Lobby";
+import QuickIntro from "./QuickIntro";
 import Results from "./Results";
 
 const CODE_ALPHABET = "BCDFGHJKLMNPQRSTVWXZ";
+
+const FUN_NAMES = ["Wordsmith", "Letter Ninja", "Vowel Bandit", "Spelling Bee", "Word Nerd", "Lexi Con", "Captain Swipe", "Scrabbler"];
 
 function newRoomCode() {
   const bytes = crypto.getRandomValues(new Uint8Array(4));
@@ -55,10 +58,12 @@ function RoomView({
   controller,
   dict,
   onLeave,
+  onIdentity,
 }: {
   controller: RoomController;
   dict: Dictionary | null;
   onLeave: () => void;
+  onIdentity: (patch: Partial<Identity>) => void;
 }) {
   const state = useSyncExternalStore(controller.subscribe, controller.getState, controller.getState);
   const rosterSize = state.roster.length;
@@ -72,7 +77,11 @@ function RoomView({
 
   let screen;
   if (state.phase === "lobby" || !state.round) {
-    screen = <Lobby state={state} controller={controller} dictReady={!!dict} onLeave={onLeave} />;
+    screen = state.room ? (
+      <Lobby state={state} controller={controller} dictReady={!!dict} onLeave={onLeave} onIdentity={onIdentity} />
+    ) : (
+      <QuickIntro state={state} controller={controller} dictReady={!!dict} onLeave={onLeave} />
+    );
   } else if (state.phase === "results") {
     screen = <Results key={state.round.id} state={state} controller={controller} onLeave={onLeave} />;
   } else {
@@ -122,7 +131,11 @@ export default function BoggledApp() {
   const enter = (room: string | null) => {
     if (!identity) return;
     sound.unlock();
-    const name = identity.name.trim() || "Player";
+    let name = identity.name.trim();
+    if (!name) {
+      name = FUN_NAMES[Math.floor(Math.random() * FUN_NAMES.length)];
+      updateIdentity({ name });
+    }
     const joinedKey = `boggled:joined:${room ?? "solo"}`;
     const joinedAt = Number(sessionStorage.getItem(joinedKey)) || serverNow();
     sessionStorage.setItem(joinedKey, String(joinedAt));
@@ -131,19 +144,24 @@ export default function BoggledApp() {
     c.start();
     if (process.env.NODE_ENV !== "production") (window as unknown as { __boggled: RoomController }).__boggled = c;
     setController(c);
-    history.replaceState(null, "", room ? `/boggled?room=${room}` : "/boggled");
+    history.replaceState(null, "", room ? `${location.pathname}?room=${room}` : location.pathname);
   };
 
   const leave = () => {
     controller?.stop();
     setController(null);
     setInvite("");
-    history.replaceState(null, "", "/boggled");
+    history.replaceState(null, "", location.pathname);
   };
 
   if (!identity) return <div className="bg-screen" />;
 
-  if (controller) return <RoomView controller={controller} dict={dict} onLeave={leave} />;
+  const rename = (patch: Partial<Identity>) => {
+    updateIdentity(patch);
+    controller?.updateMe(patch);
+  };
+
+  if (controller) return <RoomView controller={controller} dict={dict} onLeave={leave} onIdentity={rename} />;
 
   return (
     <Home

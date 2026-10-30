@@ -64,6 +64,10 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-31 | Best-of-3/5 series: Game N chip, pips + match point, series champion banner, 🏅 on scoreboard, ties = sudden death | done | `series.ts` |
 | BOG-32 | 🛡️ Shield: earned from the combo ring (BOG-34); quiet icon, tap to explain; auto-blocks the next attack | done | |
 | BOG-33 | ☠️ Danger mode setting (replaces Power-ups): attacks, shields, last 15 s = +10% (ceil of late points) with siren + red glow | done | |
+| BOG-36 | Quick Start (replaces Practice solo): You vs. Dr. Hoot 🦉 intro, mocked bot opponent with adaptive level 1–10, level-change line on results | done | `bot.ts`, `QuickIntro.tsx` |
+| BOG-37 | Lobby: Create opens the room instantly, ✏️ rename in roster, selectable room code + Copy button, "It's quiet in here" empty state | done | `transport.update()` |
+| BOG-38 | Settings: 1/2 min timer and shortest word in one row, single Chill/No chill toggle (explains both), Match = Best of 3 (default) / Best of 5 / Continuous with plain-language help | done | |
+| BOG-39 | Rename to Word Brawl; serve at the root of wordbrawl.vercel.app / wordbrawl.app via a host rewrite | done | `next.config.ts` |
 | BOG-35 | Unique ×2 only with 3+ players; head-to-head every word scores normally (results legend, reveal and how-to-play updated) | done | `DOUBLE_UNIQUE_MIN_PLAYERS` |
 | BOG-34 | Combo ring (top right): fills clockwise a quarter per word; 4 words in 4 s = boost. Rewards capped against farming short words: multiplayer (Danger mode) → 🛡️ shield (max 1, ring shows it until used); solo → +5 s on the clock (max 3/round). Tap to explain | done | `ComboRing.tsx`, replaces "3 words in 10 s" shield rule |
 | BOG-24 | e2e: power-ups (bomb earn/use/block/expiry), reactions, scoreboard across 2 rounds | done | `tests/boggled/e2e/power-ups.mts` |

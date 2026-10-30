@@ -10,11 +10,11 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "Boggled Online — play Boggle with friends",
-  description: "Find words on a shared letter grid with friends. Create a room, share the code, and race the clock from your phone.",
+  title: "Word Brawl — swipe words, beat your friends",
+  description: "A fast word-hunt party game for phones. Swipe words on a shared letter grid, battle friends with a link, or take on Dr. Hoot in Quick Start.",
   openGraph: {
-    title: "Boggled Online",
-    description: "Play Boggle with friends from your phone. Create a room and share the code.",
+    title: "Word Brawl",
+    description: "Swipe words, beat your friends. Create a room, share the link, and race the clock from your phone.",
   },
 };
 

@@ -1,13 +1,14 @@
 // Two phones in one room over Supabase Realtime (local: `npx supabase start` + .env.local).
 import { mkdirSync } from "node:fs";
 import { chromium, devices } from "playwright";
-import { assert, BASE, roomState, readBoard, setName, SHOTS, swipe, wordsOn } from "./helpers.mjs";
+import { assert, BASE, createRoom, roomState, readBoard, setName, SHOTS, swipe, wordsOn } from "./helpers.mjs";
 
 mkdirSync(SHOTS, { recursive: true });
 const VIDEOS = process.env.BOGGLED_VIDEOS ?? "/opt/cursor/artifacts/videos";
 const browser = await chromium.launch();
 const ctxA = await browser.newContext({ ...devices["iPhone 13"], recordVideo: { dir: VIDEOS, size: { width: 390, height: 664 } } });
 const ctxB = await browser.newContext({ ...devices["Pixel 7"] });
+await ctxA.grantPermissions(["clipboard-read", "clipboard-write"]);
 const a = await ctxA.newPage();
 const b = await ctxB.newPage();
 for (const [n, p] of [["A", a], ["B", b]] as const) p.on("pageerror", (e) => console.error(`pageerror ${n}:`, e.message));
@@ -16,13 +17,20 @@ const state = roomState;
 
 console.log("Two-player room");
 await a.goto(`${BASE}/boggled`);
-await a.getByTestId("menu-create").click();
-await setName(a, "Shawn");
-await a.getByTestId("create").click();
+await createRoom(a, "Shawn");
 const code = (await a.getByTestId("room-code").textContent())!.trim();
 assert(/^[A-Z]{4}$/.test(code), `room created with code ${code}`);
 assert(a.url().includes(`room=${code}`), "invite link is in the URL");
 assert((await state(a)).status === "connected" || (await a.waitForFunction(() => window.__boggled.getState().status === "connected")), "host connected to Supabase Realtime");
+assert((await state(a)).me.name === "Shawn" && (await a.locator("[data-testid=roster] li").first().textContent())!.includes("Shawn"), "Create opens the room right away; renaming in the lobby works");
+assert(await a.getByTestId("quiet").isVisible(), "an empty room says it's quiet in here");
+await a.getByTestId("copy-code").click();
+await a.getByTestId("copy-code").getByText("Copied").waitFor({ timeout: 3000 });
+assert(true, "copy button confirms");
+assert((await a.evaluate(() => navigator.clipboard.readText())) === code, "copy button puts the room code on the clipboard");
+assert((await a.getByTestId("room-code").evaluate((el) => getComputedStyle(el).userSelect)) !== "none", "room code text can be selected manually");
+assert((await state(a)).settings.series === 3 && !(await state(a)).settings.danger, "rooms default to best of 3, chill mode");
+await a.screenshot({ path: `${SHOTS}/09a-new-room.png` });
 
 await b.goto(`${BASE}/boggled`);
 await b.getByTestId("menu-join").click();
@@ -101,12 +109,13 @@ const pts = (w: string) => w.length - 2;
 const allA = [...aOnly, shared].map(([w]) => w);
 const allB = [...bOnly, shared].map(([w]) => w);
 const longest = Math.max(...[...allA, ...allB].map((w) => w.length));
-const bonus = (ws: string[]) => (ws.some((w) => w.length === longest) ? 3 : 0);
+const longestOn = (await state(a)).round!.settings.longestBonus;
+const bonus = (ws: string[]) => (longestOn && ws.some((w) => w.length === longest) ? 3 : 0);
 const expectA = aOnly.reduce((s, [w]) => s + pts(w), 0) + pts(shared[0]) + bonus(allA);
 const expectB = bOnly.reduce((s, [w]) => s + pts(w), 0) + pts(shared[0]) + bonus(allB);
 const totalA = ra.players.find((p) => p.id === sa.me.id)!.total;
 const totalB = ra.players.find((p) => p.id === sb.me.id)!.total;
-assert(totalA === expectA, `host score ${totalA} = words (no ×2 head-to-head) + longest bonus (${expectA})`);
+assert(totalA === expectA, `host score ${totalA} = word points, no ×2 head-to-head (${expectA})`);
 assert(totalB === expectB, `guest score ${totalB} = ${expectB}`);
 const shownA = await a.locator(`[data-testid=col-${sa.me.id}] [data-testid=score]`).textContent();
 assert(Number(shownA) === totalA, "animated score lands on the final total");

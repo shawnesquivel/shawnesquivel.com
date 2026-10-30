@@ -1,6 +1,6 @@
-# Boggled Online — spec & architecture
+# Word Brawl (formerly Boggled Online) — spec & architecture
 
-A browser-based, phone-first remake of Netflix's *Boggle Party*, living at `/boggled` on shawnesquivel.com.
+A browser-based, phone-first remake of Netflix's *Boggle Party*, living at `/boggled` on shawnesquivel.com and at the root of its own domain (`wordbrawl.vercel.app`, plus `wordbrawl.app` if registered) via a host-based rewrite in `next.config.ts`. Renamed to **Word Brawl** to stay clear of the Boggle trademark; code and routes keep the `boggled` name.
 Players open the site on their phones, one creates a room, others join with a 4-letter code or link, and everyone races the same board.
 
 Work is tracked in [`tickets.md`](./tickets.md). Future art/audio direction is in [`design-later.md`](./design-later.md).
@@ -15,16 +15,19 @@ Taken from the Boggle Party help center (Netflix, 2026):
 - Points: 3 letters = 1, 4 = 2, 5 = 3, +1 per extra letter (`Qu` counts as two letters).
 - **Unique word**: with 3 or more players, a word nobody else found scores **double**. Head-to-head (2 players) every word scores normally, since ×2 would just double the gap.
 - No penalty for invalid words, no speed bonus.
-- **Longest word bonus** (not in Netflix rules, requested by Shawn): +3 to the player(s) with the strictly longest valid word. Host toggle, on by default.
-- Timer: 60 / 90 / 120 / 180 s.
+- **Longest word bonus** (not in Netflix rules, requested by Shawn): +3 to the player(s) with the strictly longest valid word. Part of No chill mode.
+- Timer: 1 or 2 minutes. Timer and shortest word sit side by side in the lobby.
+- **Chill / No chill**: one host toggle. Chill (default) is the classic game. No chill turns on Danger mode and the longest-word bonus together. Tapping it explains both.
+- **Match**: Best of 3 (default), Best of 5, or Continuous (no finish line), with a one-line explanation of the selected option.
+- **Create a room** opens the lobby instantly (a fun default name if you haven't set one); rename or change emoji with ✏️ in the roster. The room code is selectable and has a Copy button; an empty room says "It's quiet in here. Share the link with your friends!"
+- **Quick Start** (replaces Practice solo): 1v1 against **Dr. Hoot** 🦉, a mocked opponent (`bot.ts`). It's not an AI: it picks real words from the board's solutions on a timed schedule. Its level (1–10, starts at 3, stored on the device) sets how many words it finds and how long they are; beat it and it levels up, lose and it levels down. Quick Start uses chill rules, 4×4, 2 minutes; the ⚡ combo ring still adds time.
 
 Party extras (v2, ours, not Netflix):
 - **Session scoreboard**: every multiplayer round adds wins (rank 1, ties all win) and points to a per-room tally shown in the lobby and results, with a banter headline and a title badge for the leader (`banter.ts`).
-- **☠️ Danger mode** (host toggle, on by default):
+- **☠️ Danger mode** (on in No chill mode):
   - 6+ letter words earn attacks, alternating 💣 bomb (blocks 1 random rival tile for 5 s, can't be swiped through) and 🙃 flip (2 rival tiles pink + upside down for 6 s). Max 3 each.
   - 🛡️ Shield: earned by filling the combo ring (4 words within 4 s; ring in the top right fills clockwise, tap to explain). Max 1; auto-blocks the next attack; attacker is told.
-- **Combo ring in solo**: same ring, but filling it adds +5 s to the clock (max 3 per round).
-  - Halftime: whoever is behind gets a free 💣.
+- **Combo ring in Quick Start**: same ring, but filling it adds +5 s to the clock (max 3 per round).
   - Danger zone (last 15 s): red glow + siren; words found then add a bonus of ceil(10% of their points). Sent as `late` with the final word list.
   - Battle log on results.
 - **Halftime reveal** (all multiplayer): rival scores show 🙈 until halftime, then live points.
