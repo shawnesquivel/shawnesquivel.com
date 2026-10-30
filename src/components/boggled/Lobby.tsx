@@ -75,7 +75,60 @@ function Segmented<T extends string | number>({
   );
 }
 
-function ChillToggle({ noChill, onChange, disabled }: { noChill: boolean; onChange: (v: boolean) => void; disabled: boolean }) {
+export function SettingsFields({
+  settings: s,
+  disabled,
+  onChange: set,
+  quick = false,
+}: {
+  settings: Settings;
+  disabled: boolean;
+  onChange: (patch: Partial<Settings>) => void;
+  quick?: boolean;
+}) {
+  return (
+    <>
+        <Cards
+          label="Board"
+          testId="opt-size"
+          value={s.size}
+          disabled={disabled}
+          options={[
+            { value: 4, label: "4×4", sub: "Classic", icon: <MiniGrid size={4} /> },
+            { value: 5, label: "5×5", sub: "Big board", icon: <MiniGrid size={5} /> },
+          ]}
+          onChange={(size) => set({ size })}
+        />
+        <div className="flex gap-3">
+          <Segmented
+            label="⏱ Timer"
+            testId="opt-duration"
+            value={s.duration}
+            disabled={disabled}
+            options={[
+              { value: 60, label: "1 min" },
+              { value: 120, label: "2 min" },
+            ]}
+            onChange={(duration) => set({ duration })}
+          />
+          <Segmented
+            label="🔤 Shortest word"
+            testId="opt-min"
+            value={s.minLength}
+            disabled={disabled}
+            options={[
+              { value: 3, label: "3 letters" },
+              { value: 4, label: "4 letters" },
+            ]}
+            onChange={(minLength) => set({ minLength })}
+          />
+        </div>
+        <ChillToggle quick={quick} noChill={isNoChill(s)} disabled={disabled} onChange={(on) => set({ danger: on, longestBonus: on })} />
+    </>
+  );
+}
+
+function ChillToggle({ noChill, onChange, disabled, quick }: { noChill: boolean; onChange: (v: boolean) => void; disabled: boolean; quick: boolean }) {
   const [explain, setExplain] = useState(false);
   return (
     <div>
@@ -92,7 +145,9 @@ function ChillToggle({ noChill, onChange, disabled }: { noChill: boolean; onChan
         <span className="text-3xl">{noChill ? "🔥" : "🧘"}</span>
         <span className="min-w-0 flex-1">
           <span className="block font-bold">{noChill ? "No chill mode" : "Chill mode"}</span>
-          <span className="block text-xs opacity-75">{noChill ? "Attacks, shields and bonus points" : "Just you, the letters and the clock"}</span>
+          <span className="block text-xs opacity-75">
+            {noChill ? (quick ? "Longest-word and danger-zone bonuses" : "Attacks, shields and bonus points") : "Just you, the letters and the clock"}
+          </span>
         </span>
         <span className={`bg-toggle ${noChill ? "on" : ""}`} />
       </button>
@@ -102,9 +157,14 @@ function ChillToggle({ noChill, onChange, disabled }: { noChill: boolean; onChan
             <b>🧘 Chill mode.</b> Classic word hunt. Every word scores its length, nothing gets in your way.
           </div>
           <div className={`bg-mode-card ${noChill ? "current" : ""}`}>
-            <b>🔥 No chill mode.</b> {BOMB_WORD_LENGTH}+ letter words earn 💣 bombs and 🙃 flips to mess up a rival&apos;s board. A
-            quick combo earns a 🛡️ shield. Longest word gets +{LONGEST_WORD_BONUS}, and the last {DANGER_ZONE_MS / 1000}s are
-            worth +{Math.round(DANGER_BOOST * 100)}%.
+            <b>🔥 No chill mode.</b>{" "}
+            {quick ? null : (
+              <>
+                {BOMB_WORD_LENGTH}+ letter words earn 💣 bombs and 🙃 flips to mess up a rival&apos;s board. A quick combo earns a 🛡️
+                shield.{" "}
+              </>
+            )}
+            Longest word gets +{LONGEST_WORD_BONUS}, and the last {DANGER_ZONE_MS / 1000}s are worth +{Math.round(DANGER_BOOST * 100)}%.
           </div>
           <button className="self-end text-xs underline opacity-70" onClick={() => setExplain(false)}>
             Got it
@@ -299,42 +359,7 @@ export default function Lobby({
           <div className="bg-title text-lg">⚙️ Game settings</div>
           {!isHost && <span className="text-xs opacity-70">{host?.name ?? "The host"} picks these</span>}
         </div>
-        <Cards
-          label="Board"
-          testId="opt-size"
-          value={s.size}
-          disabled={!isHost}
-          options={[
-            { value: 4, label: "4×4", sub: "Classic", icon: <MiniGrid size={4} /> },
-            { value: 5, label: "5×5", sub: "Big board", icon: <MiniGrid size={5} /> },
-          ]}
-          onChange={(size) => set({ size })}
-        />
-        <div className="flex gap-3">
-          <Segmented
-            label="⏱ Timer"
-            testId="opt-duration"
-            value={s.duration}
-            disabled={!isHost}
-            options={[
-              { value: 60, label: "1 min" },
-              { value: 120, label: "2 min" },
-            ]}
-            onChange={(duration) => set({ duration })}
-          />
-          <Segmented
-            label="🔤 Shortest word"
-            testId="opt-min"
-            value={s.minLength}
-            disabled={!isHost}
-            options={[
-              { value: 3, label: "3 letters" },
-              { value: 4, label: "4 letters" },
-            ]}
-            onChange={(minLength) => set({ minLength })}
-          />
-        </div>
-        <ChillToggle noChill={isNoChill(s)} disabled={!isHost} onChange={(on) => set({ danger: on, longestBonus: on })} />
+        <SettingsFields settings={s} disabled={!isHost} onChange={set} />
         <div>
           <Cards
             label="Match"

@@ -36,6 +36,17 @@ export type Settings = {
 // "No chill" turns on Danger mode and the longest-word bonus together; chill is the default.
 export const DEFAULT_SETTINGS: Settings = { size: 4, duration: 120, minLength: 3, longestBonus: false, danger: false, series: 3 };
 export const QUICK_SETTINGS: Settings = { ...DEFAULT_SETTINGS, series: 0 };
+const QUICK_SETTINGS_KEY = "boggled:quickSettings";
+
+function loadQuickSettings(): Settings {
+  try {
+    const saved = JSON.parse(localStorage.getItem(QUICK_SETTINGS_KEY) ?? "{}");
+    return { ...QUICK_SETTINGS, ...saved, series: 0 };
+  } catch {
+    return QUICK_SETTINGS;
+  }
+}
+
 const SOLO_SETTINGS: Record<SoloMode, Settings> = {
   quick: QUICK_SETTINGS,
   daily: { ...QUICK_SETTINGS, duration: DAILY_SECONDS },
@@ -160,6 +171,7 @@ export class RoomController {
   private startResends: ReturnType<typeof setTimeout>[] = [];
   private botPlan: BotPick[] = [];
   private botWords: string[] = [];
+  private botLate: string[] = [];
   private endedEarly = false;
 
   constructor(room: string | null, me: Member, soloMode: SoloMode = "quick") {
@@ -172,7 +184,7 @@ export class RoomController {
       status: "connecting",
       roster: mode === "quick" ? [me, BOT] : [me],
       hostId: me.id,
-      settings: mode === "room" ? DEFAULT_SETTINGS : SOLO_SETTINGS[mode],
+      settings: mode === "room" ? DEFAULT_SETTINGS : mode === "quick" ? loadQuickSettings() : SOLO_SETTINGS[mode],
       phase: "lobby",
       round: null,
       myWords: [],
@@ -280,6 +292,11 @@ export class RoomController {
     const settings = { ...this.state.settings, ...patch };
     this.set({ settings });
     this.send({ type: "settings", settings });
+    if (this.isQuick) {
+      try {
+        localStorage.setItem(QUICK_SETTINGS_KEY, JSON.stringify(settings));
+      } catch {}
+    }
   }
 
   startRound() {
@@ -352,7 +369,7 @@ export class RoomController {
     this.send({ type: "progress", roundId: round.id, count: next.length, points });
 
     const multiplayer = round.players.length > 1;
-    if (multiplayer && round.settings.danger) {
+    if (multiplayer && round.settings.danger && !this.isQuick) {
       const powers = { ...this.state.powers };
       if (word.length >= BOMB_WORD_LENGTH) {
         // Alternate so both weapons show up: bomb, flip, bomb, ...
@@ -399,7 +416,7 @@ export class RoomController {
     const { round, roster, me } = this.state;
     if (!round) return [];
     const present = new Set(roster.map((m) => m.id));
-    return round.players.filter((p) => p.id !== me.id && present.has(p.id));
+    return round.players.filter((p) => p.id !== me.id && p.id !== BOT.id && present.has(p.id));
   }
 
   attack(weapon: Weapon): Member | null {
@@ -473,6 +490,7 @@ export class RoomController {
     const myWords = this.restore("words", round.id);
     this.earned = 0;
     this.botWords = [];
+    this.botLate = [];
     this.endedEarly = false;
     this.botPlan =
       round.bot && this.dict
@@ -698,7 +716,7 @@ export class RoomController {
       let lates = mine ? { ...s.lates, [s.me.id]: s.myLate } : s.lates;
       if (round.bot) {
         finals = { ...finals, [BOT.id]: this.botWords };
-        lates = { ...lates, [BOT.id]: [] };
+        lates = { ...lates, [BOT.id]: this.botLate };
       }
       this.set({ phase: "collecting", finals, lates });
       this.sendFinal(true);
@@ -722,6 +740,7 @@ export class RoomController {
     while (this.botPlan.length && this.botPlan[0].at <= elapsed) found.push(this.botPlan.shift()!.word);
     if (!found.length) return;
     this.botWords = [...found.reverse(), ...this.botWords];
+    if (round.settings.danger && now >= round.endsAt - DANGER_ZONE_MS) this.botLate = [...found, ...this.botLate];
     const points = this.botWords.reduce((sum, w) => sum + wordPoints(w), 0);
     this.set({
       progress: { ...this.state.progress, [BOT.id]: this.botWords.length },

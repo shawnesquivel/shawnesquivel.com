@@ -264,11 +264,12 @@ export default function Results({
 
           {isHost ? (
             <div className="flex gap-3">
-              {soloMode ? (
+              {soloMode && (
                 <button className="bg-btn bg-btn-ghost w-14 px-0" onClick={() => { click("home"); onLeave(); }} aria-label="Home" data-testid="home-button">
                   🏠
                 </button>
-              ) : (
+              )}
+              {(!soloMode || quick) && (
                 <button className="bg-btn bg-btn-ghost w-14 px-0" onClick={() => { click("settings"); controller.backToLobby(); }} aria-label="Settings" data-testid="settings-button">
                   ⚙️
                 </button>

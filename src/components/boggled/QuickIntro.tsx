@@ -1,9 +1,10 @@
 "use client";
 
-import { click } from "@/lib/boggled/analytics";
+import { click, track } from "@/lib/boggled/analytics";
 import { BOT, BOT_TAGLINES, loadBotLevel, MAX_BOT_LEVEL } from "@/lib/boggled/bot";
 import { dayKey, formatSecs, loadDaily, loadStreak, loadSurvivalBest, SURVIVAL_START_SECONDS, survivalBonusMs } from "@/lib/boggled/modes";
-import type { RoomController, RoomState } from "@/lib/boggled/room";
+import type { RoomController, RoomState, Settings } from "@/lib/boggled/room";
+import { SettingsFields } from "./Lobby";
 import { useState } from "react";
 
 type IntroProps = { state: RoomState; controller: RoomController; dictReady: boolean; onLeave: () => void };
@@ -156,6 +157,19 @@ function QuickIntro({
         <li>⏱ Most points in {minutes} {minutes === 1 ? "minute" : "minutes"} wins.</li>
         <li>🎓 Beat him and he levels up. Lose and he gets insufferable.</li>
       </ul>
+
+      <div className="bg-panel flex flex-col gap-4 p-4" data-testid="settings">
+        <div className="bg-title text-lg">⚙️ Game settings</div>
+        <SettingsFields
+          quick
+          settings={state.settings}
+          disabled={false}
+          onChange={(patch: Partial<Settings>) => {
+            for (const [key, value] of Object.entries(patch)) track("setting", { key, value: String(value), mode: "quick" });
+            controller.updateSettings(patch);
+          }}
+        />
+      </div>
 
       {(you > 0 || hoot > 0) && (
         <div className="text-center text-sm opacity-85" data-testid="bot-record">
