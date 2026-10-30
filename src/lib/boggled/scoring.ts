@@ -1,5 +1,7 @@
 export const LONGEST_WORD_BONUS = 3;
 export const DANGER_BOOST = 0.1;
+// Head-to-head, doubling unique words just doubles the gap, so ×2 needs a crowd.
+export const DOUBLE_UNIQUE_MIN_PLAYERS = 3;
 
 export function wordPoints(word: string): number {
   return word.length < 3 ? 0 : word.length - 2;
@@ -15,6 +17,7 @@ export type PlayerWords = {
 export type ScoredWord = {
   word: string;
   base: number;
+  // Nobody else found it (multiplayer only).
   unique: boolean;
   points: number;
 };
@@ -48,6 +51,7 @@ export function compareWords(a: string, b: string): number {
 
 export function scoreRound(players: PlayerWords[], opts: ScoreOptions): RoundResult {
   const multiplayer = players.length > 1;
+  const doubleUnique = players.length >= DOUBLE_UNIQUE_MIN_PLAYERS;
   const cleaned = players.map((p) => ({
     id: p.id,
     late: new Set((p.late ?? []).map((w) => w.toLowerCase())),
@@ -70,7 +74,7 @@ export function scoreRound(players: PlayerWords[], opts: ScoreOptions): RoundRes
     const words = p.words.map((word) => {
       const base = wordPoints(word);
       const unique = multiplayer && finders.get(word) === 1;
-      return { word, base, unique, points: unique ? base * 2 : base };
+      return { word, base, unique, points: unique && doubleUnique ? base * 2 : base };
     });
     const wordTotal = words.reduce((sum, w) => sum + w.points, 0);
     const longestBonus = longestWinners.includes(p.id) ? LONGEST_WORD_BONUS : 0;
