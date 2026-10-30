@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Fredoka } from "next/font/google";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/boggled/site";
 import "./boggled.css";
 
 const fredoka = Fredoka({
@@ -10,12 +11,40 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "Word Brawl — swipe words, beat your friends",
-  description: "A fast word-hunt party game for phones. Swipe words on a shared letter grid, battle friends with a link, or take on Dr. Hoot in Quick Start.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_TITLE, template: `%s · ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: [
+    "boggle online with friends",
+    "word game with friends",
+    "multiplayer word game",
+    "online word party game",
+    "boggle party",
+    "netflix boggle party alternative",
+    "word search game",
+    "free word game no download",
+    "daily word puzzle",
+  ],
+  alternates: { canonical: "/" },
+  manifest: "/boggled/manifest.webmanifest",
+  icons: { icon: "/boggled/icon", apple: "/boggled/apple-icon" },
+  appleWebApp: { capable: true, title: SITE_NAME, statusBarStyle: "black-translucent" },
+  formatDetection: { telephone: false },
   openGraph: {
-    title: "Word Brawl",
-    description: "Swipe words, beat your friends. Create a room, share the link, and race the clock from your phone.",
+    type: "website",
+    url: "/",
+    siteName: SITE_NAME,
+    title: "Word Brawl: play a Boggle-style word game with friends",
+    description: "Free, no download. Share a link, swipe words on your phone, and beat your friends. Daily Puzzle and Survival too.",
+    locale: "en_US",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Word Brawl: play a Boggle-style word game with friends",
+    description: "Free, no download. Share a link, swipe words on your phone, and beat your friends.",
+  },
+  category: "games",
 };
 
 export const viewport: Viewport = {
