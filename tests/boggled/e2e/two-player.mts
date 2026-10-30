@@ -53,10 +53,10 @@ assert(true, "both players see each other in the roster");
 assert((await state(b)).hostId === (await state(a)).me.id, "first player is host on both phones");
 
 await a.getByText("Start round").waitFor({ timeout: 20000 });
-await a.getByText("5×5").click();
+await a.getByTestId("opt-size").getByText("5×5").click();
 await b.waitForFunction(() => window.__boggled.getState().settings.size === 5, null, { timeout: 5000 });
 assert(true, "host settings sync to the other phone");
-await a.getByText("4×4").click();
+await a.getByTestId("opt-size").getByText("4×4").click();
 await a.evaluate(() => window.__boggled.updateSettings({ duration: 25 }));
 await b.waitForFunction(() => window.__boggled.getState().settings.duration === 25);
 await a.screenshot({ path: `${SHOTS}/10-lobby-host.png` });

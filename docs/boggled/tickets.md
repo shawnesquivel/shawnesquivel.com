@@ -68,6 +68,11 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-37 | Lobby: Create opens the room instantly, ✏️ rename in roster, selectable room code + Copy button, "It's quiet in here" empty state | done | `transport.update()` |
 | BOG-38 | Settings: 1/2 min timer and shortest word in one row, single Chill/No chill toggle (explains both), Match = Best of 3 (default) / Best of 5 / Continuous with plain-language help | done | |
 | BOG-39 | Rename to Word Brawl; serve at the root of wordbrawl.vercel.app / wordbrawl.app via a host rewrite | done | `next.config.ts` |
+| BOG-40 | Analytics: spec (`analytics.md`), anonymous batched event log in Supabase (insert-only RLS, aggregate-only RPC), `/boggled/stats` dashboard (players, return rate, session length, funnel, exit screens, modes, settings, clicks, bot fairness) | done | migration must be applied to prod |
+| BOG-41 | Daily Puzzle (Netflix parity): same board for everyone per UTC day, 90 s, first play counts + streak, practice replays, share text, "beat X% of players" | done | `modes.ts`, `boggled_daily_rank` |
+| BOG-42 | Survival (Netflix parity): start at 30 s, each word adds 2–10 s by length, best time per device | done | `modes.ts` |
+| BOG-43 | Lobby QR code to join (lazy-loaded `qrcode`) | done | |
+| BOG-44 | SEO: keyword title/description, canonical, OG/Twitter image, icons, manifest, VideoGame/WebSite/FAQPage JSON-LD, server-rendered how-to/modes/rules/FAQ under the home menu, robots + sitemap on the game domain | done | `site.ts`, `SeoContent.tsx` |
 | BOG-35 | Unique ×2 only with 3+ players; head-to-head every word scores normally (results legend, reveal and how-to-play updated) | done | `DOUBLE_UNIQUE_MIN_PLAYERS` |
 | BOG-34 | Combo ring (top right): fills clockwise a quarter per word; 4 words in 4 s = boost. Rewards capped against farming short words: multiplayer (Danger mode) → 🛡️ shield (max 1, ring shows it until used); solo → +5 s on the clock (max 3/round). Tap to explain | done | `ComboRing.tsx`, replaces "3 words in 10 s" shield rule |
 | BOG-24 | e2e: power-ups (bomb earn/use/block/expiry), reactions, scoreboard across 2 rounds | done | `tests/boggled/e2e/power-ups.mts` |
@@ -85,7 +90,6 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-L7 | Real-phone QA pass: iOS Safari silent switch, backgrounding mid-round, Android Chrome haptics | later |
 | BOG-L8 | Music loops (lobby / round) | later |
 | BOG-L9 | More power-ups: ❄️ freeze a rival's timer input for 3 s, 🌀 scramble a rival's board, 🔄 rotate your own board, 💡 hint (reveal a word's first 2 letters) | later |
-| BOG-L10 | Daily puzzle: same seeded board for everyone each day + shareable emoji result | later |
 | BOG-L11 | Themed rounds: bonus points for words in a category (food, animals), or a "golden tile" worth ×2 | later |
 | BOG-L12 | Streaks + rivalry stats ("Gf has beaten you 4 times in a row"), persisted per pair | later |
 | BOG-L14 | More Danger mode: ❄️ freeze, 🫳 steal a word, 🌫️ fog, quick taunts, revenge button, combos | later |
