@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { click, track } from "@/lib/boggled/analytics";
 import { serverNow } from "@/lib/boggled/clock";
 import type { Dictionary } from "@/lib/boggled/dictionary";
 import { type RoomController, type RoomState, type Weapon } from "@/lib/boggled/room";
+import { survivalBonusMs } from "@/lib/boggled/modes";
 import { DANGER_BOOST, wordPoints } from "@/lib/boggled/scoring";
 import { sound } from "@/lib/boggled/sound";
 import ComboRing, { comboExplainer } from "./ComboRing";
@@ -29,8 +31,9 @@ export default function Game({
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [shieldInfo, setShieldInfo] = useState(false);
-  // Quick Start (vs the bot): end-early button and the time-boost combo ring.
+  // Solo modes get an end-early button; Quick Start (vs the bot) also gets the time-boost combo ring.
   const solo = !state.room;
+  const quick = state.mode === "quick";
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSecond = useRef<number | null>(null);
   const participant = round.players.some((p) => p.id === state.me.id);
@@ -50,9 +53,9 @@ export default function Game({
     if (marker === null || marker === lastSecond.current) return;
     lastSecond.current = marker;
     if (phase === "countdown" && toStart >= 1 && toStart <= 3) sound.countdown(false);
-    if (phase === "playing" && remaining === Math.ceil((round.endsAt - round.startsAt) / 1000)) sound.countdown(true);
+    if (phase === "playing" && now - round.startsAt < 1000) sound.countdown(true);
     if (phase === "playing" && remaining <= 10 && remaining > 0) sound.tick(remaining <= 5);
-  }, [phase, toStart, remaining, round.endsAt, round.startsAt]);
+  }, [phase, toStart, remaining, now, round.startsAt]);
 
   const prevPhase = useRef(phase);
   useEffect(() => {
@@ -89,7 +92,8 @@ export default function Game({
     }
     controller.addWord(word);
     sound.valid(word.length);
-    showFeedback(`${word.toUpperCase()} +${wordPoints(word)}${state.dangerZone ? " ☠️" : ""}`, "good");
+    const bonus = round.survival ? ` ⏳+${survivalBonusMs(word) / 1000}s` : state.dangerZone ? " ☠️" : "";
+    showFeedback(`${word.toUpperCase()} +${wordPoints(word)}${bonus}`, "good");
     return "valid";
   };
 
@@ -108,12 +112,12 @@ export default function Game({
   ];
   const fire = (weapon: Weapon) => {
     sound.unlock();
-    controller.attack(weapon);
+    if (controller.attack(weapon)) track("attack", { weapon });
     navigator.vibrate?.(30);
   };
   const series = round.series;
   const danger = state.dangerZone && phase === "playing";
-  const showCombo = participant && (solo || round.settings.danger);
+  const showCombo = participant && (quick || (!solo && round.settings.danger));
 
   return (
     <div className={`bg-screen gap-3 ${danger ? "bg-danger" : ""}`} data-testid="game">
@@ -123,7 +127,7 @@ export default function Game({
             ⏱ {mm}:{ss}
           </div>
           {solo && phase !== "collecting" && (
-            <button className="bg-btn bg-btn-ghost px-3 py-1.5 text-base" onClick={() => setConfirmEnd(true)} data-testid="end-early">
+            <button className="bg-btn bg-btn-ghost px-3 py-1.5 text-base" onClick={() => { click("end_early"); setConfirmEnd(true); }} data-testid="end-early">
               ✕ End
             </button>
           )}
@@ -143,13 +147,13 @@ export default function Game({
             {state.myWords.length} {state.myWords.length === 1 ? "word" : "words"}
           </div>
         </div>
-        {showCombo && <ComboRing state={state} solo={solo} onTap={() => setShieldInfo((v) => !v)} />}
+        {showCombo && <ComboRing state={state} solo={quick} onTap={() => setShieldInfo((v) => !v)} />}
         </div>
       </div>
 
       {shieldInfo && showCombo && (
         <button className="bg-shield-info bg-step px-3 py-2 text-left text-sm" onClick={() => setShieldInfo(false)} data-testid="combo-info">
-          {comboExplainer(state, solo)} <span className="opacity-60">Tap to close</span>
+          {comboExplainer(state, quick)} <span className="opacity-60">Tap to close</span>
         </button>
       )}
 

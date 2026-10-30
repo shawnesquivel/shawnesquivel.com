@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { click, setScreen } from "@/lib/boggled/analytics";
+import { dayKey, loadDaily, loadStreak, type SoloMode } from "@/lib/boggled/modes";
 import { sound } from "@/lib/boggled/sound";
 import HowToPlay from "./HowToPlay";
 
@@ -78,6 +80,7 @@ export default function Home({
   identity,
   onIdentity,
   invite,
+  autoplay,
   onEnter,
   dictError,
   newRoomCode,
@@ -85,7 +88,8 @@ export default function Home({
   identity: Identity;
   onIdentity: (patch: Partial<Identity>) => void;
   invite: string;
-  onEnter: (room: string | null) => void;
+  autoplay?: SoloMode | null;
+  onEnter: (room: string | null, mode?: SoloMode) => void;
   dictError: boolean;
   newRoomCode: () => string;
 }) {
@@ -93,11 +97,28 @@ export default function Home({
   const [code, setCode] = useState(invite);
   const [muted, setMuted] = useState(sound.muted);
   const [help, setHelp] = useState(false);
+  const [daily] = useState(() => {
+    const day = dayKey();
+    return { played: loadDaily(day).first !== null, streak: loadStreak(day) };
+  });
   const nameOk = identity.name.trim().length > 0;
   const go = (next: Step) => {
     sound.unlock();
     setStep(next);
   };
+  const solo = (mode: SoloMode) => {
+    click(mode === "quick" ? "quick_start" : mode);
+    sound.unlock();
+    onEnter(null, mode);
+  };
+
+  useEffect(() => {
+    if (autoplay) onEnter(null, autoplay);
+  }, [autoplay, onEnter]);
+
+  useEffect(() => {
+    setScreen(step === "menu" ? "home" : step === "code" ? "join_code" : "join_name");
+  }, [step]);
 
   return (
     <div className="bg-screen gap-5" data-testid="home">
@@ -110,13 +131,14 @@ export default function Home({
           <span />
         )}
         <div className="flex gap-2">
-        <button className="bg-btn bg-btn-ghost w-11 px-0 py-2 text-base font-bold" aria-label="How to play" onClick={() => setHelp(true)} data-testid="help">
+        <button className="bg-btn bg-btn-ghost w-11 px-0 py-2 text-base font-bold" aria-label="How to play" onClick={() => { click("howto"); setHelp(true); }} data-testid="help">
           ?
         </button>
         <button
           className="bg-btn bg-btn-ghost px-3 py-2 text-base"
           aria-label={muted ? "Unmute" : "Mute"}
           onClick={() => {
+            click(muted ? "unmute" : "mute");
             sound.setMuted(!muted);
             setMuted(!muted);
             sound.unlock();
@@ -147,27 +169,45 @@ export default function Home({
 
       {step === "menu" && (
         <div className="bg-step flex flex-col gap-3" data-testid="menu">
-          <button className="bg-menu-btn primary" onClick={() => { sound.unlock(); onEnter(null); }} data-testid="solo">
+          <button className="bg-menu-btn primary" onClick={() => solo("quick")} data-testid="solo">
             <span className="bg-menu-icon">⚡</span>
             <span>
               <span className="block text-xl font-bold">Quick Start</span>
               <span className="block text-sm opacity-80">1v1 against Dr. Hoot 🦉 right now</span>
             </span>
           </button>
-          <button className="bg-menu-btn" onClick={() => { sound.unlock(); onEnter(newRoomCode()); }} data-testid="menu-create">
+          <button className="bg-menu-btn" onClick={() => { click("create_room"); sound.unlock(); onEnter(newRoomCode()); }} data-testid="menu-create">
             <span className="bg-menu-icon">🎉</span>
             <span>
               <span className="block text-xl font-bold">Create a room</span>
               <span className="block text-sm opacity-75">Play friends with a link</span>
             </span>
           </button>
-          <button className="bg-menu-btn" onClick={() => go("code")} data-testid="menu-join">
+          <button className="bg-menu-btn" onClick={() => { click("join_room"); go("code"); }} data-testid="menu-join">
             <span className="bg-menu-icon">🚪</span>
             <span>
               <span className="block text-xl font-bold">Join a room</span>
               <span className="block text-sm opacity-75">Got a 4-letter code? Hop in</span>
             </span>
           </button>
+          <div className="grid grid-cols-2 gap-3">
+            <button className="bg-menu-btn bg-menu-mini" onClick={() => solo("daily")} data-testid="menu-daily">
+              <span className="text-2xl">📅</span>
+              <span>
+                <span className="block font-bold">Daily Puzzle</span>
+                <span className="block text-xs opacity-75">
+                  {daily.played ? `Done today${daily.streak > 1 ? ` · 🔥${daily.streak}` : " ✓"}` : daily.streak > 0 ? `🔥 ${daily.streak}-day streak` : "Same board for everyone"}
+                </span>
+              </span>
+            </button>
+            <button className="bg-menu-btn bg-menu-mini" onClick={() => solo("survival")} data-testid="menu-survival">
+              <span className="text-2xl">⏳</span>
+              <span>
+                <span className="block font-bold">Survival</span>
+                <span className="block text-xs opacity-75">Words add time</span>
+              </span>
+            </button>
+          </div>
         </div>
       )}
 
@@ -233,7 +273,7 @@ export default function Home({
       {dictError && <p className="text-center text-sm text-[var(--bad)]">Couldn&apos;t load the word list. Check your connection and reload.</p>}
 
       {step === "menu" && (
-        <button className="bg-btn bg-btn-ghost mt-auto" onClick={() => setHelp(true)}>
+        <button className="bg-btn bg-btn-ghost mt-auto" onClick={() => { click("howto"); setHelp(true); }}>
           ❓ How to play
         </button>
       )}
