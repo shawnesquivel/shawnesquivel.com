@@ -6,7 +6,10 @@ const GAME_HOST = "(www\\.)?wordbrawl\\.(app|vercel\\.app)";
 const nextConfig: NextConfig = {
   async rewrites() {
     return {
-      beforeFiles: [{ source: "/", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled" }],
+      beforeFiles: [
+        { source: "/", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled" },
+        { source: "/stats", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/stats" },
+      ],
       afterFiles: [],
       fallback: [],
     };
