@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Word Brawl: a free Boggle-style word game to play online with friends";
+export const alt = "Word Brawl: play Boggle online with friends, free";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -52,7 +52,7 @@ export default function OpengraphImage() {
           </div>
         ))}
         <div style={{ display: "flex", marginTop: 26, fontSize: 44, fontWeight: 700 }}>Swipe words. Beat your friends.</div>
-        <div style={{ display: "flex", fontSize: 28, opacity: 0.85 }}>Free · No download · Play with a link</div>
+        <div style={{ display: "flex", fontSize: 28, opacity: 0.85 }}>Free online Boggle · No download · Play with a link</div>
       </div>
     ),
     size,

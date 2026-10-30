@@ -7,9 +7,9 @@ const STEPS = [
 ];
 
 const MODES = [
-  ["🎉", "Rooms with friends", "Private party rooms for 2–8 players. Best of 3, best of 5 or continuous scoring, 1 or 2 minute rounds, and 4×4 or 5×5 boards."],
-  ["⚡", "Quick Start", "Play right now against Dr. Hoot 🦉, a bot that levels up when you win and eases off when you lose."],
-  ["📅", "Daily Puzzle", "One board per day, the same for everyone. Your first try counts toward the daily ranking and your streak."],
+  ["🎉", "Boggle with friends", "Private party rooms for 2–8 players. Best of 3, best of 5 or continuous scoring, 1 or 2 minute rounds, and 4×4 or 5×5 boards."],
+  ["⚡", "Boggle vs the computer", "Quick Start: play right now against Dr. Hoot 🦉, a bot that levels up when you win and eases off when you lose."],
+  ["📅", "Daily Boggle puzzle", "One Boggle board per day, the same for everyone. Your first try counts toward the daily ranking and your streak."],
   ["⏳", "Survival", "Start with 30 seconds. Every word adds time, and longer words add more. How long can you last?"],
   ["🔥", "No chill mode", "Longest-word bonus, bombs and flips to mess with rivals, shields, and a danger zone that boosts the last 15 seconds."],
 ];
@@ -28,6 +28,7 @@ const jsonLd = {
       "@type": ["VideoGame", "WebApplication"],
       "@id": `${SITE_URL}/#game`,
       name: SITE_NAME,
+      alternateName: ["Boggle Online", "Boggle With Friends", "Online Boggle Party"],
       url: `${SITE_URL}/`,
       description: SITE_DESCRIPTION,
       image: `${SITE_URL}/boggled/opengraph-image`,
@@ -55,15 +56,15 @@ export default function SeoContent() {
     <article className="bg-seo">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <header>
-        <h1 className="bg-title">Play a Boggle-style word game online with friends</h1>
+        <h1 className="bg-title">Play Boggle online with friends, free</h1>
         <p>
-          Word Brawl is a free multiplayer word game for your phone. Find words in a grid of letter dice, race the timer, and beat your
-          friends. No download, no account, and it works on any phone, tablet or computer.
+          Word Brawl is free multiplayer Boggle for your phone. Find words in the Boggle grid, race the timer, and beat your friends in
+          real time. No download, no signup, and it works on any phone, tablet or computer.
         </p>
       </header>
 
       <section aria-labelledby="seo-how">
-        <h2 id="seo-how">How to play with friends</h2>
+        <h2 id="seo-how">How to play Boggle online with friends</h2>
         <ol className="bg-seo-steps">
           {STEPS.map(([icon, title, body], i) => (
             <li key={title}>
@@ -83,7 +84,7 @@ export default function SeoContent() {
       </section>
 
       <section aria-labelledby="seo-modes">
-        <h2 id="seo-modes">Game modes</h2>
+        <h2 id="seo-modes">Boggle game modes</h2>
         <ul className="bg-seo-modes">
           {MODES.map(([icon, title, body]) => (
             <li key={title}>
@@ -97,7 +98,7 @@ export default function SeoContent() {
       </section>
 
       <section aria-labelledby="seo-rules">
-        <h2 id="seo-rules">Rules and scoring</h2>
+        <h2 id="seo-rules">Boggle rules and scoring</h2>
         <ul className="bg-seo-list">
           <li>Swipe across touching letters (sideways, up, down or diagonally) to spell a word. Each letter tile can be used once per word.</li>
           <li>Words need 3+ letters. 3 letters = 1 point, and every extra letter is +1. “Qu” counts as two letters.</li>
@@ -107,7 +108,7 @@ export default function SeoContent() {
       </section>
 
       <section aria-labelledby="seo-faq">
-        <h2 id="seo-faq">FAQ</h2>
+        <h2 id="seo-faq">Boggle online FAQ</h2>
         {FAQ.map(({ q, a }) => (
           <details key={q}>
             <summary>{q}</summary>
@@ -118,8 +119,8 @@ export default function SeoContent() {
 
       <footer>
         <p>
-          Word Brawl is an independent fan-made game inspired by classic word-search dice games and Netflix Boggle Party. It is not
-          affiliated with Hasbro or Netflix.
+          Word Brawl is an independent, fan-made online Boggle game inspired by the classic dice game and Netflix Boggle Party. Boggle
+          is a trademark of Hasbro. Word Brawl is not affiliated with Hasbro or Netflix.
         </p>
       </footer>
     </article>
