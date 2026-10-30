@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { applyRound, bestKey, loadBests, saveBests } from "@/lib/boggled/bests";
+import { BOT, MAX_BOT_LEVEL, MIN_BOT_LEVEL, nextBotLevel, recordBotRound } from "@/lib/boggled/bot";
 import type { Round, RoomState, RoundOutcome } from "@/lib/boggled/room";
 import { wordPoints } from "@/lib/boggled/scoring";
 import { seriesStatus } from "@/lib/boggled/series";
@@ -211,6 +212,39 @@ export function MissedWords({ words, total, title }: { words: string[]; total: n
           {open ? "Show less ▴" : `Show all ${words.length} ▾`}
         </button>
       )}
+    </div>
+  );
+}
+
+export function BotLevelPanel({ state, round, outcome }: { state: RoomState; round: Round; outcome: RoundOutcome }) {
+  const level = round.bot?.level ?? 0;
+  const ranks = new Map(outcome.result.players.map((p) => [p.id, p.rank]));
+  const mine = ranks.get(state.me.id) ?? 2;
+  const hoot = ranks.get(BOT.id) ?? 2;
+  const result: "win" | "loss" | "tie" = mine === hoot ? "tie" : mine < hoot ? "win" : "loss";
+  const next = nextBotLevel(level, result);
+  useEffect(() => {
+    if (level) recordBotRound(outcome.roundId, level, result);
+  }, [level, outcome.roundId, result]);
+  if (!level) return null;
+
+  let line: string;
+  if (result === "win") {
+    line =
+      level === MAX_BOT_LEVEL
+        ? `👑 You beat ${BOT.name} at max level. He's writing you a fan letter.`
+        : `🎓 ${BOT.name} leveled up to Lv ${next}. He's hitting the books.`;
+  } else if (result === "loss") {
+    line =
+      level === MIN_BOT_LEVEL
+        ? `🦉 ${BOT.name} wins at Lv 1. He's being very gracious about it. Barely.`
+        : `🦉 ${BOT.name} wins. He'll go easier next time (Lv ${next}).`;
+  } else {
+    line = `🤝 Dead heat. ${BOT.name} stays at Lv ${level}.`;
+  }
+  return (
+    <div className="bg-panel px-4 py-3 text-center font-semibold" data-testid="bot-level-change">
+      {line}
     </div>
   );
 }

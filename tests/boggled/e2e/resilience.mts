@@ -1,6 +1,6 @@
 // Packet loss at the buzzer + host leaving. Needs local Supabase like two-player.mts.
 import { chromium, devices } from "playwright";
-import { assert, BASE, roomState, readBoard, setName, swipe, wordsOn } from "./helpers.mjs";
+import { assert, BASE, createRoom, roomState, readBoard, setName, swipe, wordsOn } from "./helpers.mjs";
 
 const browser = await chromium.launch();
 const a = await (await browser.newContext({ ...devices["iPhone 13"] })).newPage();
@@ -9,9 +9,7 @@ const state = roomState;
 
 console.log("Resilience");
 await a.goto(`${BASE}/boggled`);
-await a.getByTestId("menu-create").click();
-await setName(a, "Host");
-await a.getByTestId("create").click();
+await createRoom(a, "Host");
 const code = (await a.getByTestId("room-code").textContent())!.trim();
 await b.goto(`${BASE}/boggled?room=${code}`);
 await setName(b, "Guest");

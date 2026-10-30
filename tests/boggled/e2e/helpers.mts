@@ -50,6 +50,15 @@ export async function setName(page: Page, name: string) {
   await page.getByTestId("name").fill(name);
 }
 
+// "Create a room" opens the lobby right away; the name is edited there.
+export async function createRoom(page: Page, name: string) {
+  await page.getByTestId("menu-create").click();
+  await page.getByTestId("room-code").waitFor();
+  await page.getByTestId("edit-me").click();
+  await setName(page, name);
+  await page.getByTestId("edit-done").click();
+}
+
 export function assert(cond: unknown, msg: string): asserts cond {
   if (!cond) throw new Error(`ASSERTION FAILED: ${msg}`);
   console.log(`  ✓ ${msg}`);

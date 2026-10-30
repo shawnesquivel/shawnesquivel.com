@@ -29,7 +29,8 @@ export default function Game({
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [shieldInfo, setShieldInfo] = useState(false);
-  const solo = round.players.length === 1;
+  // Quick Start (vs the bot): end-early button and the time-boost combo ring.
+  const solo = !state.room;
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSecond = useRef<number | null>(null);
   const participant = round.players.some((p) => p.id === state.me.id);
@@ -240,10 +241,10 @@ export default function Game({
       )}
 
       {confirmEnd && phase !== "collecting" && (
-        <div className="bg-modal" onClick={() => setConfirmEnd(false)} role="dialog" aria-modal aria-label="End practice" data-testid="end-confirm">
+        <div className="bg-modal" onClick={() => setConfirmEnd(false)} role="dialog" aria-modal aria-label="End round" data-testid="end-confirm">
           <div className="bg-modal-card text-center" onClick={(e) => e.stopPropagation()}>
             <div className="text-5xl">🏁</div>
-            <div className="bg-title text-2xl">End practice early?</div>
+            <div className="bg-title text-2xl">End this round early?</div>
             <p className="text-sm opacity-85">
               You&apos;ve found {state.myWords.length} {state.myWords.length === 1 ? "word" : "words"} for {myPoints} pts with {mm}:{ss} left.
             </p>

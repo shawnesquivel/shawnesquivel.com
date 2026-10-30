@@ -2,7 +2,7 @@
 // reactions and the session scoreboard. Needs local Supabase like two-player.mts.
 import { mkdirSync } from "node:fs";
 import { chromium, devices, type Page } from "playwright";
-import { assert, BASE, roomState, setName, SHOTS, swipe, wordsOn } from "./helpers.mjs";
+import { assert, BASE, createRoom, roomState, setName, SHOTS, swipe, wordsOn } from "./helpers.mjs";
 
 mkdirSync(SHOTS, { recursive: true });
 const browser = await chromium.launch();
@@ -12,9 +12,7 @@ for (const [n, p] of [["A", a], ["B", b]] as const) p.on("pageerror", (e) => con
 
 console.log("Danger mode, series, bests, reactions, scoreboard");
 await a.goto(`${BASE}/boggled`);
-await a.getByTestId("menu-create").click();
-await setName(a, "Shawn");
-await a.getByTestId("create").click();
+await createRoom(a, "Shawn");
 const code = (await a.getByTestId("room-code").textContent())!.trim();
 await b.goto(`${BASE}/boggled?room=${code}`);
 await b.getByTestId("join").waitFor({ timeout: 10000 });
@@ -28,7 +26,12 @@ await a.getByTestId("reaction-bar").getByLabel("React 😂").click();
 await b.locator(".bg-reaction").first().waitFor({ timeout: 5000 });
 assert((await b.locator(".bg-reaction").first().textContent())!.includes("😂"), "reaction floats up on the other phone");
 
-assert((await b.getByTestId("opt-danger").getAttribute("aria-checked")) === "true", "danger mode defaults on");
+assert((await b.getByTestId("opt-chill").getAttribute("aria-checked")) === "false", "rooms start in chill mode");
+await a.getByTestId("opt-chill").click();
+await a.getByTestId("chill-explainer").waitFor();
+assert((await a.getByTestId("opt-chill").textContent())!.includes("No chill mode"), "toggling switches to No chill mode and explains both");
+await b.waitForFunction(() => window.__boggled.getState().settings.danger && window.__boggled.getState().settings.longestBonus);
+assert(true, "No chill turns on danger mode and the longest-word bonus for everyone");
 await a.getByTestId("opt-size").getByText("5×5").click();
 await a.getByTestId("opt-series").getByText("Best of 3").click();
 await a.evaluate(() => window.__boggled.updateSettings({ duration: 45 }));

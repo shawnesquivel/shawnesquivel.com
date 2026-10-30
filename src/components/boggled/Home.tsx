@@ -11,7 +11,7 @@ export const EMOJIS = [
 
 export type Identity = { id: string; name: string; emoji: string };
 
-type Step = "menu" | "create" | "code" | "join";
+type Step = "menu" | "code" | "join";
 
 const segmenter = typeof Intl !== "undefined" && "Segmenter" in Intl ? new Intl.Segmenter(undefined, { granularity: "grapheme" }) : null;
 
@@ -26,7 +26,7 @@ export function normalizeCode(code: string) {
   return code.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4);
 }
 
-function EmojiPicker({ value, onChange }: { value: string; onChange: (emoji: string) => void }) {
+export function EmojiPicker({ value, onChange }: { value: string; onChange: (emoji: string) => void }) {
   const [custom, setCustom] = useState("");
   const [error, setError] = useState(false);
   const options = EMOJIS.includes(value) ? EMOJIS : [value, ...EMOJIS.slice(0, -1)];
@@ -128,35 +128,37 @@ export default function Home({
         </div>
       </div>
 
-      <div className="text-center">
-        <div className="mb-2 flex justify-center gap-1.5">
-          {"BOGGLED".split("").map((l, i) => (
-            <span
-              key={i}
-              className="bg-tile bg-title flex h-11 w-11 text-2xl"
-              style={{ transform: `rotate(${(i % 2 ? 1 : -1) * (3 + (i % 3))}deg)` }}
-            >
-              {l}
-            </span>
-          ))}
-        </div>
-        <div className="bg-title text-xl opacity-90">online</div>
+      <div className="flex flex-col items-center gap-1.5" aria-label="Word Brawl" data-testid="logo">
+        {["WORD", "BRAWL"].map((row, r) => (
+          <div key={row} className="flex justify-center gap-1.5" aria-hidden>
+            {row.split("").map((l, i) => (
+              <span
+                key={i}
+                className={`bg-tile bg-title flex h-12 w-12 text-2xl ${r === 1 ? "bg-logo-hot" : ""}`}
+                style={{ transform: `rotate(${((i + r) % 2 ? 1 : -1) * (3 + ((i + r) % 3))}deg)` }}
+              >
+                {l}
+              </span>
+            ))}
+          </div>
+        ))}
+        <div className="mt-1 text-sm opacity-80">Swipe words. Beat your friends.</div>
       </div>
 
       {step === "menu" && (
         <div className="bg-step flex flex-col gap-3" data-testid="menu">
-          <button className="bg-menu-btn" onClick={() => { sound.unlock(); onEnter(null); }} data-testid="solo">
-            <span className="bg-menu-icon">🧘</span>
+          <button className="bg-menu-btn primary" onClick={() => { sound.unlock(); onEnter(null); }} data-testid="solo">
+            <span className="bg-menu-icon">⚡</span>
             <span>
-              <span className="block text-xl font-bold">Practice solo</span>
-              <span className="block text-sm opacity-75">Warm up on your own, no room needed</span>
+              <span className="block text-xl font-bold">Quick Start</span>
+              <span className="block text-sm opacity-80">1v1 against Dr. Hoot 🦉 right now</span>
             </span>
           </button>
-          <button className="bg-menu-btn primary" onClick={() => go("create")} data-testid="menu-create">
+          <button className="bg-menu-btn" onClick={() => { sound.unlock(); onEnter(newRoomCode()); }} data-testid="menu-create">
             <span className="bg-menu-icon">🎉</span>
             <span>
               <span className="block text-xl font-bold">Create a room</span>
-              <span className="block text-sm opacity-80">Get a code to share with friends</span>
+              <span className="block text-sm opacity-75">Play friends with a link</span>
             </span>
           </button>
           <button className="bg-menu-btn" onClick={() => go("code")} data-testid="menu-join">
@@ -196,17 +198,17 @@ export default function Home({
         </form>
       )}
 
-      {(step === "create" || step === "join") && (
+      {step === "join" && (
         <form
           className="bg-step bg-panel flex flex-col gap-4 p-4"
           onSubmit={(e) => {
             e.preventDefault();
             if (!nameOk) return;
-            onEnter(step === "create" ? newRoomCode() : code);
+            onEnter(code);
           }}
         >
           <div className="bg-title text-center text-2xl">
-            {step === "create" ? "Who's hosting?" : <>Joining room <span className="text-[var(--gold)] tracking-widest">{code}</span></>}
+            Joining room <span className="text-[var(--gold)] tracking-widest">{code}</span>
           </div>
           <label className="flex flex-col gap-1.5">
             <span className="text-sm opacity-75">Your name</span>
@@ -221,8 +223,8 @@ export default function Home({
             />
           </label>
           <EmojiPicker value={identity.emoji} onChange={(emoji) => onIdentity({ emoji })} />
-          <button className="bg-btn bg-btn-primary text-xl" disabled={!nameOk} data-testid={step === "create" ? "create" : "join"}>
-            {step === "create" ? "Create room 🎉" : "Join room 🚪"}
+          <button className="bg-btn bg-btn-primary text-xl" disabled={!nameOk} data-testid="join">
+            Join room 🚪
           </button>
           {!nameOk && <p className="-mt-2 text-center text-sm opacity-75">Enter your name to continue</p>}
         </form>

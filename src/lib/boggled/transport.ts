@@ -14,6 +14,8 @@ export type Envelope = { type: string; from: string; [key: string]: unknown };
 export interface Transport {
   readonly kind: "supabase" | "local" | "solo";
   connect(me: Member): void;
+  // Re-announce a renamed player (or a new emoji) to the room.
+  update(me: Member): void;
   send(msg: Envelope): void;
   reconnect(): void;
   close(): void;
@@ -47,6 +49,9 @@ class SoloTransport implements Transport {
       this.onStatus("connected");
       this.onRoster([me]);
     });
+  }
+  update(me: Member) {
+    this.onRoster([me]);
   }
   send() {}
   reconnect() {}
@@ -104,11 +109,16 @@ class SupabaseTransport implements Transport {
       if (channel !== this.channel || this.closed) return;
       if (status === "SUBSCRIBED") {
         this.onStatus("connected");
-        void channel.track(me);
+        void channel.track(this.me ?? me);
       } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
         this.onStatus("offline");
       }
     });
+  }
+
+  update(me: Member) {
+    this.me = me;
+    if (this.channel?.state === "joined") void this.channel.track(me);
   }
 
   send(msg: Envelope) {
@@ -165,14 +175,22 @@ class LocalTransport implements Transport {
       }
     };
     this.seen.set(me.id, { member: me, at: Date.now() });
-    const ping = () => {
-      this.seen.set(me.id, { member: me, at: Date.now() });
-      this.bc?.postMessage({ type: "_presence", from: me.id, member: me });
-      this.emitRoster();
-    };
-    ping();
-    this.timer = setInterval(ping, 1500);
+    this.timer = setInterval(() => this.ping(), 1500);
+    this.ping();
     this.onStatus("connected");
+  }
+
+  private ping() {
+    const me = this.me;
+    if (!me) return;
+    this.seen.set(me.id, { member: me, at: Date.now() });
+    this.bc?.postMessage({ type: "_presence", from: me.id, member: me });
+    this.emitRoster();
+  }
+
+  update(me: Member) {
+    this.me = me;
+    this.ping();
   }
 
   private emitRoster() {

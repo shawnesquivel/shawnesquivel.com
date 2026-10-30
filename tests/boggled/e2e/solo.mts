@@ -8,16 +8,21 @@ const ctx = await browser.newContext({ ...devices["iPhone 13"] });
 const page = await ctx.newPage();
 page.on("pageerror", (e) => console.error("pageerror:", e.message));
 
-console.log("Solo round on iPhone 13");
+console.log("Quick Start (vs Dr. Hoot) on iPhone 13");
 await page.goto(`${BASE}/boggled`);
 await page.getByTestId("menu").waitFor();
 await page.waitForTimeout(400);
 await page.screenshot({ path: `${SHOTS}/01-home.png` });
+assert((await page.getByTestId("solo").textContent())!.includes("Quick Start"), "home offers Quick Start");
+await page.evaluate(() => localStorage.setItem("boggled:botLevel", "5"));
 await page.getByTestId("solo").click();
-await page.getByTestId("lobby").waitFor();
-await page.getByText("Start round").waitFor({ timeout: 20000 });
-await page.evaluate(() => window.__boggled.updateSettings({ duration: 20, danger: false }));
-await page.screenshot({ path: `${SHOTS}/02-solo-lobby.png` });
+await page.getByTestId("quick-intro").waitFor();
+assert((await page.getByTestId("quick-intro").textContent())!.includes("You vs. Dr. Hoot"), "Quick Start shows You vs. Dr. Hoot");
+assert((await page.getByTestId("bot-level").textContent())!.includes("Lv 5"), "Dr. Hoot's level shows");
+await page.getByText("Start ⚡").waitFor({ timeout: 20000 });
+await page.waitForTimeout(600);
+await page.screenshot({ path: `${SHOTS}/02-quick-intro.png` });
+await page.evaluate(() => window.__boggled.updateSettings({ duration: 20 }));
 await page.getByTestId("start").click();
 
 await page.locator(".bg-count").waitFor();
@@ -100,13 +105,18 @@ await page.getByTestId("missed-toggle").click();
 const buttons = await page.locator("[data-testid=home-button], [data-testid=settings-button], [data-testid=play-again]").evaluateAll((els) =>
   els.map((e) => [e.getAttribute("data-testid"), e.getBoundingClientRect().left] as const),
 );
-assert(buttons.sort((x, y) => x[1] - y[1]).at(-1)![0] === "play-again", "Play again is the right-most button");
-const score = Number(await page.getByTestId("score").first().textContent());
+assert(buttons.sort((x, y) => x[1] - y[1]).at(-1)![0] === "play-again", "Rematch is the right-most button");
+assert(!buttons.some(([id]) => id === "settings-button"), "Quick Start results have no settings button");
+const meId = await page.evaluate(() => window.__boggled.getState().me.id);
+const score = Number(await page.locator(`[data-testid=col-${meId}] [data-testid=score]`).textContent());
+const res = (await page.evaluate(() => window.__boggled.getState().outcome!.result))!;
+assert(res.players.some((p) => p.id === "bot:hoot" && p.words.length > 0), "Dr. Hoot played the round and found words");
+assert(await page.getByTestId("bot-level-change").isVisible(), `level line: "${await page.getByTestId("bot-level-change").textContent()}"`);
 const expected = [...found2].reduce((s, w) => s + w.length - 2, 0);
 assert(score === expected, `final score ${score} equals sum of word points ${expected}`);
 
 // Ending a practice round early.
-await page.evaluate(() => window.__boggled.updateSettings({ duration: 180 }));
+await page.evaluate(() => window.__boggled.updateSettings({ duration: 120 }));
 await page.getByTestId("play-again").click();
 await page.locator(".bg-overlay").waitFor({ state: "detached", timeout: 6000 });
 const quick = wordsOn(await readBoard(page)).filter(([w]) => w.length <= 4).slice(0, 4);
@@ -127,7 +137,7 @@ assert(!(await page.getByTestId("end-confirm").isVisible()) && (await page.getBy
 await page.getByTestId("end-early").click();
 await page.getByTestId("end-score").click();
 await page.getByTestId("podium").waitFor({ timeout: 30000 });
-assert(Number(await page.getByTestId("score").first().textContent()) === early[1], `"End & see my score" jumps to results with the words so far`);
+assert(Number(await page.locator(`[data-testid=col-${meId}] [data-testid=score]`).textContent()) === early[1], `"End & see my score" jumps to results with the words so far`);
 await page.getByTestId("home-button").evaluate((el: HTMLElement) => el.click());
 await page.getByTestId("menu").waitFor();
 assert(true, "Home button on solo results returns to the menu");

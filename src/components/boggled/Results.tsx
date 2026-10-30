@@ -7,7 +7,7 @@ import { seriesStatus } from "@/lib/boggled/series";
 import { sound } from "@/lib/boggled/sound";
 import type { Member } from "@/lib/boggled/transport";
 import { ReactionBar, Scoreboard } from "./Extras";
-import { BattleLog, BestsPanel, MissedWords, SeriesPanel } from "./ResultsExtras";
+import { BattleLog, BestsPanel, BotLevelPanel, MissedWords, SeriesPanel } from "./ResultsExtras";
 
 const VICTORY = ["Transcendent", "Glorious", "Stupendous", "Legendary", "Magnificent", "Flawless", "Spectacular"];
 
@@ -46,6 +46,7 @@ export default function Results({
   const outcome = state.outcome;
   const result = outcome?.result;
   const solo = round.players.length === 1;
+  const quick = !state.room;
   const doubled = round.players.length >= DOUBLE_UNIQUE_MIN_PLAYERS;
 
   const members = useMemo(() => {
@@ -245,26 +246,28 @@ export default function Results({
 
       {stage === "podium" && (
         <>
+          {quick && <BotLevelPanel state={state} round={round} outcome={outcome!} />}
           <MissedWords words={outcome!.missed} total={outcome!.allWords} title={solo ? "Words you missed" : "Words nobody found"} />
 
           <BestsPanel state={state} round={round} outcome={outcome!} />
           {!solo && <SeriesPanel state={state} round={round} />}
           {!solo && <BattleLog state={state} round={round} />}
           {!solo && <Scoreboard state={state} />}
-          {!solo && <ReactionBar controller={controller} />}
+          {!solo && !quick && <ReactionBar controller={controller} />}
 
           {isHost ? (
             <div className="flex gap-3">
-              {solo && (
+              {quick ? (
                 <button className="bg-btn bg-btn-ghost w-14 px-0" onClick={onLeave} aria-label="Home" data-testid="home-button">
                   🏠
                 </button>
+              ) : (
+                <button className="bg-btn bg-btn-ghost w-14 px-0" onClick={() => controller.backToLobby()} aria-label="Settings" data-testid="settings-button">
+                  ⚙️
+                </button>
               )}
-              <button className="bg-btn bg-btn-ghost w-14 px-0" onClick={() => controller.backToLobby()} aria-label="Settings" data-testid="settings-button">
-                ⚙️
-              </button>
               <button className="bg-btn bg-btn-primary flex-1" onClick={() => controller.startRound()} data-testid="play-again">
-                {round.series ? (seriesOver ? "New series" : "Next game →") : "Play again"}
+                {quick ? "Rematch ⚡" : round.series ? (seriesOver ? "New series" : "Next game →") : "Play again"}
               </button>
             </div>
           ) : (

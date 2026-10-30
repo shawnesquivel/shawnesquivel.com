@@ -1,3 +1,4 @@
+import { BOT, loadBotLevel, planBot, type BotPick } from "./bot";
 import { findPath, generateBoard, solve, type Board } from "./board";
 import { serverNow } from "./clock";
 import type { BoardSize } from "./dice";
@@ -14,11 +15,17 @@ export type Settings = {
   longestBonus: boolean;
   // Danger mode: attacks, shields, the danger-zone boost and the battle log.
   danger: boolean;
-  // 0 = single rounds, otherwise best-of-N
+  // 0 = continuous, otherwise best-of-N
   series: 0 | 3 | 5;
 };
 
-export const DEFAULT_SETTINGS: Settings = { size: 4, duration: 120, minLength: 3, longestBonus: true, danger: true, series: 0 };
+// "No chill" turns on Danger mode and the longest-word bonus together; chill is the default.
+export const DEFAULT_SETTINGS: Settings = { size: 4, duration: 120, minLength: 3, longestBonus: false, danger: false, series: 3 };
+export const QUICK_SETTINGS: Settings = { ...DEFAULT_SETTINGS, series: 0 };
+
+export function isNoChill(settings: Settings) {
+  return settings.danger;
+}
 
 export type Round = {
   id: string;
@@ -28,6 +35,8 @@ export type Round = {
   settings: Settings;
   players: Member[];
   series?: SeriesRef;
+  // Quick Start: the bot's level for this round
+  bot?: { level: number };
 };
 
 export type Phase = "lobby" | "countdown" | "playing" | "collecting" | "results";
@@ -124,6 +133,8 @@ export class RoomController {
   private roundContributions = new Map<string, Record<string, { points: number; wins: number; series: number }>>();
   private earned = 0;
   private startResends: ReturnType<typeof setTimeout>[] = [];
+  private botPlan: BotPick[] = [];
+  private botWords: string[] = [];
 
   constructor(room: string | null, me: Member) {
     this.transport = createTransport(room);
@@ -131,9 +142,9 @@ export class RoomController {
       room,
       me,
       status: "connecting",
-      roster: [me],
+      roster: room ? [me] : [me, BOT],
       hostId: me.id,
-      settings: DEFAULT_SETTINGS,
+      settings: room ? DEFAULT_SETTINGS : QUICK_SETTINGS,
       phase: "lobby",
       round: null,
       myWords: [],
@@ -176,6 +187,17 @@ export class RoomController {
     for (const fn of this.listeners) fn();
   }
 
+  get isQuick() {
+    return this.state.room === null;
+  }
+
+  // Lets you rename yourself or swap emoji after joining.
+  updateMe(patch: Partial<Pick<Member, "name" | "emoji">>) {
+    const me = { ...this.state.me, ...patch };
+    this.set({ me, roster: this.state.roster.map((m) => (m.id === me.id ? me : m)) });
+    this.transport.update(me);
+  }
+
   get isHost() {
     return this.state.hostId === this.state.me.id;
   }
@@ -191,7 +213,8 @@ export class RoomController {
       if (status === "connected") this.send({ type: "hello" });
     };
     t.onRoster = (roster) => {
-      const withMe = roster.some((m) => m.id === this.state.me.id) ? roster : [...roster, this.state.me];
+      let withMe = roster.some((m) => m.id === this.state.me.id) ? roster : [...roster, this.state.me];
+      if (this.isQuick) withMe = [...withMe.filter((m) => m.id !== BOT.id), BOT];
       const hostId = computeHost(withMe, this.state.me.id);
       this.set({ roster: withMe, hostId });
     };
@@ -240,7 +263,8 @@ export class RoomController {
       endsAt: startsAt + settings.duration * 1000,
       settings,
       players: this.state.roster,
-      series: this.nextSeries(settings),
+      series: this.isQuick ? undefined : this.nextSeries(settings),
+      bot: this.isQuick ? { level: loadBotLevel() } : undefined,
     };
     this.beginRound(round);
     // Broadcast is at-most-once; resending an idempotent start covers a dropped packet.
@@ -249,10 +273,10 @@ export class RoomController {
     this.startResends = [800, 2000].map((ms) => setTimeout(() => this.send({ type: "start", round }), ms));
   }
 
-  // Solo only: there's nobody to wait for, so the round can just end now.
+  // Quick Start only: there's nobody to wait for, so the round can just end now.
   endEarly() {
     const { round, phase } = this.state;
-    if (!round || round.players.length !== 1 || (phase !== "playing" && phase !== "countdown")) return;
+    if (!round || !this.isQuick || (phase !== "playing" && phase !== "countdown")) return;
     const now = serverNow();
     this.set({ round: { ...round, startsAt: Math.min(round.startsAt, now), endsAt: now } });
     this.tick();
@@ -306,13 +330,13 @@ export class RoomController {
       this.set({ powers });
     }
     this.bumpCombo(round);
-    if (multiplayer && word.length >= BRAG_LENGTH) this.send({ type: "brag", roundId: round.id, length: word.length });
+    if (multiplayer && !this.isQuick && word.length >= BRAG_LENGTH) this.send({ type: "brag", roundId: round.id, length: word.length });
   }
 
   comboActive(): boolean {
     const { round, powers, timeBoosts } = this.state;
     if (!round || !this.isParticipant(round)) return false;
-    if (round.players.length === 1) return timeBoosts < MAX_TIME_BOOSTS;
+    if (this.isQuick) return timeBoosts < MAX_TIME_BOOSTS;
     return round.settings.danger && powers.shield === 0;
   }
 
@@ -324,7 +348,7 @@ export class RoomController {
       this.set({ combo });
       return;
     }
-    if (round.players.length === 1) {
+    if (this.isQuick) {
       const boosted = { ...round, endsAt: round.endsAt + SOLO_TIME_BOOST_MS };
       this.set({ round: boosted, combo: [], comboBurst: now, timeBoosts: this.state.timeBoosts + 1 });
       this.toast(`⚡ Combo! +${SOLO_TIME_BOOST_MS / 1000} seconds`, "combo");
@@ -409,6 +433,11 @@ export class RoomController {
   private beginRound(round: Round) {
     const myWords = this.restore("words", round.id);
     this.earned = 0;
+    this.botWords = [];
+    this.botPlan =
+      round.bot && this.dict
+        ? planBot([...solve(round.board, this.dict, round.settings.minLength).keys()], round.bot.level, round.endsAt - round.startsAt, round.id)
+        : [];
     this.set({
       round,
       settings: round.settings,
@@ -603,12 +632,19 @@ export class RoomController {
     }
 
     if (s.phase === "countdown" && now >= round.startsAt) this.set({ phase: "playing" });
-    if (this.state.phase === "playing" && now < round.endsAt) this.milestones(round, now);
+    if (this.state.phase === "playing" && now < round.endsAt) {
+      this.botFinds(round, now);
+      this.milestones(round, now);
+    }
 
     if ((s.phase === "countdown" || s.phase === "playing") && now >= round.endsAt) {
       const mine = this.isParticipant(round);
-      const finals = mine ? { ...s.finals, [s.me.id]: s.myWords } : s.finals;
-      const lates = mine ? { ...s.lates, [s.me.id]: s.myLate } : s.lates;
+      let finals = mine ? { ...s.finals, [s.me.id]: s.myWords } : s.finals;
+      let lates = mine ? { ...s.lates, [s.me.id]: s.myLate } : s.lates;
+      if (round.bot) {
+        finals = { ...finals, [BOT.id]: this.botWords };
+        lates = { ...lates, [BOT.id]: [] };
+      }
       this.set({ phase: "collecting", finals, lates });
       this.sendFinal(true);
     }
@@ -623,6 +659,21 @@ export class RoomController {
         this.computeOutcome();
       }
     }
+  }
+
+  private botFinds(round: Round, now: number) {
+    const elapsed = now - round.startsAt;
+    const found: string[] = [];
+    while (this.botPlan.length && this.botPlan[0].at <= elapsed) found.push(this.botPlan.shift()!.word);
+    if (!found.length) return;
+    this.botWords = [...found.reverse(), ...this.botWords];
+    const points = this.botWords.reduce((sum, w) => sum + wordPoints(w), 0);
+    this.set({
+      progress: { ...this.state.progress, [BOT.id]: this.botWords.length },
+      livePoints: { ...this.state.livePoints, [BOT.id]: points },
+    });
+    const long = found.find((w) => w.length >= BRAG_LENGTH);
+    if (long) this.toast(`${BOT.emoji} ${BOT.name} found ${long.length === 8 || long.length === 11 ? "an" : "a"} ${long.length}-letter word!`, "brag");
   }
 
   private milestones(round: Round, now: number) {

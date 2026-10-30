@@ -14,9 +14,9 @@ export function useRoomEffects(state: RoomState) {
   useEffect(() => {
     if (state.comboBurst && state.comboBurst !== lastBurst.current) {
       lastBurst.current = state.comboBurst;
-      if (state.round && state.round.players.length > 1) sound.combo();
+      if (state.room) sound.combo();
     }
-  }, [state.comboBurst, state.round]);
+  }, [state.comboBurst, state.room]);
   useEffect(() => {
     for (const t of state.toasts) {
       if (seen.current.has(t.id)) continue;
