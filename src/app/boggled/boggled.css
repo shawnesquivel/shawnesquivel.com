@@ -944,3 +944,8 @@ body:has(.boggled) {
   width: 100%;
   height: auto;
 }
+
+.bg-stats {
+  -webkit-user-select: text;
+  user-select: text;
+}
