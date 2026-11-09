@@ -47,7 +47,14 @@ function stored(storage: Storage, key: string, prefix: string) {
   return v;
 }
 
+// wordbrawl.app/test (or /boggled/test): the owner's test mode, never tracked.
+export const isTestMode = () => typeof location !== "undefined" && /\/test\/?$/.test(location.pathname);
+
+// Path for links shared with other people, so invites from test mode don't land friends in it.
+export const publicPath = () => location.pathname.replace(/\/test\/?$/, "") || "/";
+
 function optedOut() {
+  if (isTestMode()) return true;
   const q = new URLSearchParams(location.search).get("notrack");
   if (q === "1") localStorage.setItem("boggled:notrack", "1");
   if (q === "0") localStorage.removeItem("boggled:notrack");

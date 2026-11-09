@@ -1,6 +1,6 @@
 "use client";
 
-import { click, track } from "@/lib/boggled/analytics";
+import { click, publicPath, track } from "@/lib/boggled/analytics";
 import { useState, type ReactNode } from "react";
 import { BOMB_WORD_LENGTH, DANGER_ZONE_MS, isNoChill, type RoomController, type RoomState, type Settings } from "@/lib/boggled/room";
 import { DANGER_BOOST, LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
@@ -221,7 +221,7 @@ export default function Lobby({
     setTimeout(() => setCopied(""), 1600);
   };
 
-  const inviteUrl = () => `${location.origin}${location.pathname}?room=${state.room}`;
+  const inviteUrl = () => `${location.origin}${publicPath()}?room=${state.room}`;
 
   const showQr = async () => {
     if (qr) return setQr("");

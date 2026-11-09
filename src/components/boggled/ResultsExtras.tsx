@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { click, dailyRank, flush } from "@/lib/boggled/analytics";
+import { click, dailyRank, flush, publicPath } from "@/lib/boggled/analytics";
 import { applyRound, bestKey, loadBests, saveBests } from "@/lib/boggled/bests";
 import { dailyShareText, formatSecs, type DailyResult, type SurvivalResult } from "@/lib/boggled/modes";
 import { DAILY_REWARDS, type DailyReward, type Item } from "@/lib/boggled/quest";
@@ -235,7 +235,7 @@ export function DailyPanel({ daily, words }: { daily: DailyResult; words: number
 
   const share = async () => {
     click("share_daily");
-    const url = `${location.origin}${location.pathname}?play=daily`;
+    const url = `${location.origin}${publicPath()}?play=daily`;
     const text = dailyShareText(daily, words, url);
     try {
       if (navigator.share) await navigator.share({ text });

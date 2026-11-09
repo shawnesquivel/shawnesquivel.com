@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
     return {
       beforeFiles: [
         { source: "/", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled" },
+        { source: "/test", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled" },
+        { source: "/boggled/test", destination: "/boggled" },
         { source: "/stats", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/stats" },
         { source: "/robots.txt", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/robots.txt" },
         { source: "/sitemap.xml", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/sitemap.xml" },

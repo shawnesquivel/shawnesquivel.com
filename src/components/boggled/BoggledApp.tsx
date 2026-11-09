@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { initAnalytics, setScreen, type Screen } from "@/lib/boggled/analytics";
+import { initAnalytics, isTestMode, setScreen, type Screen } from "@/lib/boggled/analytics";
 import { serverNow, syncClock } from "@/lib/boggled/clock";
 import { loadDictionary, type Dictionary } from "@/lib/boggled/dictionary";
 import type { SoloMode } from "@/lib/boggled/modes";
@@ -108,7 +108,23 @@ function RoomView({
   );
 }
 
+const noSubscribe = () => () => {};
+
 export default function BoggledApp() {
+  const test = useSyncExternalStore(noSubscribe, isTestMode, () => false);
+  return (
+    <>
+      {test && (
+        <div className="bg-test-badge" data-testid="test-mode" role="status">
+          🧪 Test mode · not tracked
+        </div>
+      )}
+      <App />
+    </>
+  );
+}
+
+function App() {
   const [identity, setIdentity] = useState<Identity | null>(null);
   const [dict, setDict] = useState<Dictionary | null>(null);
   const [dictError, setDictError] = useState(false);
