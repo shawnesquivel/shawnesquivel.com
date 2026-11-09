@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { click, track } from "@/lib/boggled/analytics";
 import {
+  adsLeft,
   formatCountdown,
   LEVELS,
   livesLeft,
@@ -18,6 +19,7 @@ import {
 import type { RoomController, RoomState } from "@/lib/boggled/room";
 import { sound } from "@/lib/boggled/sound";
 import { Lives, regionStyle, Stars, useNow } from "./QuestUI";
+import { AdModal, ItemChips, ShopModal } from "./Shop";
 
 // Node positions on the tilted plane (percent), bottom to top. The 5th is the boss.
 const NODES = [
@@ -76,7 +78,8 @@ export default function QuestMap({
   onLeave: () => void;
 }) {
   const now = useNow();
-  const [save] = useState(loadQuest);
+  const [save, setSave] = useState(loadQuest);
+  const [modal, setModal] = useState<"shop" | "ad" | null>(null);
   const outcome = state.outcome?.quest;
   const outcomeId = state.outcome?.roundId ?? "";
   const fresh = !!outcome && !played.has(outcomeId);
@@ -138,6 +141,7 @@ export default function QuestMap({
   const first = viewRegion * 5 + 1;
   const regionOpen = (r: number) => r * 5 + 1 <= save.unlocked;
   const selectedStars = save.stars[selected.level] ?? 0;
+  const best = save.best[selected.level];
   const play = () => {
     click("quest_play");
     sound.unlock();
@@ -156,7 +160,10 @@ export default function QuestMap({
           ←
         </button>
         <Lives save={save} now={now} broke={broke} />
-        <span className="bg-chip text-sm" data-testid="total-stars">⭐ {totalStars(save)}</span>
+        <span className="bg-chip flex flex-col items-end whitespace-nowrap px-2.5 py-1 text-xs leading-tight">
+          <span className="bg-coins" data-testid="coins">🪙 {save.coins}</span>
+          <span data-testid="total-stars">⭐ {totalStars(save)}</span>
+        </span>
       </div>
 
       <div className="bg-quest-track" data-testid="region-track">
@@ -223,6 +230,7 @@ export default function QuestMap({
               >
                 <span className="bg-node-disc">{open ? l.level : "🔒"}</span>
                 {l.boss && <span className="bg-node-boss">{l.emoji}</span>}
+                {l.boss && !beaten && <span className="bg-node-label">{l.final ? "FINAL" : "BOSS"} · Lv {l.level}</span>}
                 {beaten && (
                   <span className="bg-node-stars">
                     <Stars n={save.stars[l.level] ?? 0} />
@@ -264,13 +272,23 @@ export default function QuestMap({
             </span>
           ))}
         </div>
+        <div className="mt-2 flex items-center justify-between gap-2 text-sm">
+          <span className="font-semibold" data-testid="best">
+            {best ? `🏆 Best ${best.me} – ${best.them}` : "⚔️ First fight"}
+          </span>
+          <ItemChips save={save} />
+        </div>
         <div className="mt-3 flex gap-2">
-          <button className="bg-btn bg-btn-ghost px-3 text-base" onClick={practice} data-testid="practice">
-            🎯 Practice
+          <button className="bg-btn bg-btn-ghost px-3 text-base" onClick={() => { click("shop"); setModal("shop"); }} data-testid="shop-button">
+            🛒 Shop
           </button>
           {lives > 0 ? (
             <button className="bg-btn bg-btn-primary flex-1 text-xl" disabled={!dictReady} onClick={play} data-testid="start">
               {dictReady ? `⚔️ Play Level ${selected.level}` : "Loading words…"}
+            </button>
+          ) : adsLeft(save, now) > 0 ? (
+            <button className="bg-btn bg-btn-primary flex-1 px-2 text-base" onClick={() => { click("ad"); setModal("ad"); }} data-testid="watch-ad">
+              📺 Watch ad · +1 ❤️
             </button>
           ) : (
             <button className="bg-btn bg-btn-primary flex-1 px-2 text-sm" disabled data-testid="out-of-lives">
@@ -278,7 +296,16 @@ export default function QuestMap({
             </button>
           )}
         </div>
+        <div className="mt-2 flex justify-center gap-3 text-xs opacity-85">
+          {lives === 0 && next && <span data-testid="out-of-lives-timer">💔 next free life in {formatCountdown(next - now)}</span>}
+          <button className="font-semibold underline" onClick={practice} data-testid="practice">
+            🎯 Practice (free)
+          </button>
+        </div>
       </div>
+
+      {modal === "shop" && <ShopModal save={save} onChange={setSave} onClose={() => setModal(null)} />}
+      {modal === "ad" && <AdModal onReward={setSave} onClose={() => setModal(null)} />}
 
       {anim?.stage === "badge" && (
         <div className="bg-modal" role="dialog" aria-modal aria-label="Badge earned" data-testid="badge-earned">
