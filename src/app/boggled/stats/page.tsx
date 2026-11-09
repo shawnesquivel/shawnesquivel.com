@@ -42,7 +42,8 @@ const SCREENS: Record<string, string> = {
   home: "Home menu",
   join_code: "Typing a room code",
   join_name: "Entering name to join",
-  intro_quick: "Quick Start intro",
+  intro_quick: "Quest map",
+  intro_practice: "Practice intro",
   intro_daily: "Daily Puzzle intro",
   intro_survival: "Survival intro",
   lobby: "Room lobby",
@@ -52,7 +53,8 @@ const SCREENS: Record<string, string> = {
 };
 
 const MODES: Record<string, string> = {
-  quick: "⚡ Quick Start (vs Dr. Hoot)",
+  quick: "⚡ Quick Start quest",
+  practice: "🎯 Practice (vs bot)",
   daily: "📅 Daily Puzzle",
   survival: "⏳ Survival",
   room: "🎉 Rooms with friends",
@@ -295,7 +297,7 @@ function Dashboard({ s }: { s: Stats }) {
           />
         </Section>
 
-        <Section title="Dr. Hoot fairness" why="Player win rate by bot level. Aim for roughly 40–60% everywhere.">
+        <Section title="Quest difficulty" why="Player win rate per quest level. Aim for a gentle slope: ~80% at level 1 down to ~30% at the level 20 boss.">
           <Table head={["Level", "Rounds", "Player wins"]} rows={s.bot.map((b) => [`Lv ${b.level}`, b.rounds, pct(b.player_wins, b.rounds)])} />
         </Section>
 

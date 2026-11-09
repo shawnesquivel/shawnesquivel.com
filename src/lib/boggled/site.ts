@@ -37,7 +37,7 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Can I play Boggle alone?",
-    a: "Yes. Quick Start puts you against Dr. Hoot, a computer opponent who levels up when you beat him. The Daily Puzzle gives everyone the same board each day, and in Survival every word you find adds time to the clock.",
+    a: "Yes. Quick Start is a 20-level quest against computer opponents that get tougher every level, with a boss every 5 levels. The Daily Puzzle gives everyone the same board each day, and in Survival every word you find adds time to the clock.",
   },
   {
     q: "Is there a daily Boggle puzzle?",

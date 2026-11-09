@@ -197,7 +197,7 @@ const SLIDES: Slide[] = [
     title: "Playing alone?",
     body: (
       <>
-        ⚡ <b>Quick Start</b> pits you against Dr. Hoot 🦉. 📅 <b>Daily Puzzle</b> gives everyone the same board each day, and your first try counts. ⏳{" "}
+        ⚡ <b>Quick Start</b> is a quest: 20 opponents across 4 worlds, a boss every 5 levels, and Lexidrake 🐉 at the top. 📅 <b>Daily Puzzle</b> gives everyone the same board each day, and your first try counts. ⏳{" "}
         <b>Survival</b> starts you at 30 seconds, and every word adds time.
       </>
     ),
