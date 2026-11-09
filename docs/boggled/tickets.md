@@ -73,6 +73,7 @@ A new agent should read [`README.md`](./README.md) first, then pick the first `t
 | BOG-42 | Survival (Netflix parity): start at 30 s, each word adds 2–10 s by length, best time per device | done | `modes.ts` |
 | BOG-43 | Lobby QR code to join (lazy-loaded `qrcode`) | done | |
 | BOG-44 | SEO: keyword title/description, canonical, OG/Twitter image, icons, manifest, VideoGame/WebSite/FAQPage JSON-LD, server-rendered how-to/modes/rules/FAQ under the home menu, robots + sitemap on the game domain | done | `site.ts`, `SeoContent.tsx` |
+| BOG-45 | Quest: 20 levels / 4 regions / boss every 5 with powers, tilted map with path + avatar, 5 lives per rolling 24 h with refill timer, stars, versus intro, visual results (score race, verdict, stars), badge + region transitions, practice mode | done | `quest.ts`, `QuestMap.tsx`, `QuestResults.tsx`, `quest.md` |
 | BOG-35 | Unique ×2 only with 3+ players; head-to-head every word scores normally (results legend, reveal and how-to-play updated) | done | `DOUBLE_UNIQUE_MIN_PLAYERS` |
 | BOG-34 | Combo ring (top right): fills clockwise a quarter per word; 4 words in 4 s = boost. Rewards capped against farming short words: multiplayer (Danger mode) → 🛡️ shield (max 1, ring shows it until used); solo → +5 s on the clock (max 3/round). Tap to explain | done | `ComboRing.tsx`, replaces "3 words in 10 s" shield rule |
 | BOG-24 | e2e: power-ups (bomb earn/use/block/expiry), reactions, scoreboard across 2 rounds | done | `tests/boggled/e2e/power-ups.mts` |

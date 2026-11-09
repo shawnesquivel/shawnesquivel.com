@@ -20,7 +20,7 @@ Taken from the Boggle Party help center (Netflix, 2026):
 - **Chill / No chill**: one host toggle. Chill (default) is the classic game. No chill turns on Danger mode and the longest-word bonus together. Tapping it explains both.
 - **Match**: Best of 3 (default), Best of 5, or Continuous (no finish line), with a one-line explanation of the selected option.
 - **Create a room** opens the lobby instantly (a fun default name if you haven't set one); rename or change emoji with ✏️ in the roster. The room code is selectable and has a Copy button; an empty room says "It's quiet in here. Share the link with your friends!"
-- **Quick Start** (replaces Practice solo): 1v1 against **Dr. Hoot** 🦉, a mocked opponent (`bot.ts`). It's not an AI: it picks real words from the board's solutions on a timed schedule. Its level (1–10, starts at 3, stored on the device) sets how many words it finds and how long they are; beat it and it levels up, lose and it levels down. Quick Start uses chill rules, 4×4, 2 minutes; the ⚡ combo ring still adds time.
+- **Quick Start = Quest** (see `quest.md`): a 20-level journey on a tilted map across 4 regions, against mocked opponents (`bot.ts`, `quest.ts`) that get a little better every level, with a boss every 5 levels (bombs, flips, final frenzy) and Lexidrake 🐉 at 20. 5 lives per rolling 24 h (only losses cost one), 1–3 stars per win, animated versus intro, visual results. 🎯 Practice plays any unlocked opponent with your own settings, free.
 
 Party extras (v2, ours, not Netflix):
 - **Session scoreboard**: every multiplayer round adds wins (rank 1, ties all win) and points to a per-room tally shown in the lobby and results, with a banter headline and a title badge for the leader (`banter.ts`).

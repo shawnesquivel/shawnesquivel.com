@@ -11,7 +11,7 @@ Goal: learn, over the first ~3 months, which parts of the game people like enoug
 | 3 | Where do they leave? | Funnel (landed → started a round → finished a round → played 2+ rounds → came back another day) and the **last screen** of every session |
 | 4 | What do they try, and what sticks? | Rounds by mode (Quick Start, Daily, Survival, room) with unique players and rounds per player; room settings picked (board, timer, chill / no chill, match type); setting changes |
 | 5 | Does multiplayer spread? | Rooms created, copy code / share link / QR clicks, players per room round |
-| 6 | Is Dr. Hoot fair? | Quick Start rounds and win rate by bot level |
+| 6 | Is the quest curve right? | Quest rounds and win rate per quest level (`bot_level`) |
 | 7 | Are features discovered? | Clicks on home buttons, how-to-play opens, attacks, combos, reactions |
 
 Anything that doesn't feed one of these questions isn't tracked.
@@ -31,8 +31,8 @@ Every event row: `at` (server time), `player`, `session`, `event`, `screen` (scr
 | `screen` | Screen changes | — (`screen` column): `home`, `join_code`, `join_name`, `intro_quick`, `intro_daily`, `intro_survival`, `lobby`, `game`, `results` |
 | `click` | Buttons we care about | `target`: `quick_start`, `daily`, `survival`, `create_room`, `join_room`, `copy_code`, `share_link`, `qr`, `rename`, `howto`, `mute`, `rematch`, `play_again`, `next_game`, `home`, `settings`, `end_early`, `share_daily` |
 | `setting` | Host changes a room setting | `key`, `value` |
-| `round_start` | A round begins on this phone | `mode` (`quick`/`daily`/`survival`/`room`), `players`, `size`, `duration`, `min`, `no_chill`, `series`, `game`, `bot_level`, `host` |
-| `round_end` | Results computed | `mode`, `players`, `score`, `words`, `rank`, `won`, `bot` (`win`/`loss`/`tie`), `ended_early`, `secs` (seconds played), `survived` (survival), `first` (first daily play today), `day` (daily) |
+| `round_start` | A round begins on this phone | `mode` (`quick` = quest/`practice`/`daily`/`survival`/`room`), `players`, `size`, `duration`, `min`, `no_chill`, `series`, `game`, `bot_level` (quest level), `boss`, `host` |
+| `round_end` | Results computed | `mode`, `players`, `score`, `words`, `rank`, `won`, `bot` (`win`/`loss`/`tie`), `bot_level`, `stars` + `lives` (quest), `ended_early`, `secs` (seconds played), `survived` (survival), `first` (first daily play today), `day` (daily) |
 | `howto` | How-to-play closed | `slide` (furthest slide reached), `of` |
 | `attack` / `combo` / `react` | In-game feature use | `weapon` / — / — |
 | `hide` | Tab hidden (phone locked, app switched) | `in_round` |
