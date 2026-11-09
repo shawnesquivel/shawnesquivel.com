@@ -10,7 +10,7 @@ import { sound } from "@/lib/boggled/sound";
 import type { Member } from "@/lib/boggled/transport";
 import { ReactionBar, Scoreboard } from "./Extras";
 import QuestResults from "./QuestResults";
-import { BattleLog, BestsPanel, DailyPanel, MissedWords, SeriesPanel, SurvivalPanel } from "./ResultsExtras";
+import { BattleLog, BestsPanel, DailyPanel, DailyRewardModal, MissedWords, SeriesPanel, SurvivalPanel } from "./ResultsExtras";
 
 const VICTORY = ["Transcendent", "Glorious", "Stupendous", "Legendary", "Magnificent", "Flawless", "Spectacular"];
 
@@ -70,6 +70,7 @@ function ClassicResults({ state, controller, onLeave }: ResultsProps) {
   }, [result]);
 
   const [step, setStep] = useState(0);
+  const [rewardSeen, setRewardSeen] = useState(false);
   const [stage, setStage] = useState<"intro" | "reveal" | "bonus" | "podium">("intro");
   const hasDanger = !!result && result.players.some((p) => p.dangerBonus > 0);
   const hasBonus = !!result && (result.longestWinners.length > 0 || hasDanger);
@@ -250,6 +251,7 @@ function ClassicResults({ state, controller, onLeave }: ResultsProps) {
       {stage === "podium" && (
         <>
           {outcome?.daily && <DailyPanel daily={outcome.daily} words={result.players[0]?.words.length ?? 0} />}
+          {outcome?.dailyReward && !rewardSeen && <DailyRewardModal reward={outcome.dailyReward} onClose={() => setRewardSeen(true)} />}
           {outcome?.survival && <SurvivalPanel survival={outcome.survival} />}
           <MissedWords words={outcome!.missed} total={outcome!.allWords} title={solo ? "Words you missed" : "Words nobody found"} />
 

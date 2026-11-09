@@ -18,8 +18,22 @@ page.on("request", (req) => {
   if (req.url().includes("/rest/v1/boggled_events") && req.method() === "POST") sent.push(...JSON.parse(req.postData() ?? "[]"));
 });
 
-console.log("Daily Puzzle");
+console.log("Home and the Daily Puzzle reward");
 await page.goto(`${BASE}/boggled`);
+// A 2-day streak through yesterday: today's play is day 3 on the reward track.
+await page.evaluate(() => {
+  const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+  localStorage.setItem("boggled:dailyStreak", JSON.stringify({ last: yesterday, n: 2 }));
+});
+await page.reload();
+assert((await page.getByTestId("menu-daily").textContent())!.includes("Day 3 reward: +40 🪙"), "home previews today's streak reward");
+await page.waitForTimeout(400);
+await page.screenshot({ path: `${SHOTS}/19-home.png` });
+await page.getByTestId("menu-friends").click();
+assert((await page.getByTestId("friends").isVisible()) && (await page.getByTestId("menu-join").isVisible()), "Play with Friends offers create and join");
+await page.getByTestId("back").click();
+
+console.log("Daily Puzzle");
 await page.getByTestId("menu-daily").click();
 await page.getByTestId("daily-intro").waitFor();
 assert((await page.getByTestId("daily-today").textContent()) === "?", "daily intro: no score yet today");
@@ -34,6 +48,16 @@ const dailyWords = wordsOn(board1).slice(0, 3);
 for (const [, p] of dailyWords) await swipe(page, p);
 await page.getByTestId("end-early").click();
 await page.getByTestId("end-score").click();
+await page.getByTestId("daily-reward").waitFor({ timeout: 30000 });
+await page.waitForTimeout(500);
+await page.screenshot({ path: `${SHOTS}/20b-daily-chest.png` });
+await page.locator(".bg-chest.open").waitFor({ timeout: 5000 });
+await page.waitForTimeout(900);
+await page.screenshot({ path: `${SHOTS}/20c-daily-reward.png` });
+await page.getByTestId("daily-claim").click({ timeout: 5000 });
+assert(true, "the gift opens after a moment and can be collected");
+const reward = await page.evaluate(() => JSON.parse(localStorage.getItem("boggled:quest") ?? "{}"));
+assert(reward.coins === 40 && reward.items.time === 1, "day 3 pays 40 coins and a ⏱️ into the Story wallet");
 await page.getByTestId("podium").waitFor({ timeout: 30000 });
 await page.getByTestId("daily-panel").waitFor();
 assert((await page.getByTestId("daily-panel").textContent())!.includes("locked in"), "first daily play locks in the score");
@@ -49,8 +73,10 @@ await page.getByTestId("end-early").click();
 await page.getByTestId("end-score").click();
 await page.getByTestId("daily-panel").waitFor({ timeout: 30000 });
 assert((await page.getByTestId("daily-panel").textContent())!.includes("Practice run"), "second daily play is practice");
+assert((await page.getByTestId("daily-reward").count()) === 0, "the reward is paid once per day");
 await page.getByTestId("home-button").evaluate((el: HTMLElement) => el.click());
 assert((await page.getByTestId("menu-daily").textContent())!.includes("Done today"), "home shows the daily is done");
+assert((await page.getByTestId("menu-daily").textContent())!.includes("tomorrow +50"), "and previews tomorrow's reward");
 
 console.log("Survival");
 await page.getByTestId("menu-survival").click();
