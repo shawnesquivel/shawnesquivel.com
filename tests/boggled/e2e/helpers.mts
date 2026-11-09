@@ -50,9 +50,8 @@ export async function setName(page: Page, name: string) {
   await page.getByTestId("name").fill(name);
 }
 
-// Play with Friends → "Create a room" opens the lobby right away; the name is edited there.
+// "Create room" on the home menu opens the lobby right away; the name is edited there.
 export async function createRoom(page: Page, name: string) {
-  await page.getByTestId("menu-friends").click();
   await page.getByTestId("menu-create").click();
   await page.getByTestId("room-code").waitFor();
   await page.getByTestId("edit-me").click();
@@ -63,4 +62,11 @@ export async function createRoom(page: Page, name: string) {
 export function assert(cond: unknown, msg: string): asserts cond {
   if (!cond) throw new Error(`ASSERTION FAILED: ${msg}`);
   console.log(`  ✓ ${msg}`);
+}
+
+// Story map: the level sheet opens from the bottom Play button.
+export async function openLevel(page: Page) {
+  await page.getByTestId("quest-map").waitFor();
+  if (!(await page.getByTestId("level-card").isVisible())) await page.getByTestId("map-play").click();
+  await page.getByTestId("level-card").waitFor();
 }

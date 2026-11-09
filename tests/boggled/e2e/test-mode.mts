@@ -19,7 +19,7 @@ async function open(path: string) {
     if (req.url().includes("/rest/v1/boggled_events") && req.method() === "POST") sent.push(...JSON.parse(req.postData() ?? "[]").map((e: { event: string }) => e.event));
   });
   await page.goto(`${BASE}${path}`);
-  await page.getByTestId("menu-friends").waitFor();
+  await page.getByTestId("menu-create").waitFor();
   return { page, sent };
 }
 

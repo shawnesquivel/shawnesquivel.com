@@ -26,12 +26,10 @@ await page.evaluate(() => {
   localStorage.setItem("boggled:dailyStreak", JSON.stringify({ last: yesterday, n: 2 }));
 });
 await page.reload();
-assert((await page.getByTestId("menu-daily").textContent())!.includes("Day 3 reward: +40 🪙"), "home previews today's streak reward");
+assert((await page.getByTestId("menu-daily").textContent())!.includes("+40 🪙 · 🔥2"), "home previews today's streak reward");
 await page.waitForTimeout(400);
 await page.screenshot({ path: `${SHOTS}/19-home.png` });
-await page.getByTestId("menu-friends").click();
-assert((await page.getByTestId("friends").isVisible()) && (await page.getByTestId("menu-join").isVisible()), "Play with Friends offers create and join");
-await page.getByTestId("back").click();
+assert((await page.getByTestId("menu-create").isVisible()) && (await page.getByTestId("menu-join").isVisible()), "home leads with Create and Join room");
 
 console.log("Daily Puzzle");
 await page.getByTestId("menu-daily").click();
@@ -75,8 +73,7 @@ await page.getByTestId("daily-panel").waitFor({ timeout: 30000 });
 assert((await page.getByTestId("daily-panel").textContent())!.includes("Practice run"), "second daily play is practice");
 assert((await page.getByTestId("daily-reward").count()) === 0, "the reward is paid once per day");
 await page.getByTestId("home-button").evaluate((el: HTMLElement) => el.click());
-assert((await page.getByTestId("menu-daily").textContent())!.includes("Done today"), "home shows the daily is done");
-assert((await page.getByTestId("menu-daily").textContent())!.includes("tomorrow +50"), "and previews tomorrow's reward");
+assert((await page.getByTestId("menu-daily").textContent())!.includes("Done ✓ · 🔥3"), "home shows the daily is done, with the streak");
 
 console.log("Survival");
 await page.getByTestId("menu-survival").click();

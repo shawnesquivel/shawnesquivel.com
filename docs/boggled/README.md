@@ -130,6 +130,16 @@ npx tsx tests/boggled/e2e/resilience.mts   # packet loss at the buzzer + host le
 npx tsx tests/boggled/e2e/power-ups.mts    # danger mode, series, bests, reactions, scoreboard
 ```
 
+Before every commit (about 30 s, no Supabase needed):
+
+```bash
+npm run check:boggled       # eslint + tsc + unit tests + stats SQL in PGlite
+npm run test:boggled:smoke  # dev server up: every screen + in-app/browser back, fails on any crash
+git config core.hooksPath .githooks   # optional: run both automatically on commits that touch the game
+```
+
+The smoke test makes `scrollTo` & co. return Promises like Chrome 150, and the lint rule bans expression-bodied effects (`useEffect(() => el.scrollTo(…))`). That combination is what crashed Play/Back in production: React treated the returned Promise as the effect cleanup.
+
 E2E scripts drive `window.__boggled` (the `RoomController`, exposed in non-production builds only) to shorten timers and inspect state. Screenshots/videos land in `/opt/cursor/artifacts/` (override with `BOGGLED_SHOTS` / `BOGGLED_VIDEOS`).
 
 Docker-in-VM gotcha: if containers can't reach each other (Supabase fails with `DbSetupError` / Realtime "connection not available"), switch to legacy iptables (`update-alternatives --set iptables /usr/sbin/iptables-legacy`) and restart `dockerd`.

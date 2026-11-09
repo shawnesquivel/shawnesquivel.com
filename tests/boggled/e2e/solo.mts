@@ -1,6 +1,6 @@
 import { mkdirSync } from "node:fs";
 import { chromium, devices } from "playwright";
-import { assert, BASE, readBoard, SHOTS, swipe, wordsOn } from "./helpers.mjs";
+import { assert, BASE, openLevel, readBoard, SHOTS, swipe, wordsOn } from "./helpers.mjs";
 
 mkdirSync(SHOTS, { recursive: true });
 const browser = await chromium.launch();
@@ -14,11 +14,11 @@ await page.getByTestId("menu").waitFor();
 await page.waitForTimeout(400);
 await page.screenshot({ path: `${SHOTS}/01-home.png` });
 assert((await page.getByTestId("solo").textContent())!.includes("STORY"), "home offers Story");
-assert(await page.getByTestId("menu-friends").isVisible(), "home offers Play with Friends");
-assert((await page.getByTestId("menu-daily").textContent())!.includes("DAILY PUZZLE"), "home offers the Daily Puzzle");
+assert(await page.getByTestId("menu-create").isVisible(), "home offers Create room");
+assert((await page.getByTestId("menu-daily").textContent())!.includes("DAILY"), "home offers the Daily Puzzle");
 await page.evaluate(() => localStorage.removeItem("boggled:quest"));
 await page.getByTestId("solo").click();
-await page.getByTestId("quest-map").waitFor();
+await openLevel(page);
 await page.getByTestId("practice").click();
 await page.getByTestId("quick-intro").waitFor();
 assert((await page.getByTestId("quick-intro").textContent())!.includes("Bun Bun"), "Practice is against the selected level's opponent");
@@ -147,6 +147,7 @@ await page.getByTestId("menu").waitFor();
 assert(true, "Home button on solo results returns to the menu");
 
 await page.getByTestId("solo").click();
+await openLevel(page);
 await page.getByTestId("start").click();
 await page.getByTestId("end-early").click();
 await page.getByTestId("end-home").click();
@@ -155,6 +156,7 @@ assert(page.url().endsWith("/boggled"), "Quit to home mid-round returns to the m
 
 console.log("Practice settings");
 await page.getByTestId("solo").click();
+await openLevel(page);
 await page.getByTestId("practice").click();
 await page.getByTestId("quick-intro").waitFor();
 await page.getByTestId("opt-size").getByText("5×5").click();
@@ -168,6 +170,7 @@ await page.getByTestId("leave").click();
 await page.getByTestId("quest-map").waitFor();
 await page.reload();
 await page.getByTestId("solo").click();
+await openLevel(page);
 await page.getByTestId("practice").click();
 await page.getByTestId("quick-intro").waitFor();
 const kept = await page.evaluate(() => window.__boggled.getState().settings);
