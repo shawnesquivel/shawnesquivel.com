@@ -130,7 +130,10 @@ export default function QuestMap({
     }
     if (anim.stage === "badge" || anim.stage === "complete") sound.champion();
     if (anim.stage === "region") {
-      const t = setTimeout(() => setAnim(null), 2600);
+      const t = setTimeout(() => {
+        setAnim(null);
+        setSheet(true);
+      }, 2600);
       return () => clearTimeout(t);
     }
   }, [anim, controller]);
