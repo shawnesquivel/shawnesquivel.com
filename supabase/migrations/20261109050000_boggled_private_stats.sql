@@ -85,11 +85,17 @@ rooms as (
     max((props->>'players')::int) as size,
     count(*) filter (where (props->>'host')::boolean) as rounds,
     count(distinct player) as members,
-    count(distinct (at at time zone 'utc')::date) as days,
-    extract(epoch from max(at) - min(at)) as secs
+    count(distinct (at at time zone 'utc')::date) as days
   from starts
   where props->>'mode' = 'room' and coalesce(props->>'room', '') <> ''
   group by 1
+),
+-- A room's play session = first to last round on one day (the same code can be reused later).
+room_nights as (
+  select props->>'room' as room, extract(epoch from max(at) - min(at)) as secs, count(*) filter (where (props->>'host')::boolean) as rounds
+  from starts
+  where props->>'mode' = 'room' and coalesce(props->>'room', '') <> ''
+  group by 1, (at at time zone 'utc')::date
 ),
 feature_list(key, ord) as (
   values ('story', 1), ('daily', 2), ('rooms', 3), ('practice', 4), ('survival', 5),
@@ -140,7 +146,7 @@ select jsonb_build_object(
     select coalesce(jsonb_agg(jsonb_build_object('bucket', bucket, 'players', n) order by ord), '[]'::jsonb) from (
       select
         case when d = 1 then '1 day' when d = 2 then '2 days' when d = 3 then '3 days' when d <= 6 then '4–6 days' else '7+ days' end as bucket,
-        least(d, 7) as ord, count(*) as n
+        case when d <= 3 then d when d <= 6 then 4 else 5 end as ord, count(*) as n
       from (select player, count(distinct (at at time zone 'utc')::date) as d from ev group by player) p
       group by 1, 2
     ) x
@@ -171,14 +177,14 @@ select jsonb_build_object(
       'replayed', count(*) filter (where rounds >= 2),
       'marathon', count(*) filter (where rounds >= 5),
       'returned', count(*) filter (where days >= 2),
-      'avg_secs', round(avg(secs) filter (where rounds >= 2)),
+      'avg_secs', (select round(avg(secs)) from room_nights where rounds >= 2),
       'sizes', (
         select coalesce(jsonb_agg(jsonb_build_object('size', size, 'groups', n) order by size), '[]'::jsonb)
         from (select size, count(*) as n from rooms group by 1) s
       ),
       'rounds_dist', (
         select coalesce(jsonb_agg(jsonb_build_object('bucket', bucket, 'groups', n) order by ord), '[]'::jsonb) from (
-          select case when rounds <= 1 then '1' when rounds <= 3 then '2–3' when rounds <= 9 then '4–9' else '10+' end as bucket,
+          select case when rounds <= 1 then '1 round' when rounds <= 3 then '2–3 rounds' when rounds <= 9 then '4–9 rounds' else '10+ rounds' end as bucket,
             case when rounds <= 1 then 1 when rounds <= 3 then 2 when rounds <= 9 then 3 else 4 end as ord, count(*) as n
           from rooms group by 1, 2
         ) b
