@@ -27,10 +27,12 @@ The bot is not an AI. It picks real words from the board's solutions on a timed 
 
 ```
 Lv  1   2   3   4  [5]   6   7   8   9  [10]  11  12  13  14 [15]  16  17  18   19  [20]
-   1.0 1.6 2.2 2.8 3.6  3.8 4.3 4.8 5.3 6.0  6.2 6.7 7.2 7.7 8.5  8.7 9.2 9.7 10.3 11.5
+    0.6 1.0 1.4 1.8 2.4  2.5 2.9 3.3 3.7 4.4  5.4 6.0 6.6 7.2 8.2  8.6 9.2 9.8 10.4 11.5
 ```
 
-Skill sets how many words the bot finds (about `3 + 3.5 × skill` per 2 minutes, capped at 70% of the board) and how much it favours long words. Level 1 finds about 7 words, so nearly anyone wins. Level 20 finds about 43 words on a 5×5 board, plus a frenzy at the end, so it should take real skill.
+Levels 1–10 (the first two regions) are meant to be easy: an average player should reach the Whispering Woods boss without running out of lives. At level 11 the curve jumps (4.4 to 5.4), and from there a player who keeps losing to a boss is nudged to grind earlier levels for coins and buy items (see Coins and shop).
+
+Skill sets how many words the bot finds (about `3 + 3.5 × skill` per 2 minutes, capped at 70% of the board) and how much it favours long words. Level 1 finds about 5 words, so nearly anyone wins. Level 20 finds about 43 words on a 5×5 board, plus a frenzy at the end, so it should take real skill.
 
 **Boss powers** are scheduled at random times in the middle of the round (never in the first 12 s or the last 8 s):
 
@@ -50,29 +52,61 @@ The live dashboard (`/stats`, "Quest difficulty") shows the win rate per level. 
 
 ## Stars
 
-A win earns 1 to 3 stars, based on the margin: 1★ for any win, 2★ for 25% more points than the opponent, 3★ for 60% more. Your best stars per level are kept. Replaying a beaten level costs a life only if you lose, and is there to chase ⭐⭐⭐.
+A win earns 1 to 3 stars, based on the margin: 1★ for any win, 2★ for 10% more points than the opponent (easy to reach), and 3★ for 75% more (the hard last stretch). `STAR_RATIOS` in `quest.ts` holds the thresholds. After a win that isn't 3★, the results screen shows how many more points the next star needed ("+12 pts for ★★★"). Your best stars per level are kept. Replaying a beaten level costs a life only if you lose, and is there to chase ⭐⭐⭐.
+
+## Coins and shop
+
+Coins are the reason to keep playing when a boss is too hard: replay earlier levels, earn coins, then buy items for the boss fight.
+
+**Earning (`coinsFor` in `quest.ts`):**
+
+| Source | Coins |
+| --- | --- |
+| 📝 Words: your score ÷ 3, win or lose | up to 20 |
+| 🏆 Win | 10 + 2 × level |
+| ★★ / ★★★ bonus | 5 / 15 + level |
+| 🚩 First clear of a level | 10 + level |
+| 👑 First clear of a boss | 50 + 5 × level |
+| 🎯 Practice round | words played ÷ 2, up to 10 |
+
+A first 3★ win on level 1 pays about 55 coins, and on a boss about 150 or more. A lost round still pays the word coins, so a failed attempt is never worth zero. Replays pay less than first clears, which rewards progress but still makes grinding worthwhile.
+
+**Shop (🛒 next to Play on the map card):**
+
+| Item | Price | Effect in a quest round |
+| --- | --- | --- |
+| 💣 Stun | 40 | Tap during the round: the opponent finds no words for 8 s |
+| 🛡️ Shield | 30 | Passive: blocks the next boss bomb or flip automatically |
+| ⏱️ +15s | 25 | Tap during the round: adds 15 s to your clock |
+| ❤️ Life | 60 | Refills one life now |
+
+You can use each item at most `ITEM_LIMIT` (2) times per round, so items help but can't buy a win outright. Items are only spent when used, and practice rounds never use them.
+
+**Map card:** tapping any unlocked node shows the opponent, the rules, your best score against them ("🏆 Best 42 – 30" or "⚔️ First fight") and the items you are taking in. Boss nodes show a "BOSS · Lv N" tag.
+
+**Out of lives:** the Play button becomes "📺 Watch ad · +1 ❤️", which is allowed `AD_LIVES_PER_DAY` (3) times per rolling 24 hours, then a countdown. The ad is currently a 5-second placeholder (`AdModal` in `Shop.tsx`); swapping in a real rewarded-ad network (AdSense H5 games ads, AppLixir, etc.) needs an account and only touches that component.
 
 ## Storyboard
 
 1. **Home.** The Quick Start button shows where you are: "Level 7 · 🌲 Whispering Woods · ❤️ 4". For a new player it reads "Start your quest: 20 levels, 4 bosses 🐉".
 2. **Map.** This is the hub screen.
-   - **Header:** ← back, hearts with the refill timer, and your ⭐ total.
+   - **Header:** ← back, hearts with the refill timer, and your 🪙 coins and ⭐ total.
    - **Region track:** four region icons joined by a line. Earned badges sit on the icons, and locked regions show 🔒.
    - **Region title**, with the story line the first time you play.
    - **The board:** a tilted 3D board in the region's colours. A curved path climbs from the bottom to the boss at the top and continues off the edge toward the next region. Nodes you've beaten are gold with stars underneath. Locked nodes are dim with 🔒. The boss node is bigger, red and gold, with its character standing on it (a black silhouette until it's unlocked). Your avatar bobs on the current node.
-   - **Bottom card:** the selected opponent with its taunt, rule chips (board, timer, powers), 🎯 Practice and ⚔️ Play Level N.
+   - **Bottom card:** the selected opponent with its taunt, rule chips (board, timer, powers), your best score against it, your items, 🛒 Shop and ⚔️ Play Level N, with 🎯 Practice (free) underneath.
 3. **Versus intro.** This plays during the 5-second countdown.
    - **Background:** region colours with a rotating sunburst (red for bosses, fire for the dragon).
    - **Reveal sequence:** the level number drops in. You and your opponent slide in from opposite sides. "VS" slams down and the screen shakes. Then the taunt bubble and the rule chips appear, and 3, 2, 1, GO.
    - **Boss levels** get a pulsing "⚔️ BOSS BATTLE" banner.
-4. **Game.** This is the normal board. Boss powers arrive as toasts ("💣 🦊 Countess Vix bombed your board!") and land on your tiles.
+4. **Game.** This is the normal board. Boss powers arrive as toasts ("💣 🦊 Countess Vix bombed your board!") and land on your tiles. If you own items, an item bar sits under the board: 💣 Stun ×n, ⏱️ +15s ×n, and a 🛡️ chip while a shield is ready.
 5. **Results.** These are visual and quick.
    - **Score race:** two score towers (yours gold, theirs red) race up for 2 seconds.
    - **Verdict:** VICTORY! / DEFEAT / DRAW slams in.
    - **Rewards:** stars pop in one by one with a chime. The winner gets a bobbing crown, and the loser greys out and tilts.
-   - **Below:** three chips (your words, your longest word, their words) and your hearts. A lost heart cracks.
+   - **Below:** the coins you earned ("+55 🪙") with a chip per source, and your hearts. A lost heart cracks. Out of lives shows "📺 Watch ad".
    - **Buttons:** after a win, "Continue ➜" (with ↻ replay). After a loss, "Try again ❤️" (with 🗺️ map).
-   - The word lists and missed words are behind "📖 See the words".
+   - Word counts, word lists and missed words are behind "📖 See the words".
 6. **Map, after a win.**
    - Your avatar hops to the next node and the path segment draws in gold.
    - **After a boss:** a "BOSS DEFEATED · 🪶 Feather Badge" card appears with "Onward to 🌲 Whispering Woods →". Next comes a full-screen region title card, and your avatar drops onto the first node of the new region.
@@ -85,11 +119,13 @@ A win earns 1 to 3 stars, based on the margin: 1★ for any win, 2★ for 25% mo
 ## Analytics
 
 - **Quest rounds:** mode `quick`, with `bot_level` (the quest level) and `boss` on `round_start`, and `bot` (win/loss/tie), `stars` and `lives` on `round_end`. Practice rounds use mode `practice`.
-- **The map:** screen `intro_quick`, with clicks `quest_play`, `quest_practice`, `quest_onward`, `quest_map`, `quest_retry` and `quest_replay`. The event `quest_complete` fires when the final card is dismissed.
+- **The map:** screen `intro_quick`, with clicks `quest_play`, `quest_practice`, `quest_onward`, `quest_map`, `quest_retry`, `quest_replay`, `shop` and `ad`. The event `quest_complete` fires when the final card is dismissed.
+- **Economy:** `coins` on `round_end`, `buy` (`item`, `price`), `item` (`item`, `level`) when an item is used, and `ad_start` / `ad_reward` for the rewarded ad.
 
 ## Not built yet
 
-- Server-side lives and progress. Today everything lives in localStorage on the device, so clearing storage resets it.
+- A real rewarded-ad network (the ad is a placeholder today).
+- Server-side lives, coins and progress. Today everything lives in localStorage on the device, so clearing storage resets it.
 - More boss mechanics: hiding the timer, stealing a word, or fog over part of the board.
 - Character art instead of emoji, and per-region music (see `design-later.md`).
 - Friends' avatars on the map, plus a weekly leaderboard per level.
