@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { click, setScreen } from "@/lib/boggled/analytics";
 import { dayKey, loadDaily, loadStreak, type SoloMode } from "@/lib/boggled/modes";
+import { livesLeft, loadQuest, MAX_LEVEL, questLevel, REGIONS } from "@/lib/boggled/quest";
 import { sound } from "@/lib/boggled/sound";
 import HowToPlay from "./HowToPlay";
 
@@ -101,6 +102,13 @@ export default function Home({
     const day = dayKey();
     return { played: loadDaily(day).first !== null, streak: loadStreak(day) };
   });
+  const [questLine] = useState(() => {
+    const q = loadQuest();
+    if (q.unlocked === 1) return "Start your quest: 20 levels, 4 bosses 🐉";
+    if (q.unlocked > MAX_LEVEL) return "👑 Quest complete · go for ⭐⭐⭐";
+    const l = questLevel(q.unlocked);
+    return `Level ${l.level} · ${REGIONS[l.region].emoji} ${REGIONS[l.region].name} · ❤️ ${livesLeft(q)}`;
+  });
   const nameOk = identity.name.trim().length > 0;
   const go = (next: Step) => {
     sound.unlock();
@@ -173,7 +181,9 @@ export default function Home({
             <span className="bg-menu-icon">⚡</span>
             <span>
               <span className="block text-xl font-bold">Quick Start</span>
-              <span className="block text-sm opacity-80">1v1 against Dr. Hoot 🦉 right now</span>
+              <span className="block text-sm opacity-80" data-testid="quest-progress">
+                {questLine}
+              </span>
             </span>
           </button>
           <button className="bg-menu-btn" onClick={() => { click("create_room"); sound.unlock(); onEnter(newRoomCode()); }} data-testid="menu-create">

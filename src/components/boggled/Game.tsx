@@ -11,6 +11,7 @@ import { sound } from "@/lib/boggled/sound";
 import ComboRing, { comboExplainer } from "./ComboRing";
 import { Toasts } from "./Extras";
 import Grid, { type SubmitResult } from "./Grid";
+import { VsIntro } from "./QuestUI";
 
 type Feedback = { text: string; kind: "good" | "dup" | "bad" | ""; key: number };
 
@@ -235,7 +236,8 @@ export default function Game({
         <p className="text-center text-sm opacity-80">Round in progress — you&apos;ll join the next one.</p>
       )}
 
-      {phase === "countdown" && (
+      {phase === "countdown" && round.bot && <VsIntro state={state} round={round} toStart={toStart} />}
+      {phase === "countdown" && !round.bot && (
         <div className="bg-overlay">
           <div key={toStart} className="bg-count">
             {toStart > 0 ? toStart : "GO!"}
