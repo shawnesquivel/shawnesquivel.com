@@ -32,9 +32,11 @@ Every event row: `at` (server time), `player`, `session`, `event`, `screen` (scr
 | `click` | Buttons we care about | `target`: `quick_start`, `daily`, `survival`, `create_room`, `join_room`, `copy_code`, `share_link`, `qr`, `rename`, `howto`, `mute`, `rematch`, `play_again`, `next_game`, `home`, `settings`, `end_early`, `share_daily` |
 | `setting` | Host changes a room setting | `key`, `value` |
 | `round_start` | A round begins on this phone | `mode` (`quick` = quest/`practice`/`daily`/`survival`/`room`), `players`, `size`, `duration`, `min`, `no_chill`, `series`, `game`, `bot_level` (quest level), `boss`, `host` |
-| `round_end` | Results computed | `mode`, `players`, `score`, `words`, `rank`, `won`, `bot` (`win`/`loss`/`tie`), `bot_level`, `stars` + `lives` (quest), `ended_early`, `secs` (seconds played), `survived` (survival), `first` (first daily play today), `day` (daily) |
+| `round_end` | Results computed | `mode`, `players`, `score`, `words`, `rank`, `won`, `bot` (`win`/`loss`/`tie`), `bot_level`, `stars` + `lives` (quest), `coins` (quest/practice), `ended_early`, `secs` (seconds played), `survived` (survival), `first` (first daily play today), `day` (daily) |
 | `howto` | How-to-play closed | `slide` (furthest slide reached), `of` |
 | `attack` / `combo` / `react` | In-game feature use | `weapon` / — / — |
+| `buy` / `item` | Quest shop purchase / item used in a round | `item`, `price` / `item`, `level` |
+| `ad_start` / `ad_reward` | Rewarded ad opened / finished | — / `granted` |
 | `hide` | Tab hidden (phone locked, app switched) | `in_round` |
 
 Session length = last event − first event in a session. The **exit screen** is the `screen` of a session's last event, which survives phones that never fire `pagehide`.
