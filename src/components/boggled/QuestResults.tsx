@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { click } from "@/lib/boggled/analytics";
 import { BOT, botFor } from "@/lib/boggled/bot";
 import { adsLeft, formatCountdown, livesLeft, loadQuest, nextLifeAt, pointsToNextStar, questLevel, REGIONS } from "@/lib/boggled/quest";
+import { revealOrder, revealTotals } from "@/lib/boggled/reveal";
 import type { RoomController, RoomState } from "@/lib/boggled/room";
 import { compareWords } from "@/lib/boggled/scoring";
 import { sound } from "@/lib/boggled/sound";
@@ -11,13 +12,17 @@ import { MissedWords } from "./ResultsExtras";
 import { Lives, regionStyle, Stars, useNow } from "./QuestUI";
 import { AdModal } from "./Shop";
 
-const RACE_MS = 2200;
+// Total time for the word-by-word reveal; each word gets a beat between these bounds.
+const REVEAL_MS = 9000;
+const BEAT_MIN_MS = 170;
+const BEAT_MAX_MS = 650;
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 const sorted = (p?: { words: { word: string; points: number }[] }) => [...(p?.words ?? [])].sort((x, y) => -compareWords(x.word, y.word));
 
-// Results for rounds against a quest opponent: a score race, a verdict, stars. Word lists sit behind a toggle.
+// Results for rounds against a quest opponent: a word-by-word reveal where the lead swings back and forth,
+// then a verdict and stars. Full word lists sit behind a toggle.
 export default function QuestResults({ state, controller, onLeave }: { state: RoomState; controller: RoomController; onLeave: () => void }) {
   const round = state.round!;
   const outcome = state.outcome;
@@ -29,8 +34,8 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
   const opp = round.players.find((p) => p.id === BOT.id) ?? botFor(level.level);
   const now = useNow();
   const [save, setSave] = useState(loadQuest);
-  const [stage, setStage] = useState<"race" | "verdict" | "done">("race");
-  const [shown, setShown] = useState(0);
+  const [stage, setStage] = useState<"reveal" | "verdict" | "done">("reveal");
+  const [step, setStep] = useState(0);
   const [words, setWords] = useState(false);
   const [ad, setAd] = useState(false);
 
@@ -41,33 +46,46 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
   const won = a > b;
   const tie = a === b;
   const stars = quest?.stars ?? 0;
+  const meId = state.me.id;
+  const steps = useMemo(() => {
+    const words = (id: string) => result?.players.find((p) => p.id === id)?.words ?? [];
+    return result ? revealOrder(words(meId), words(BOT.id)) : [];
+  }, [result, meId]);
+  const { totals } = useMemo(() => revealTotals(steps), [steps]);
 
   useEffect(() => {
-    if (!result) return;
-    const start = performance.now();
-    let raf = 0;
-    const frame = (t: number) => {
-      const k = Math.min(1, (t - start) / RACE_MS);
-      setShown(1 - Math.pow(1 - k, 3));
-      if (k < 1) raf = requestAnimationFrame(frame);
-    };
-    raf = requestAnimationFrame(frame);
-    const t1 = setTimeout(() => {
-      setStage("verdict");
-      setSave(loadQuest());
-      if (won) sound.fanfare();
-      else if (tie) sound.bonus();
-      else sound.defeat();
-    }, RACE_MS + 200);
-    const t2 = setTimeout(() => setStage("done"), RACE_MS + 900 + stars * 350);
-    const starTimers = Array.from({ length: stars }, (_, i) => setTimeout(() => sound.star(i), RACE_MS + 700 + i * 350));
+    if (!result || stage !== "reveal") return;
+    if (step >= steps.length) {
+      const t = setTimeout(() => {
+        setSave(loadQuest());
+        setStage("verdict");
+      }, 500);
+      return () => clearTimeout(t);
+    }
+    const beat = Math.max(BEAT_MIN_MS, Math.min(BEAT_MAX_MS, REVEAL_MS / steps.length));
+    const t = setTimeout(() => {
+      const s = steps[step];
+      const before = step ? totals[step - 1].leader : 0;
+      const after = totals[step].leader;
+      if (after && before && after !== before) sound.brag();
+      else sound.reveal(step, s.me !== null && s.them !== null);
+      setStep(step + 1);
+    }, step === 0 ? 800 : beat);
+    return () => clearTimeout(t);
+  }, [result, stage, step, steps, totals]);
+
+  useEffect(() => {
+    if (stage !== "verdict") return;
+    if (won) sound.fanfare();
+    else if (tie) sound.bonus();
+    else sound.defeat();
+    const done = setTimeout(() => setStage("done"), 700 + stars * 350);
+    const starTimers = Array.from({ length: stars }, (_, i) => setTimeout(() => sound.star(i), 500 + i * 350));
     return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(t1);
-      clearTimeout(t2);
+      clearTimeout(done);
       starTimers.forEach(clearTimeout);
     };
-  }, [result, won, tie, stars]);
+  }, [stage, won, tie, stars]);
 
   if (!result) {
     return (
@@ -78,9 +96,19 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
   }
 
   const top = Math.max(1, a, b);
+  const verdict = stage !== "reveal";
+  const cur = verdict ? { me: a, them: b, leader: won ? 1 : tie ? 0 : -1 } : step ? totals[step - 1] : { me: 0, them: 0, leader: 0 };
+  const prevLeader = totals.slice(0, Math.max(0, step - 1)).findLast((t) => t.leader)?.leader ?? 0;
+  const leadChange = !verdict && cur.leader !== 0 && cur.leader !== prevLeader;
+  const revealed = steps.slice(0, step);
+  const skip = () => {
+    click("skip_reveal");
+    setStep(steps.length);
+    setSave(loadQuest());
+    setStage("verdict");
+  };
   const lives = livesLeft(save, now);
   const next = nextLifeAt(save, now);
-  const verdict = stage !== "race";
   const longest = sorted(mine)[0]?.word;
   const toNext = quest ? pointsToNextStar(a, b) : null;
   const toMap = () => {
@@ -95,23 +123,34 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
 
   const col = (who: "me" | "them") => {
     const me = who === "me";
-    const score = me ? a : b;
+    const score = me ? cur.me : cur.them;
     const winner = verdict && !tie && (me ? won : !won);
     const loser = verdict && !tie && !winner;
+    const leading = !verdict && cur.leader === (me ? 1 : -1);
+    const recent = revealed.filter((s) => (me ? s.me : s.them) !== null).slice(-3).reverse();
     return (
       <div className={`bg-race-col ${winner ? "winner" : ""} ${loser ? "loser" : ""}`} data-testid={me ? "race-me" : "race-them"}>
         <div className="bg-race-track">
-          <div className={`bg-race-fill ${me ? "me" : "them"}`} style={{ height: `${Math.max(4, (score / top) * 100 * shown)}%` }}>
-            <span className="bg-race-score bg-title" data-testid={me ? "score-me" : "score-them"}>
-              {Math.round(score * shown)}
+          <div className={`bg-race-fill ${me ? "me" : "them"}`} style={{ height: `${Math.max(4, (score / top) * 100)}%` }}>
+            <span key={score} className="bg-race-score bg-title" data-testid={me ? "score-me" : "score-them"}>
+              {score}
             </span>
           </div>
         </div>
         <div className="bg-race-avatar">
-          {winner && <span className="bg-race-crown">👑</span>}
+          {(winner || leading) && <span key={leading ? "lead" : "win"} className="bg-race-crown">👑</span>}
           {me ? state.me.emoji : opp.emoji}
         </div>
         <div className="max-w-full truncate text-sm font-semibold">{me ? "You" : opp.name}</div>
+        {!verdict && (
+          <div className="bg-reveal-feed" data-testid={me ? "feed-me" : "feed-them"}>
+            {recent.map((s, i) => (
+              <span key={s.word} className={`bg-reveal-pop ${i ? "old" : ""} ${s.me !== null && s.them !== null ? "shared" : ""}`}>
+                {s.word} +{me ? s.me : s.them}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
@@ -134,6 +173,10 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
           <div className="bg-verdict bg-title" data-testid="verdict">
             {won ? "VICTORY!" : tie ? "DRAW" : "DEFEAT"}
           </div>
+        ) : leadChange ? (
+          <div key={step} className="bg-lead-call bg-title" data-testid="lead-call">
+            {cur.leader === 1 ? "You take the lead!" : `${opp.emoji} ${opp.name} takes the lead!`}
+          </div>
         ) : (
           <div className="bg-verdict pending bg-title">⚔️</div>
         )}
@@ -152,11 +195,17 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
         )}
       </div>
 
-      <div className="bg-race">
+      <div className="bg-race" data-testid="reveal">
         {col("me")}
         <div className="bg-race-vs bg-title">VS</div>
         {col("them")}
       </div>
+
+      {!verdict && steps.length > 0 && (
+        <button className="bg-btn bg-btn-ghost mx-auto px-4 py-2 text-base" onClick={skip} data-testid="skip-reveal">
+          Skip ⏭
+        </button>
+      )}
 
       {verdict && outcome?.coins && outcome.coins.total > 0 && (
         <div className="bg-coin-reward" data-testid="coin-reward">
