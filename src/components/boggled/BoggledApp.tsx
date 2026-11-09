@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { initAnalytics, isTestMode, setScreen, type Screen } from "@/lib/boggled/analytics";
 import { serverNow, syncClock } from "@/lib/boggled/clock";
 import { loadDictionary, type Dictionary } from "@/lib/boggled/dictionary";
@@ -86,7 +86,9 @@ function RoomView({
       : state.phase === "results"
         ? "results"
         : "game";
-  useEffect(() => setScreen(tracked), [tracked]);
+  useEffect(() => {
+    setScreen(tracked);
+  }, [tracked]);
 
   let screen;
   if (state.phase === "lobby" || !state.round) {
@@ -101,10 +103,10 @@ function RoomView({
     screen = <Game state={state} controller={controller} dict={dict} onLeave={onLeave} />;
   }
   return (
-    <>
+    <div data-screen="play">
       {screen}
       <FloatingReactions state={state} />
-    </>
+    </div>
   );
 }
 
@@ -177,16 +179,33 @@ function App() {
     c.start();
     if (process.env.NODE_ENV !== "production") (window as unknown as { __boggled: RoomController }).__boggled = c;
     setController(c);
-    history.replaceState(null, "", room ? `${location.pathname}?room=${room}` : location.pathname);
+    // Its own history entry, so the phone's back gesture returns to the menu instead of leaving the site.
+    history.pushState({ wb: "play" }, "", room ? `${location.pathname}?room=${room}` : location.pathname);
   };
 
-  const leave = () => {
+  const close = () => {
     controller?.stop();
     setController(null);
     setInvite("");
     setAutoplay(null);
     history.replaceState(null, "", location.pathname);
   };
+
+  const leave = () => {
+    if (history.state?.wb === "play") history.back();
+    else close();
+  };
+
+  const closeRef = useRef(close);
+  useEffect(() => {
+    closeRef.current = close;
+  });
+  useEffect(() => {
+    if (!controller) return;
+    const onPop = () => closeRef.current();
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [controller]);
 
   if (!identity) return <div className="bg-screen" />;
 

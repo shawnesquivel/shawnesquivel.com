@@ -2,6 +2,10 @@
 export const SITE_URL = (process.env.NEXT_PUBLIC_WORDBRAWL_URL ?? "https://wordbrawl.vercel.app").replace(/\/$/, "");
 
 export const SITE_NAME = "Word Brawl";
+
+export const GUIDE_SLUG = "how-to-play-boggle-party";
+// The game lives at the root of its own domain and under /boggled everywhere else.
+export const guidePath = (hash = "") => `${location.pathname.startsWith("/boggled") ? "/boggled" : ""}/${GUIDE_SLUG}${hash}`;
 export const SITE_TITLE = "Play Boggle Online With Friends Free | Word Brawl";
 export const SITE_DESCRIPTION =
   "Play Boggle online free with friends. No signup, no download: share a link and play real-time multiplayer Boggle on your phone. Daily Boggle puzzle too.";

@@ -100,7 +100,9 @@ export default function QuestMap({
   const selected = questLevel(state.questLevel);
   const [viewRegion, setViewRegion] = useState(() => questLevel(avatar).region);
 
-  useEffect(() => window.scrollTo(0, 0), []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     if (!fresh) return;
