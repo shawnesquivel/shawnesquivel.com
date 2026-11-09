@@ -29,6 +29,7 @@ let session = "";
 let screen: Screen | null = null;
 let enabled = false;
 let started = false;
+let pendingStart: Props | null = null;
 let timer: ReturnType<typeof setInterval> | null = null;
 
 function randomId(prefix: string) {
@@ -87,11 +88,20 @@ export function initAnalytics() {
         standalone: matchMedia("(display-mode: standalone)").matches,
         utm: params.get("utm_source") ?? params.get("ref") ?? undefined,
       };
-      void geo().then((g) => track("session_start", { ...props, ...g }));
+      pendingStart = props;
+      void geo().then((g) => sendStart(g));
     }
   } catch {
     enabled = false;
   }
+}
+
+// session_start waits for the location, but goes out without it if the page is left first.
+function sendStart(g: Props = {}) {
+  if (!pendingStart) return;
+  const props = pendingStart;
+  pendingStart = null;
+  queue.unshift({ player, session, event: "session_start", screen: null, props: { ...props, ...g } });
 }
 
 // Country / region / city from the host's edge headers (no IP). Resolves to {} if unavailable or slow.
@@ -102,8 +112,8 @@ async function geo(): Promise<Props> {
     const res = await fetch("/boggled/geo", { signal: ctrl.signal, cache: "no-store" });
     clearTimeout(t);
     if (!res.ok) return {};
-    const g = (await res.json()) as { country?: string; region?: string; city?: string };
-    return { country: g.country, region: g.region, city: g.city };
+    const g = (await res.json()) as { country?: string; region?: string; city?: string; lat?: number; lon?: number };
+    return { country: g.country, region: g.region, city: g.city, lat: g.lat, lon: g.lon };
   } catch {
     return {};
   }
@@ -124,7 +134,9 @@ export function setScreen(next: Screen) {
 export const click = (target: string) => track("click", { target });
 
 export function flush() {
-  if (!enabled || queue.length === 0) return;
+  if (!enabled) return;
+  if (document.visibilityState === "hidden") sendStart();
+  if (queue.length === 0) return;
   const rows = queue;
   queue = [];
   try {

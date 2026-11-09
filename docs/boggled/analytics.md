@@ -27,11 +27,11 @@ Every event row: `at` (server time), `player`, `session`, `event`, `screen` (scr
 
 | Event | When | Props |
 | --- | --- | --- |
-| `session_start` | Page load | `ref` (referrer host), `host`, `visit` (nth visit on this device), `mobile`, `standalone` (installed PWA), `utm`, `country` / `region` / `city` (from Vercel's edge geolocation via `/boggled/geo`; the IP is never stored) |
+| `session_start` | Page load | `ref` (referrer host), `host`, `visit` (nth visit on this device), `mobile`, `standalone` (installed PWA), `utm`, `country` / `region` / `city` / `lat` / `lon` (from Vercel's edge geolocation via `/boggled/geo`, coordinates rounded to ~10 km; the IP is never stored) |
 | `screen` | Screen changes | — (`screen` column): `home`, `friends`, `join_code`, `join_name`, `intro_quick`, `intro_daily`, `intro_survival`, `lobby`, `game`, `results` |
 | `click` | Buttons we care about | `target`: `quick_start` (Story), `friends`, `daily`, `daily_collect`, `skip_reveal`, `survival`, `create_room`, `join_room`, `copy_code`, `share_link`, `qr`, `rename`, `howto`, `mute`, `rematch`, `play_again`, `next_game`, `home`, `settings`, `end_early`, `share_daily` |
 | `setting` | Host changes a room setting | `key`, `value` |
-| `round_start` | A round begins on this phone | `mode` (`quick` = quest/`practice`/`daily`/`survival`/`room`), `players`, `size`, `duration`, `min`, `no_chill`, `series`, `game`, `bot_level` (quest level), `boss`, `host` |
+| `round_start` | A round begins on this phone | `mode` (`quick` = quest/`practice`/`daily`/`survival`/`room`), `players`, `size`, `duration`, `min`, `no_chill`, `series`, `game`, `bot_level` (quest level), `boss`, `host`, `room` (room code, rooms only) |
 | `round_end` | Results computed | `mode`, `players`, `score`, `words`, `rank`, `won`, `bot` (`win`/`loss`/`tie`), `bot_level`, `stars` + `lives` (quest), `coins` (quest/practice), `ended_early`, `secs` (seconds played), `survived` (survival), `first` (first daily play today), `reward_day` (streak reward paid, 1–7), `day` (daily) |
 | `howto` | How-to-play closed | `slide` (furthest slide reached), `of` |
 | `attack` / `combo` / `react` | In-game feature use | `weapon` / — / — |
@@ -46,12 +46,17 @@ Session length = last event − first event in a session. The **exit screen** is
 - `src/lib/boggled/analytics.ts`: events go into an in-memory queue. It flushes every 15 s, at 20 events, and when the tab is hidden, as one `fetch(..., { keepalive: true })` insert. It never awaits on the game's path and never throws. If the table is missing it switches itself off for the session.
 - Storage: one Supabase table `boggled_events`. Anyone can insert (RLS) but nobody can read rows directly.
 - Read side: `security definer` SQL functions return aggregates only:
-  - `boggled_stats(days)` and `boggled_places(days)` (countries and cities, one per player) power the dashboard. They only answer to the server's secret key (`service_role`), so nobody can pull the numbers with the public key;
+  - `boggled_stats(days)`, `boggled_places(days)` (countries, cities and map points, one per player) and `boggled_insights(days, tz)` power the dashboard. They only answer to the server's secret key (`service_role`), so nobody can pull the numbers with the public key. `boggled_insights` returns:
+    - groups: rooms by room code, with size, rounds, how many replayed or came back another day, session length and invites;
+    - replayability: return rate within 1, 2, 3, 7 and 14 days of a player's first visit, days played, and per-mode play-again and come-back rates;
+    - feature adoption: the share of players who used each of 22 features, including ones nobody used;
+    - when people play: rounds by weekday and hour.
   - `boggled_daily_rank(day, score)` powers "you beat X% of players" on the Daily Puzzle.
-- Dashboard: `/boggled/stats` (also `/stats` on the Word Brawl domain). It's server-rendered, has a 7 / 30 / 90-day switch, and is `noindex`. It's private: the browser asks for a password (any username, password = `STATS_PASSWORD`). With no `STATS_PASSWORD` set it stays locked in production.
+- Dashboard: `/boggled/stats` (also `/stats` on the Word Brawl domain). It's server-rendered with no client JS (SVG charts and a `d3-geo` world map), has a 7 / 30 / 90-day switch, and is `noindex`. Chapters: Top & least-used features, Replayability, Groups, Where players are, When people play, and a collapsed More detail. It's private: the browser asks for a password (any username, password = `STATS_PASSWORD`). With no `STATS_PASSWORD` set it stays locked in production.
 - Private-stats setup (once):
   1. Vercel → project → Environment Variables: add `STATS_PASSWORD` (your choice) and `SUPABASE_SECRET_KEY` (Supabase → Project Settings → API Keys → secret key), for Production. Redeploy.
-  2. Supabase SQL editor: run `supabase/migrations/20261109050000_boggled_private_stats.sql`. This locks `boggled_stats` to the secret key and adds `boggled_places`.
+  2. Supabase SQL editor: run `supabase/migrations/20261109050000_boggled_private_stats.sql` (locks `boggled_stats` to the secret key, adds `boggled_places`), then `supabase/migrations/20261109060000_boggled_insights.sql` (map points, `boggled_insights`). Both are safe to re-run. Until they run, the affected sections show a "run the migration" note.
+- Testing the SQL: `npx tsx tests/boggled/stats-sql.mts` runs the analytics migrations in PGlite (in-memory Postgres) against a month of synthetic events. To preview the dashboard on that data, run `npx tsx tests/boggled/stats-server.mts`, then `NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54329 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=dev npm run dev`.
 - Migration: `supabase/migrations/20261030090000_boggled_analytics.sql`. Apply it once to the production project (Supabase dashboard → SQL editor, or `supabase db push`).
 
 ## Not doing (yet)
