@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { click } from "@/lib/boggled/analytics";
 import { BOT, botFor } from "@/lib/boggled/bot";
-import { formatCountdown, livesLeft, loadQuest, nextLifeAt, questLevel, REGIONS } from "@/lib/boggled/quest";
+import { adsLeft, formatCountdown, livesLeft, loadQuest, nextLifeAt, pointsToNextStar, questLevel, REGIONS } from "@/lib/boggled/quest";
 import type { RoomController, RoomState } from "@/lib/boggled/room";
 import { compareWords } from "@/lib/boggled/scoring";
 import { sound } from "@/lib/boggled/sound";
 import { MissedWords } from "./ResultsExtras";
 import { Lives, regionStyle, Stars, useNow } from "./QuestUI";
+import { AdModal } from "./Shop";
 
 const RACE_MS = 2200;
 
@@ -31,6 +32,7 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
   const [stage, setStage] = useState<"race" | "verdict" | "done">("race");
   const [shown, setShown] = useState(0);
   const [words, setWords] = useState(false);
+  const [ad, setAd] = useState(false);
 
   const mine = result?.players.find((p) => p.id === state.me.id);
   const theirs = result?.players.find((p) => p.id === BOT.id);
@@ -80,6 +82,7 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
   const next = nextLifeAt(save, now);
   const verdict = stage !== "race";
   const longest = sorted(mine)[0]?.word;
+  const toNext = quest ? pointsToNextStar(a, b) : null;
   const toMap = () => {
     click("quest_map");
     controller.backToLobby();
@@ -142,6 +145,11 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
         {verdict && quest?.newBest && !quest.advanced && (
           <div className="bg-title-badge mt-2 inline-block">New best!</div>
         )}
+        {verdict && toNext && won && (
+          <div className="mt-1 text-sm opacity-85" data-testid="next-star">
+            +{toNext.points} pts for {"★".repeat(toNext.stars)}
+          </div>
+        )}
       </div>
 
       <div className="bg-race">
@@ -150,13 +158,18 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
         {col("them")}
       </div>
 
-      <div className="flex flex-wrap justify-center gap-2 text-sm">
-        <span className="bg-chip">📝 {plural(mine?.words.length ?? 0, "word")}</span>
-        {longest && <span className="bg-chip uppercase">📏 {longest}</span>}
-        <span className="bg-chip">
-          {opp.emoji} {plural(theirs?.words.length ?? 0, "word")}
-        </span>
-      </div>
+      {verdict && outcome?.coins && outcome.coins.total > 0 && (
+        <div className="bg-coin-reward" data-testid="coin-reward">
+          <span className="bg-coin-total bg-title">+{outcome.coins.total} 🪙</span>
+          <span className="flex flex-wrap justify-center gap-1" title="Coins: words, win, stars, first clear">
+            {outcome.coins.parts.map(([label, n]) => (
+              <span key={label} className="bg-chip px-2 py-0.5 text-xs">
+                {label} +{n}
+              </span>
+            ))}
+          </span>
+        </div>
+      )}
 
       {!practice && (
         <div className="flex justify-center">
@@ -195,6 +208,10 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
                 <button className="bg-btn bg-btn-primary flex-1 text-xl" onClick={replay} data-testid="play-again">
                   Try again ❤️
                 </button>
+              ) : adsLeft(save, now) > 0 ? (
+                <button className="bg-btn bg-btn-primary flex-1 text-base" onClick={() => { click("ad"); setAd(true); }} data-testid="watch-ad">
+                  📺 Watch ad · +1 ❤️
+                </button>
               ) : (
                 <button className="bg-btn bg-btn-primary flex-1 text-base" disabled data-testid="out-of-lives">
                   💔 Next life in {next ? formatCountdown(next - now) : "…"}
@@ -211,8 +228,17 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
         </button>
       )}
 
+      {ad && <AdModal onReward={setSave} onClose={() => setAd(false)} />}
+
       {words && (
         <>
+          <div className="flex flex-wrap justify-center gap-2 text-sm">
+            <span className="bg-chip">📝 {plural(mine?.words.length ?? 0, "word")}</span>
+            {longest && <span className="bg-chip uppercase">📏 {longest}</span>}
+            <span className="bg-chip">
+              {opp.emoji} {plural(theirs?.words.length ?? 0, "word")}
+            </span>
+          </div>
           <div className="grid grid-cols-2 gap-3" data-testid="word-lists">
             {[mine, theirs].map((p, i) => (
               <div key={i} className="bg-panel flex max-h-[40dvh] flex-col overflow-y-auto p-3">

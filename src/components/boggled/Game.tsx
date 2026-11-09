@@ -6,6 +6,7 @@ import { serverNow } from "@/lib/boggled/clock";
 import type { Dictionary } from "@/lib/boggled/dictionary";
 import { type RoomController, type RoomState, type Weapon } from "@/lib/boggled/room";
 import { survivalBonusMs } from "@/lib/boggled/modes";
+import { ITEM_LIMIT } from "@/lib/boggled/quest";
 import { DANGER_BOOST, wordPoints } from "@/lib/boggled/scoring";
 import { sound } from "@/lib/boggled/sound";
 import ComboRing, { comboExplainer } from "./ComboRing";
@@ -214,6 +215,34 @@ export default function Game({
                 {state.powers[w.weapon] > 1 ? ` ×${state.powers[w.weapon]}` : ""}
               </button>
             ))}
+        </div>
+      )}
+
+      {round.bot?.quest && phase === "playing" && (state.inventory.bomb > 0 || state.inventory.time > 0 || state.inventory.shield > 0) && (
+        <div className="flex justify-center gap-2" data-testid="items">
+          {(["bomb", "time"] as const).map((item) => {
+            const left = Math.min(state.inventory[item], ITEM_LIMIT - state.itemsUsed[item]);
+            if (state.inventory[item] <= 0) return null;
+            return (
+              <button
+                key={item}
+                className={`bg-btn bg-attack-btn ${item === "bomb" ? "bomb" : "flip"}`}
+                disabled={left <= 0}
+                onClick={() => {
+                  click(`item_${item}`);
+                  controller.fireItem(item);
+                }}
+                data-testid={`item-${item}`}
+              >
+                {item === "bomb" ? "💣 Stun" : "⏱️ +15s"} ×{left}
+              </button>
+            );
+          })}
+          {state.inventory.shield > 0 && (
+            <span className="bg-chip self-center text-sm" data-testid="item-shield">
+              🛡️ ×{Math.min(state.inventory.shield, ITEM_LIMIT - state.itemsUsed.shield)}
+            </span>
+          )}
         </div>
       )}
 
