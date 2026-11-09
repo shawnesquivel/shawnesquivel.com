@@ -19,6 +19,7 @@ Anything that doesn't feed one of these questions isn't tracked.
 ## Privacy
 
 - A random player id in `localStorage` and a random session id in `sessionStorage`. No names, emoji, words, IPs or room codes are stored.
+- Test mode: play at `wordbrawl.app/test` (or `/boggled/test`) and nothing is tracked on that page, with a green "Test mode · not tracked" badge. Room invites and Daily share links made there point at the normal page, so friends who join are still counted. Tests: `npx tsx tests/boggled/e2e/test-mode.mts`.
 - Owner opt-out: open the game once with `?notrack=1` (sets `boggled:notrack` on that device). `?notrack=0` turns it back on.
 
 ## Events

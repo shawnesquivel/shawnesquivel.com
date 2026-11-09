@@ -1071,6 +1071,21 @@ body:has(.boggled) {
   .bg-stat-card, .bg-bar, .bg-funnel-step, .bg-col, .bg-rank, .bg-curve-line, .bg-world-dot { animation: none; }
 }
 
+.bg-test-badge {
+  position: fixed;
+  z-index: 60;
+  left: 12px;
+  top: max(10px, env(safe-area-inset-top));
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #2a1670;
+  background: #3ddc84;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
 /* ---------- crawlable home content ---------- */
 
 .boggled:has([data-testid="lobby"], [data-testid="game"], [data-testid="results"], [data-testid$="-intro"]) .bg-seo {
