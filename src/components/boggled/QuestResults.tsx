@@ -9,7 +9,7 @@ import type { RoomController, RoomState } from "@/lib/boggled/room";
 import { compareWords } from "@/lib/boggled/scoring";
 import { sound } from "@/lib/boggled/sound";
 import { MissedWords } from "./ResultsExtras";
-import { Lives, regionStyle, Stars, useNow } from "./QuestUI";
+import { AnimatedNumber, Lives, regionStyle, Stars, useNow } from "./QuestUI";
 import { AdModal } from "./Shop";
 
 // Total time for the word-by-word reveal; each word gets a beat between these bounds.
@@ -121,36 +121,40 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
     controller.startRound();
   };
 
+  // Same word-by-word columns as party rounds: each word drops into the finder's list and the score ticks up.
   const col = (who: "me" | "them") => {
     const me = who === "me";
     const score = me ? cur.me : cur.them;
     const winner = verdict && !tie && (me ? won : !won);
     const loser = verdict && !tie && !winner;
     const leading = !verdict && cur.leader === (me ? 1 : -1);
-    const recent = revealed.filter((s) => (me ? s.me : s.them) !== null).slice(-3).reverse();
+    const list = revealed.filter((s) => (me ? s.me : s.them) !== null).reverse();
     return (
-      <div className={`bg-race-col ${winner ? "winner" : ""} ${loser ? "loser" : ""}`} data-testid={me ? "race-me" : "race-them"}>
-        <div className="bg-race-track">
-          <div className={`bg-race-fill ${me ? "me" : "them"}`} style={{ height: `${Math.max(4, (score / top) * 100)}%` }}>
-            <span key={score} className="bg-race-score bg-title" data-testid={me ? "score-me" : "score-them"}>
-              {score}
-            </span>
+      <div className={`bg-col bg-panel bg-race-col p-3 ${winner || leading ? "leading" : ""} ${winner ? "winner" : ""} ${loser ? "loser" : ""}`} data-testid={me ? "race-me" : "race-them"}>
+        <div className="mb-2 flex items-center gap-2">
+          <span className="bg-race-avatar">
+            {(winner || leading) && <span key={leading ? "lead" : "win"} className="bg-race-crown">👑</span>}
+            {me ? state.me.emoji : opp.emoji}
+          </span>
+          <div className="min-w-0">
+            <div className="truncate font-semibold">{me ? "You" : opp.name}</div>
+            <div className="bg-score" data-testid={me ? "score-me" : "score-them"}>
+              <AnimatedNumber value={score} />
+            </div>
           </div>
         </div>
-        <div className="bg-race-avatar">
-          {(winner || leading) && <span key={leading ? "lead" : "win"} className="bg-race-crown">👑</span>}
-          {me ? state.me.emoji : opp.emoji}
+        <div className="bg-race-bar">
+          <span className={me ? "me" : "them"} style={{ width: `${Math.max(3, (score / top) * 100)}%` }} />
         </div>
-        <div className="max-w-full truncate text-sm font-semibold">{me ? "You" : opp.name}</div>
-        {!verdict && (
-          <div className="bg-reveal-feed" data-testid={me ? "feed-me" : "feed-them"}>
-            {recent.map((s, i) => (
-              <span key={s.word} className={`bg-reveal-pop ${i ? "old" : ""} ${s.me !== null && s.them !== null ? "shared" : ""}`}>
-                {s.word} +{me ? s.me : s.them}
-              </span>
-            ))}
-          </div>
-        )}
+        <div className="mt-2 flex max-h-[34dvh] flex-col gap-1.5 overflow-y-auto" data-testid={me ? "feed-me" : "feed-them"}>
+          {list.map((s) => (
+            <div key={s.word} className={`bg-reveal ${s.me !== null && s.them !== null ? "shared" : "unique"}`}>
+              <span className="bg-reveal-word truncate">{s.word}</span>
+              <span className="shrink-0 text-sm">+{me ? s.me : s.them}</span>
+            </div>
+          ))}
+          {verdict && list.length === 0 && <div className="text-sm opacity-70">No words</div>}
+        </div>
       </div>
     );
   };
@@ -195,9 +199,10 @@ export default function QuestResults({ state, controller, onLeave }: { state: Ro
         )}
       </div>
 
-      <div className="bg-race" data-testid="reveal">
+      {!verdict && <p className="-mt-2 text-center text-sm opacity-80">Bright = only one of you found it · dimmed = both</p>}
+
+      <div className="grid grid-cols-2 gap-3" data-testid="reveal">
         {col("me")}
-        <div className="bg-race-vs bg-title">VS</div>
         {col("them")}
       </div>
 

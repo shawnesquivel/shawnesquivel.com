@@ -9,32 +9,13 @@ import { seriesStatus } from "@/lib/boggled/series";
 import { sound } from "@/lib/boggled/sound";
 import type { Member } from "@/lib/boggled/transport";
 import { ReactionBar, Scoreboard } from "./Extras";
+import { AnimatedNumber } from "./QuestUI";
 import QuestResults from "./QuestResults";
 import { BattleLog, BestsPanel, DailyPanel, DailyRewardModal, MissedWords, SeriesPanel, SurvivalPanel } from "./ResultsExtras";
 
 const VICTORY = ["Transcendent", "Glorious", "Stupendous", "Legendary", "Magnificent", "Flawless", "Spectacular"];
 
 type Step = { word: string; base: number; points: number; finders: string[]; unique: boolean };
-
-function AnimatedNumber({ value }: { value: number }) {
-  const [shown, setShown] = useState(value);
-  const from = useRef(value);
-  useEffect(() => {
-    const start = performance.now();
-    const begin = from.current;
-    let raf = 0;
-    const frame = (t: number) => {
-      const k = Math.min(1, (t - start) / 450);
-      const v = Math.round(begin + (value - begin) * (1 - Math.pow(1 - k, 3)));
-      setShown(v);
-      from.current = v;
-      if (k < 1) raf = requestAnimationFrame(frame);
-    };
-    raf = requestAnimationFrame(frame);
-    return () => cancelAnimationFrame(raf);
-  }, [value]);
-  return <>{shown}</>;
-}
 
 type ResultsProps = { state: RoomState; controller: RoomController; onLeave: () => void };
 

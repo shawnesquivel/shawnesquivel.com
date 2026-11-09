@@ -72,7 +72,7 @@ assert(!(await page.getByTestId("hint").isVisible()), "the hint goes away once y
 await page.waitForFunction(() => (window.__boggled.getState().livePoints["bot:hoot"] ?? 0) > 0, null, { timeout: 40000 });
 await page.evaluate(() => window.__boggled.endEarly());
 await page.getByTestId("reveal").waitFor();
-await page.getByTestId("feed-me").locator(".bg-reveal-pop").first().waitFor({ timeout: 5000 });
+await page.getByTestId("feed-me").locator(".bg-reveal").first().waitFor({ timeout: 5000 });
 assert(!(await page.getByTestId("verdict").isVisible()), "words reveal one by one before the verdict");
 await page.waitForTimeout(1500);
 await page.screenshot({ path: `${SHOTS}/q03-reveal.png` });
