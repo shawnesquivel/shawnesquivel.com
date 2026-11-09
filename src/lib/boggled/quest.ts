@@ -194,10 +194,14 @@ export type QuestSave = {
   best: Record<number, { me: number; them: number }>;
   // Date.now() of each rewarded ad watched (capped per 24 h)
   ads: number[];
+  // one-time explainers already dismissed (e.g. the Word Blast unlock card)
+  tips: string[];
+  // the last day (YYYY-MM-DD) whose Daily Puzzle reward was claimed
+  dailyDay: string;
 };
 
 const KEY = "boggled:quest";
-const EMPTY: QuestSave = { unlocked: 1, stars: {}, lost: [], applied: [], coins: 0, items: { bomb: 0, shield: 0, time: 0 }, best: {}, ads: [] };
+const EMPTY: QuestSave = { unlocked: 1, stars: {}, lost: [], applied: [], coins: 0, items: { bomb: 0, shield: 0, time: 0 }, best: {}, ads: [], tips: [], dailyDay: "" };
 
 export function loadQuest(): QuestSave {
   try {
@@ -388,4 +392,52 @@ export function formatCountdown(ms: number) {
   const m = Math.floor((s % 3600) / 60);
   const sec = s % 60;
   return h ? `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}` : `${m}:${String(sec).padStart(2, "0")}`;
+}
+
+// Reaching this level unlocks the Word Blast: long words earn blasts that blow up the opponent's latest word.
+export const WEAPON_LEVEL = 5;
+export const BLAST_WORD_LENGTH = 5;
+export const MAX_BLASTS = 3;
+
+export function weaponUnlocked(q: QuestSave) {
+  return q.unlocked >= WEAPON_LEVEL;
+}
+
+export function markTip(tip: string): QuestSave {
+  const q = loadQuest();
+  if (!q.tips.includes(tip)) {
+    q.tips = [...q.tips, tip];
+    saveQuest(q);
+  }
+  return q;
+}
+
+// Daily Puzzle streak rewards: a 7-day track that repeats. Missing a day resets the streak to day 1.
+export const DAILY_REWARDS: { coins: number; item?: Item }[] = [
+  { coins: 20 },
+  { coins: 30 },
+  { coins: 40, item: "time" },
+  { coins: 50 },
+  { coins: 60, item: "shield" },
+  { coins: 80 },
+  { coins: 150, item: "bomb" },
+];
+
+export type DailyReward = { day: number; coins: number; item?: Item; streak: number; total: number };
+
+export function dailyRewardFor(streak: number) {
+  const day = ((Math.max(1, streak) - 1) % DAILY_REWARDS.length) + 1;
+  return { day, ...DAILY_REWARDS[day - 1] };
+}
+
+// Pays today's streak reward into the quest wallet, once per day. Returns null if already claimed.
+export function claimDaily(day: string, streak: number): DailyReward | null {
+  const q = loadQuest();
+  if (q.dailyDay === day) return null;
+  const r = dailyRewardFor(streak);
+  q.coins += r.coins;
+  if (r.item) q.items = { ...q.items, [r.item]: q.items[r.item] + 1 };
+  q.dailyDay = day;
+  saveQuest(q);
+  return { ...r, streak, total: q.coins };
 }

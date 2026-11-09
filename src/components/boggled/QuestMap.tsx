@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { click, track } from "@/lib/boggled/analytics";
 import {
   adsLeft,
+  BLAST_WORD_LENGTH,
   formatCountdown,
   LEVELS,
   livesLeft,
   loadQuest,
+  markTip,
   MAX_LEVEL,
   nextLifeAt,
   QUEST_STORY,
@@ -15,6 +17,8 @@ import {
   REGIONS,
   ruleChips,
   totalStars,
+  weaponUnlocked,
+  WEAPON_LEVEL,
 } from "@/lib/boggled/quest";
 import type { RoomController, RoomState } from "@/lib/boggled/room";
 import { sound } from "@/lib/boggled/sound";
@@ -352,6 +356,48 @@ export default function QuestMap({
         </div>
       )}
 
+      {!anim && weaponUnlocked(save) && !save.tips.includes("blast") && (
+        <div className="bg-modal" role="dialog" aria-modal aria-label="New weapon" data-testid="weapon-unlock">
+          <div className="bg-modal-card bg-quest-reward text-center">
+            <div className="bg-quest-reward-icon">💥</div>
+            <div className="bg-title text-sm tracking-widest opacity-85">NEW WEAPON UNLOCKED</div>
+            <div className="bg-title text-3xl text-[var(--gold)]">Word Blast</div>
+            <ol className="bg-weapon-steps">
+              <li>
+                <span className="bg-weapon-demo">
+                  {"STONE".split("").map((l, i) => (
+                    <span key={i} className="bg-weapon-tile" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
+                      {l}
+                    </span>
+                  ))}
+                </span>
+                Find a {BLAST_WORD_LENGTH}+ letter word to earn a blast
+              </li>
+              <li>
+                <span className="bg-weapon-btn">💥 Blast</span>
+                Tap it during the fight
+              </li>
+              <li>
+                <span className="bg-weapon-boom">
+                  <s>TREE</s> 💥
+                </span>
+                Your opponent&apos;s last word goes up in smoke
+              </li>
+            </ol>
+            <p className="text-xs opacity-75">Hold up to 3 per round. Works in every fight from level {WEAPON_LEVEL} on.</p>
+            <button
+              className="bg-btn bg-btn-primary"
+              onClick={() => {
+                track("tip", { tip: "blast" });
+                setSave(markTip("blast"));
+              }}
+              data-testid="weapon-ok"
+            >
+              Got it 💥
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

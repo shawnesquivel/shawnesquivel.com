@@ -6,6 +6,7 @@ type Row = { player: string; session: string; event: string; screen: string | nu
 
 export type Screen =
   | "home"
+  | "friends"
   | "join_code"
   | "join_name"
   | "intro_quick"
