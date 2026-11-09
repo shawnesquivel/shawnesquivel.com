@@ -9,7 +9,8 @@ import { seriesStatus } from "@/lib/boggled/series";
 import { sound } from "@/lib/boggled/sound";
 import type { Member } from "@/lib/boggled/transport";
 import { ReactionBar, Scoreboard } from "./Extras";
-import { BattleLog, BestsPanel, BotLevelPanel, DailyPanel, MissedWords, SeriesPanel, SurvivalPanel } from "./ResultsExtras";
+import QuestResults from "./QuestResults";
+import { BattleLog, BestsPanel, DailyPanel, MissedWords, SeriesPanel, SurvivalPanel } from "./ResultsExtras";
 
 const VICTORY = ["Transcendent", "Glorious", "Stupendous", "Legendary", "Magnificent", "Flawless", "Spectacular"];
 
@@ -35,20 +36,17 @@ function AnimatedNumber({ value }: { value: number }) {
   return <>{shown}</>;
 }
 
-export default function Results({
-  state,
-  controller,
-  onLeave,
-}: {
-  state: RoomState;
-  controller: RoomController;
-  onLeave: () => void;
-}) {
+type ResultsProps = { state: RoomState; controller: RoomController; onLeave: () => void };
+
+export default function Results(props: ResultsProps) {
+  return props.state.round?.bot ? <QuestResults {...props} /> : <ClassicResults {...props} />;
+}
+
+function ClassicResults({ state, controller, onLeave }: ResultsProps) {
   const round = state.round!;
   const outcome = state.outcome;
   const result = outcome?.result;
   const solo = round.players.length === 1;
-  const quick = state.mode === "quick";
   const soloMode = !state.room;
   const doubled = round.players.length >= DOUBLE_UNIQUE_MIN_PLAYERS;
 
@@ -251,7 +249,6 @@ export default function Results({
 
       {stage === "podium" && (
         <>
-          {quick && <BotLevelPanel state={state} round={round} outcome={outcome!} />}
           {outcome?.daily && <DailyPanel daily={outcome.daily} words={result.players[0]?.words.length ?? 0} />}
           {outcome?.survival && <SurvivalPanel survival={outcome.survival} />}
           <MissedWords words={outcome!.missed} total={outcome!.allWords} title={solo ? "Words you missed" : "Words nobody found"} />
@@ -260,7 +257,7 @@ export default function Results({
           {!solo && <SeriesPanel state={state} round={round} />}
           {!solo && <BattleLog state={state} round={round} />}
           {!solo && <Scoreboard state={state} />}
-          {!solo && !quick && <ReactionBar controller={controller} />}
+          {!solo && <ReactionBar controller={controller} />}
 
           {isHost ? (
             <div className="flex gap-3">
@@ -269,7 +266,7 @@ export default function Results({
                   🏠
                 </button>
               )}
-              {(!soloMode || quick) && (
+              {!soloMode && (
                 <button className="bg-btn bg-btn-ghost w-14 px-0" onClick={() => { click("settings"); controller.backToLobby(); }} aria-label="Settings" data-testid="settings-button">
                   ⚙️
                 </button>
@@ -282,9 +279,7 @@ export default function Results({
                 }}
                 data-testid="play-again"
               >
-                {quick
-                  ? "Rematch ⚡"
-                  : round.daily
+                {round.daily
                     ? "Practice again 🔁"
                     : round.survival
                       ? "Try again ⏳"

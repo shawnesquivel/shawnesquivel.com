@@ -80,7 +80,9 @@ function RoomView({
     state.phase === "lobby" || !state.round
       ? state.room
         ? "lobby"
-        : (`intro_${state.mode}` as Screen)
+        : state.practice
+          ? "intro_practice"
+          : (`intro_${state.mode}` as Screen)
       : state.phase === "results"
         ? "results"
         : "game";

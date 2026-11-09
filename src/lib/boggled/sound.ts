@@ -197,6 +197,29 @@ class SoundEngine {
     this.tone(660, 0, 0.1, { wave: "sine", vol: 0.2 });
     this.tone(990, 0.08, 0.14, { wave: "sine", vol: 0.2 });
   }
+
+  slam() {
+    this.tone(160, 0, 0.35, { wave: "sawtooth", vol: 0.18, slideTo: 60 });
+    this.noise(0, 0.35, 0.35, 2500, 200);
+  }
+
+  star(i: number) {
+    this.tone(this.note([0, 4, 7][i] ?? 12, 784), 0, 0.3, { wave: "triangle", vol: 0.2 });
+    this.tone(this.note(([0, 4, 7][i] ?? 12) + 12, 784), 0.04, 0.25, { wave: "sine", vol: 0.12 });
+  }
+
+  hop() {
+    this.tone(400, 0, 0.14, { wave: "sine", vol: 0.2, slideTo: 800 });
+    this.tone(800, 0.16, 0.1, { wave: "triangle", vol: 0.12 });
+  }
+
+  defeat() {
+    [7, 5, 2, 0].forEach((s, i) => this.tone(this.note(s, 330), i * 0.18, 0.3, { wave: "triangle", vol: 0.15 }));
+  }
+
+  heartBreak() {
+    this.tone(500, 0, 0.3, { wave: "square", vol: 0.08, slideTo: 150 });
+  }
 }
 
 export const sound = new SoundEngine();
