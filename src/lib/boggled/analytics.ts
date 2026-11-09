@@ -20,6 +20,7 @@ export type Screen =
 const URL_ = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const FLUSH_MS = 15_000;
+const GEO_TIMEOUT_MS = 2500;
 const MAX_QUEUE = 20;
 
 let queue: Row[] = [];
@@ -78,17 +79,33 @@ export function initAnalytics() {
       try {
         ref = document.referrer ? new URL(document.referrer).hostname : "";
       } catch {}
-      track("session_start", {
+      const props: Props = {
         ref: ref === location.hostname ? "" : ref,
         host: location.hostname,
         visit,
         mobile: matchMedia("(pointer: coarse)").matches,
         standalone: matchMedia("(display-mode: standalone)").matches,
         utm: params.get("utm_source") ?? params.get("ref") ?? undefined,
-      });
+      };
+      void geo().then((g) => track("session_start", { ...props, ...g }));
     }
   } catch {
     enabled = false;
+  }
+}
+
+// Country / region / city from the host's edge headers (no IP). Resolves to {} if unavailable or slow.
+async function geo(): Promise<Props> {
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), GEO_TIMEOUT_MS);
+    const res = await fetch("/boggled/geo", { signal: ctrl.signal, cache: "no-store" });
+    clearTimeout(t);
+    if (!res.ok) return {};
+    const g = (await res.json()) as { country?: string; region?: string; city?: string };
+    return { country: g.country, region: g.region, city: g.city };
+  } catch {
+    return {};
   }
 }
 
