@@ -53,7 +53,7 @@ const SCREENS: Record<string, string> = {
 };
 
 const MODES: Record<string, string> = {
-  quick: "⚡ Quick Start quest",
+  quick: "🗺️ Story",
   practice: "🎯 Practice (vs bot)",
   daily: "📅 Daily Puzzle",
   survival: "⏳ Survival",

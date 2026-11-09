@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { click, track } from "@/lib/boggled/analytics";
 import { serverNow } from "@/lib/boggled/clock";
 import type { Dictionary } from "@/lib/boggled/dictionary";
+import { pickHint } from "@/lib/boggled/hint";
 import { type RoomController, type RoomState, type Weapon } from "@/lib/boggled/room";
 import { survivalBonusMs } from "@/lib/boggled/modes";
 import { ITEM_LIMIT } from "@/lib/boggled/quest";
@@ -15,6 +16,9 @@ import Grid, { type SubmitResult } from "./Grid";
 import { VsIntro } from "./QuestUI";
 
 type Feedback = { text: string; kind: "good" | "dup" | "bad" | ""; key: number };
+
+// Story rounds open by tracing one short word on the board, until the player finds a word or this runs out.
+const HINT_MS = 12_000;
 
 export default function Game({
   state,
@@ -40,6 +44,11 @@ export default function Game({
   const lastSecond = useRef<number | null>(null);
   const participant = round.players.some((p) => p.id === state.me.id);
   const minLength = round.settings.minLength;
+  const story = !!round.bot;
+  const hintPath = useMemo(
+    () => (story && dict ? (pickHint(round.board, dict, minLength, round.id)?.path ?? null) : null),
+    [story, dict, round.board, round.id, minLength],
+  );
 
   useEffect(() => {
     const id = setInterval(() => setNow(serverNow()), 100);
@@ -120,6 +129,7 @@ export default function Game({
   const series = round.series;
   const danger = state.dangerZone && phase === "playing";
   const showCombo = participant && (quick || (!solo && round.settings.danger));
+  const hint = playing && hintPath && !state.myWords.length && now - round.startsAt < HINT_MS ? hintPath : null;
 
   return (
     <div className={`bg-screen gap-3 ${danger ? "bg-danger" : ""}`} data-testid="game">
@@ -171,12 +181,12 @@ export default function Game({
               <span className="max-w-24 truncate">{p.id === state.me.id ? "You" : p.name}</span>
               {p.id === state.me.id ? (
                 <span className="rounded-full bg-black/25 px-2 tabular-nums">{myPoints}</span>
-              ) : state.halftime ? (
+              ) : state.halftime && !story ? (
                 <span key="pts" className="bg-banner rounded-full bg-black/25 px-2 tabular-nums" title="Points so far (before ×2)">
                   {state.livePoints[p.id] ?? 0}
                 </span>
               ) : (
-                <span className="rounded-full bg-black/25 px-2" title="Scores reveal at halftime">
+                <span className="rounded-full bg-black/25 px-2" title={story ? "Scores reveal after the round" : "Scores reveal at halftime"}>
                   🙈
                 </span>
               )}
@@ -203,6 +213,7 @@ export default function Game({
         classify={classify}
         onSubmit={onSubmit}
         onPathChange={setLive}
+        hint={hint}
       />
 
       {canAttack && (state.powers.bomb > 0 || state.powers.flip > 0) && (
@@ -215,6 +226,22 @@ export default function Game({
                 {state.powers[w.weapon] > 1 ? ` ×${state.powers[w.weapon]}` : ""}
               </button>
             ))}
+        </div>
+      )}
+
+      {round.bot?.blast && playing && state.blasts > 0 && (
+        <div className="flex justify-center">
+          <button
+            className="bg-btn bg-attack-btn bomb"
+            onClick={() => {
+              sound.unlock();
+              if (controller.blast()) sound.bombLaunch();
+              navigator.vibrate?.(30);
+            }}
+            data-testid="blast"
+          >
+            💥 Blast{state.blasts > 1 ? ` ×${state.blasts}` : ""}
+          </button>
         </div>
       )}
 
