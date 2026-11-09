@@ -207,7 +207,8 @@ function Setup({ error }: { error: string }) {
   );
 }
 
-const NEEDS_MIGRATION = "Run supabase/migrations/20261109050000_boggled_private_stats.sql in the Supabase SQL editor to unlock this.";
+const NEEDS_MIGRATION =
+  "Run supabase/migrations/20261109050000_boggled_private_stats.sql and 20261109060000_boggled_insights.sql in the Supabase SQL editor to unlock this.";
 
 export default async function StatsPage({ searchParams }: { searchParams: Promise<{ days?: string }> }) {
   const { days: raw } = await searchParams;
