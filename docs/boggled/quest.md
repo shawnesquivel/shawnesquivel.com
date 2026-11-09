@@ -1,6 +1,6 @@
 # Quest mode: concept and storyboard
 
-Quick Start is a journey. You are a traveling wordsmith. **Lexidrake the Word Dragon stole the alphabet**, and you walk from the Training Grounds to the top of Lexicon Peaks to take it back. There are 20 levels in 4 regions. Every 5th level is a boss that guards a badge, and level 20 is the dragon.
+Story mode (the old Quick Start) is a journey. You are a traveling wordsmith. **Lexidrake the Word Dragon stole the alphabet**, and you walk from the Training Grounds to the top of Lexicon Peaks to take it back. There are 20 levels in 4 regions. Every 5th level is a boss that guards a badge, and level 20 is the dragon.
 
 Design goals:
 
@@ -8,7 +8,8 @@ Design goals:
 - **Short, readable steps:** each level is a single opponent that's a little better than the last.
 - **Bosses are events:** bigger nodes, a red "BOSS BATTLE" intro, powers that mess with your board, and a badge ceremony when you win.
 - **A reason to come back:** 5 lives per 24 hours, ⭐⭐⭐ to chase on every level, and the next region visible but locked.
-- **Less reading:** the results screen is a score race with a verdict and stars, and the word lists sit behind a toggle.
+- **Less reading:** the results screen reveals words one at a time on both sides with a verdict and stars at the end, and the full word lists sit behind a toggle.
+- **Suspense to the end:** the opponent's score stays hidden all round (no halftime score, no "found a 7-letter word" toasts) until the reveal.
 
 ## The world
 
@@ -86,9 +87,23 @@ You can use each item at most `ITEM_LIMIT` (2) times per round, so items help bu
 
 **Out of lives:** the Play button becomes "📺 Watch ad · +1 ❤️", which is allowed `AD_LIVES_PER_DAY` (3) times per rolling 24 hours, then a countdown. The ad is currently a 5-second placeholder (`AdModal` in `Shop.tsx`); swapping in a real rewarded-ad network (AdSense H5 games ads, AppLixir, etc.) needs an account and only touches that component.
 
+## Word Blast (unlocks at level 5)
+
+Reaching level 5 (the first boss) unlocks the first weapon. A "NEW WEAPON UNLOCKED" card pops up once on the map and shows how it works in three animated steps:
+
+1. Find a 5+ letter word (`BLAST_WORD_LENGTH`) to earn a 💥 Blast. You can hold up to 3 (`MAX_BLASTS`).
+2. Tap 💥 Blast under the board during the fight.
+3. Your opponent's most recent word is blown up: it's gone from their list and their score.
+
+It works in every Story fight from level 5 on (quest and practice) and is free, unlike the shop items. A blast with nothing to hit isn't spent.
+
+## Opening hint
+
+Every Story round starts with a short word (3 letters, or the level's minimum) traced on the board: the tiles light up one by one with a 👆 sliding from letter to letter, on a loop. It stops as soon as you find any word, or after 12 s. The word comes from a list of everyday words when the board has one (`hint.ts`), so it's "cat", not "nae".
+
 ## Storyboard
 
-1. **Home.** The Quick Start button shows where you are: "Level 7 · 🌲 Whispering Woods · ❤️ 4". For a new player it reads "Start your quest: 20 levels, 4 bosses 🐉".
+1. **Home.** Three big buttons: 🗺️ STORY, 🎉 PLAY WITH FRIENDS (create or join a room) and 🎁 DAILY PUZZLE. Survival and How to play sit underneath. The Story button shows where you are: "Level 7 · 🌲 Whispering Woods · ❤️ 4". For a new player it reads "Start your quest: 20 levels, 4 bosses 🐉".
 2. **Map.** This is the hub screen.
    - **Header:** ← back, hearts with the refill timer, and your 🪙 coins and ⭐ total.
    - **Region track:** four region icons joined by a line. Earned badges sit on the icons, and locked regions show 🔒.
@@ -99,9 +114,9 @@ You can use each item at most `ITEM_LIMIT` (2) times per round, so items help bu
    - **Background:** region colours with a rotating sunburst (red for bosses, fire for the dragon).
    - **Reveal sequence:** the level number drops in. You and your opponent slide in from opposite sides. "VS" slams down and the screen shakes. Then the taunt bubble and the rule chips appear, and 3, 2, 1, GO.
    - **Boss levels** get a pulsing "⚔️ BOSS BATTLE" banner.
-4. **Game.** This is the normal board. Boss powers arrive as toasts ("💣 🦊 Countess Vix bombed your board!") and land on your tiles. If you own items, an item bar sits under the board: 💣 Stun ×n, ⏱️ +15s ×n, and a 🛡️ chip while a shield is ready.
+4. **Game.** This is the normal board, opening with the traced hint word. The opponent's chip shows 🙈 the whole round. Boss powers arrive as toasts ("💣 🦊 Countess Vix bombed your board!") and land on your tiles. If you own items, an item bar sits under the board: 💣 Stun ×n, ⏱️ +15s ×n, and a 🛡️ chip while a shield is ready.
 5. **Results.** These are visual and quick.
-   - **Score race:** two score towers (yours gold, theirs red) race up for 2 seconds.
+   - **Word-by-word reveal:** both towers start at 0. Words appear one at a time under each side ("STONE +3") and the towers grow. Short words go first, and whoever is behind reveals next, so the lead swings back and forth ("You take the lead!" / "🐤 Pip takes the lead!") until one side runs out and the winner pulls away. Words you both found land on both sides at once. The crown sits on whoever is leading. About 9 s in total, with ⏭ Skip.
    - **Verdict:** VICTORY! / DEFEAT / DRAW slams in.
    - **Rewards:** stars pop in one by one with a chime. The winner gets a bobbing crown, and the loser greys out and tilts.
    - **Below:** the coins you earned ("+55 🪙") with a chip per source, and your hearts. A lost heart cracks. Out of lives shows "📺 Watch ad".
@@ -112,6 +127,18 @@ You can use each item at most `ITEM_LIMIT` (2) times per round, so items help bu
    - **After a boss:** a "BOSS DEFEATED · 🪶 Feather Badge" card appears with "Onward to 🌲 Whispering Woods →". Next comes a full-screen region title card, and your avatar drops onto the first node of the new region.
 7. **After Lexidrake.** A "👑 QUEST COMPLETE · The alphabet is free!" card appears, followed by an invitation to go back for ⭐⭐⭐ everywhere.
 
+## Daily Puzzle streak rewards
+
+The Daily Puzzle pays into the same 🪙 wallet as Story, so playing it every day helps with hard bosses. Rewards follow a 7-day track that repeats, and missing a day starts it over:
+
+| Day | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Reward | 20 🪙 | 30 🪙 | 40 🪙 + ⏱️ | 50 🪙 | 60 🪙 + 🛡️ | 80 🪙 | 150 🪙 + 💣 |
+
+- **Home:** the Daily Puzzle button wiggles a 🎁 and shows "Day 3 reward: +40 🪙 · 🔥2" with a 7-segment streak bar. After playing: "Done today ✓ · tomorrow +50 🪙".
+- **After today's first play:** a full-screen reward. The gift shakes, bursts into 💰 with coins flying out, the amount pops in, and the 7-day track highlights today. Then "Collect 🪙".
+- Paid once per day (the first play, which is also the one that counts for the streak). `DAILY_REWARDS` and `claimDaily` in `quest.ts`.
+
 ## Practice
 
 🎯 Practice plays any unlocked opponent with your own settings (board, timer, minimum length, chill). It costs no lives and changes no progress, so there's always something to play while you wait for lives. It's the old Quick Start settings screen.
@@ -120,6 +147,7 @@ You can use each item at most `ITEM_LIMIT` (2) times per round, so items help bu
 
 - **Quest rounds:** mode `quick`, with `bot_level` (the quest level) and `boss` on `round_start`, and `bot` (win/loss/tie), `stars` and `lives` on `round_end`. Practice rounds use mode `practice`.
 - **The map:** screen `intro_quick`, with clicks `quest_play`, `quest_practice`, `quest_onward`, `quest_map`, `quest_retry`, `quest_replay`, `shop` and `ad`. The event `quest_complete` fires when the final card is dismissed.
+- **Weapon and reveal:** `attack` with `weapon: "blast"`, `tip` (`tip: "blast"`) when the unlock card is dismissed, click `skip_reveal`.
 - **Economy:** `coins` on `round_end`, `buy` (`item`, `price`), `item` (`item`, `level`) when an item is used, and `ad_start` / `ad_reward` for the rewarded ad.
 
 ## Not built yet

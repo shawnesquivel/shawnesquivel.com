@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { click, setScreen } from "@/lib/boggled/analytics";
 import { dayKey, loadDaily, loadStreak, type SoloMode } from "@/lib/boggled/modes";
-import { livesLeft, loadQuest, MAX_LEVEL, questLevel, REGIONS } from "@/lib/boggled/quest";
+import { DAILY_REWARDS, dailyRewardFor, livesLeft, loadQuest, MAX_LEVEL, questLevel, REGIONS } from "@/lib/boggled/quest";
 import { sound } from "@/lib/boggled/sound";
 import HowToPlay from "./HowToPlay";
 
@@ -14,7 +14,7 @@ export const EMOJIS = [
 
 export type Identity = { id: string; name: string; emoji: string };
 
-type Step = "menu" | "code" | "join";
+type Step = "menu" | "friends" | "code" | "join";
 
 const segmenter = typeof Intl !== "undefined" && "Segmenter" in Intl ? new Intl.Segmenter(undefined, { granularity: "grapheme" }) : null;
 
@@ -100,7 +100,10 @@ export default function Home({
   const [help, setHelp] = useState(false);
   const [daily] = useState(() => {
     const day = dayKey();
-    return { played: loadDaily(day).first !== null, streak: loadStreak(day) };
+    const played = loadDaily(day).first !== null;
+    const streak = loadStreak(day);
+    // Not played yet: today's reward continues the streak. Played: preview tomorrow's.
+    return { played, streak, reward: dailyRewardFor(streak + 1) };
   });
   const [questLine] = useState(() => {
     const q = loadQuest();
@@ -125,14 +128,14 @@ export default function Home({
   }, [autoplay, onEnter]);
 
   useEffect(() => {
-    setScreen(step === "menu" ? "home" : step === "code" ? "join_code" : "join_name");
+    setScreen(step === "menu" ? "home" : step === "friends" ? "friends" : step === "code" ? "join_code" : "join_name");
   }, [step]);
 
   return (
     <div className="bg-screen gap-5" data-testid="home">
       <div className="flex items-center justify-between">
         {step !== "menu" ? (
-          <button className="bg-btn bg-btn-ghost px-3 py-2 text-base" onClick={() => go(step === "join" && !invite ? "code" : "menu")} data-testid="back">
+          <button className="bg-btn bg-btn-ghost px-3 py-2 text-base" onClick={() => go(step === "join" && !invite ? "code" : step === "code" ? "friends" : "menu")} data-testid="back">
             ← Back
           </button>
         ) : (
@@ -178,19 +181,48 @@ export default function Home({
       {step === "menu" && (
         <div className="bg-step flex flex-col gap-3" data-testid="menu">
           <button className="bg-menu-btn primary" onClick={() => solo("quick")} data-testid="solo">
-            <span className="bg-menu-icon">⚡</span>
+            <span className="bg-menu-icon">🗺️</span>
             <span>
-              <span className="block text-xl font-bold">Quick Start</span>
+              <span className="bg-title block text-2xl tracking-wide">STORY</span>
               <span className="block text-sm opacity-80" data-testid="quest-progress">
                 {questLine}
               </span>
             </span>
           </button>
-          <button className="bg-menu-btn" onClick={() => { click("create_room"); sound.unlock(); onEnter(newRoomCode()); }} data-testid="menu-create">
+          <button className="bg-menu-btn" onClick={() => { click("friends"); go("friends"); }} data-testid="menu-friends">
+            <span className="bg-menu-icon">🎉</span>
+            <span>
+              <span className="bg-title block text-2xl tracking-wide">PLAY WITH FRIENDS</span>
+              <span className="block text-sm opacity-75">Create a room or join with a code</span>
+            </span>
+          </button>
+          <button className={`bg-menu-btn bg-daily-btn ${daily.played ? "" : "ready"}`} onClick={() => solo("daily")} data-testid="menu-daily">
+            <span className="bg-menu-icon">{daily.played ? "📅" : <span className="bg-gift">🎁</span>}</span>
+            <span className="min-w-0 flex-1">
+              <span className="bg-title block text-2xl tracking-wide">DAILY PUZZLE</span>
+              <span className="block text-sm opacity-80">
+                {daily.played
+                  ? `Done today ✓${daily.streak > 1 ? ` · 🔥${daily.streak}` : ""} · tomorrow +${daily.reward.coins} 🪙`
+                  : `Day ${daily.reward.day} reward: +${daily.reward.coins} 🪙${daily.streak > 0 ? ` · 🔥${daily.streak}` : ""}`}
+              </span>
+              <span className="bg-daily-dots" aria-hidden>
+                {DAILY_REWARDS.map((_, i) => {
+                  const done = i < daily.reward.day - 1;
+                  return <span key={i} className={done ? "done" : i === daily.reward.day - 1 && !daily.played ? "today" : ""} />;
+                })}
+              </span>
+            </span>
+          </button>
+        </div>
+      )}
+
+      {step === "friends" && (
+        <div className="bg-step flex flex-col gap-3" data-testid="friends">
+          <button className="bg-menu-btn primary" onClick={() => { click("create_room"); sound.unlock(); onEnter(newRoomCode()); }} data-testid="menu-create">
             <span className="bg-menu-icon">🎉</span>
             <span>
               <span className="block text-xl font-bold">Create a room</span>
-              <span className="block text-sm opacity-75">Play friends with a link</span>
+              <span className="block text-sm opacity-80">Get a link and a code to share</span>
             </span>
           </button>
           <button className="bg-menu-btn" onClick={() => { click("join_room"); go("code"); }} data-testid="menu-join">
@@ -200,24 +232,6 @@ export default function Home({
               <span className="block text-sm opacity-75">Got a 4-letter code? Hop in</span>
             </span>
           </button>
-          <div className="grid grid-cols-2 gap-3">
-            <button className="bg-menu-btn bg-menu-mini" onClick={() => solo("daily")} data-testid="menu-daily">
-              <span className="text-2xl">📅</span>
-              <span>
-                <span className="block font-bold">Daily Puzzle</span>
-                <span className="block text-xs opacity-75">
-                  {daily.played ? `Done today${daily.streak > 1 ? ` · 🔥${daily.streak}` : " ✓"}` : daily.streak > 0 ? `🔥 ${daily.streak}-day streak` : "Same board for everyone"}
-                </span>
-              </span>
-            </button>
-            <button className="bg-menu-btn bg-menu-mini" onClick={() => solo("survival")} data-testid="menu-survival">
-              <span className="text-2xl">⏳</span>
-              <span>
-                <span className="block font-bold">Survival</span>
-                <span className="block text-xs opacity-75">Words add time</span>
-              </span>
-            </button>
-          </div>
         </div>
       )}
 
@@ -283,9 +297,14 @@ export default function Home({
       {dictError && <p className="text-center text-sm text-[var(--bad)]">Couldn&apos;t load the word list. Check your connection and reload.</p>}
 
       {step === "menu" && (
-        <button className="bg-btn bg-btn-ghost mt-auto" onClick={() => { click("howto"); setHelp(true); }}>
-          ❓ How to play
-        </button>
+        <div className="mt-auto flex justify-center gap-2">
+          <button className="bg-btn bg-btn-ghost flex-1 py-2 text-base" onClick={() => { click("howto"); setHelp(true); }}>
+            ❓ How to play
+          </button>
+          <button className="bg-btn bg-btn-ghost flex-1 py-2 text-base" onClick={() => solo("survival")} data-testid="menu-survival">
+            ⏳ Survival
+          </button>
+        </div>
       )}
 
       {help && <HowToPlay onClose={() => setHelp(false)} />}

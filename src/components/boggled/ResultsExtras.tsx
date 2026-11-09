@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { click, dailyRank, flush } from "@/lib/boggled/analytics";
 import { applyRound, bestKey, loadBests, saveBests } from "@/lib/boggled/bests";
 import { dailyShareText, formatSecs, type DailyResult, type SurvivalResult } from "@/lib/boggled/modes";
+import { DAILY_REWARDS, type DailyReward, type Item } from "@/lib/boggled/quest";
 import type { Round, RoomState, RoundOutcome } from "@/lib/boggled/room";
 import { wordPoints } from "@/lib/boggled/scoring";
 import { seriesStatus } from "@/lib/boggled/series";
@@ -274,6 +275,64 @@ export function SurvivalPanel({ survival }: { survival: SurvivalResult }) {
         : survival.best > survival.survivedMs
           ? `⏳ Your best is ${formatSecs(survival.best)}. Longer words buy more time.`
           : `⏳ First run in the books. Longer words buy more time.`}
+    </div>
+  );
+}
+
+const ITEM_EMOJI: Record<Item, string> = { bomb: "💣", shield: "🛡️", time: "⏱️" };
+const CHEST_MS = 1300;
+
+// Full-screen streak reward after today's first Daily Puzzle: the gift shakes, bursts open, coins fly,
+// and the 7-day track shows where the streak is heading.
+export function DailyRewardModal({ reward, onClose }: { reward: DailyReward; onClose: () => void }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setOpen(true);
+      sound.champion();
+    }, CHEST_MS);
+    return () => clearTimeout(t);
+  }, []);
+  return (
+    <div className="bg-daily-reward" role="dialog" aria-modal aria-label="Daily reward" data-testid="daily-reward">
+      <div className="bg-title text-sm tracking-widest opacity-85">🔥 {reward.streak}-DAY STREAK</div>
+      <div className="bg-title text-3xl">Day {reward.day} reward</div>
+      <div className="bg-chest-wrap">
+        <span className={`bg-chest ${open ? "open" : ""}`}>{open ? "💰" : "🎁"}</span>
+        {open &&
+          Array.from({ length: 12 }, (_, i) => (
+            <span key={i} className="bg-coin-fly" style={{ ["--a" as string]: `${i * 30}deg`, animationDelay: `${(i % 4) * 0.05}s` }}>
+              🪙
+            </span>
+          ))}
+      </div>
+      <div className={`bg-daily-amount bg-title ${open ? "open" : ""}`} data-testid="daily-reward-coins">
+        +{reward.coins} 🪙{reward.item ? <span className="ml-2">+1 {ITEM_EMOJI[reward.item]}</span> : null}
+      </div>
+      <div className="bg-daily-track" data-testid="daily-track">
+        {DAILY_REWARDS.map((r, i) => {
+          const n = i + 1;
+          const cls = n < reward.day ? "done" : n === reward.day ? "today" : "";
+          return (
+            <div key={n} className={`bg-daily-cell ${cls} ${n === DAILY_REWARDS.length ? "big" : ""}`}>
+              <span className="text-[0.65rem] opacity-80">Day {n}</span>
+              <span className="text-lg leading-none">{n < reward.day ? "✓" : n === DAILY_REWARDS.length ? "👑" : r.item ? ITEM_EMOJI[r.item] : "🪙"}</span>
+              <span className="text-xs font-bold">{r.coins}</span>
+            </div>
+          );
+        })}
+      </div>
+      <p className="text-sm opacity-85">
+        {reward.day < DAILY_REWARDS.length
+          ? `Come back tomorrow for +${DAILY_REWARDS[reward.day].coins} 🪙. Miss a day and the streak starts over.`
+          : "Week complete! The track starts again tomorrow."}
+      </p>
+      <div className="text-sm opacity-80">
+        Wallet: <b className="bg-coins">🪙 {reward.total}</b> · spend it in the Story shop
+      </div>
+      <button className="bg-btn bg-btn-primary w-full max-w-xs" disabled={!open} onClick={() => { click("daily_collect"); onClose(); }} data-testid="daily-claim">
+        Collect 🪙
+      </button>
     </div>
   );
 }
