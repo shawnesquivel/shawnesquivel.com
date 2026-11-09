@@ -1,14 +1,14 @@
 // Runs the analytics migrations in PGlite and checks the dashboard functions.
 // Usage: npx tsx tests/boggled/stats-sql.mts
 import assert from "node:assert/strict";
-import { callRpc, seededDb, syntheticEvents } from "./stats-fixture.mts";
+import { callRpc, seededDb, syntheticEvents } from "./stats-fixture.mjs";
 
 type Insights = {
   players: number;
   retention: { day: number; eligible: number; on_day: number; within: number }[];
   active_days: { bucket: string; players: number }[];
   modes: { mode: string; players: number; repeat_players: number; return_players: number; rounds: number; ends: number; again: number }[];
-  groups: { groups: number; avg_size: number; replayed: number; sizes: { size: number; groups: number }[] };
+  groups: { groups: number; avg_size: number; replayed: number; avg_secs: number | null; sizes: { size: number; groups: number }[] };
   invites: Record<string, number>;
   features: { key: string; players: number; uses: number }[];
   hours: { dow: number; hour: number; rounds: number }[];
@@ -27,6 +27,8 @@ for (const r of ins.retention) {
 }
 assert.ok(ins.retention.find((r) => r.day === 7)!.within > 0, "some players come back within a week");
 assert.equal(ins.active_days.reduce((n, b) => n + b.players, 0), players, "active-day buckets cover everyone");
+assert.equal(new Set(ins.active_days.map((b) => b.bucket)).size, ins.active_days.length, "each active-day bucket appears once");
+assert.ok(ins.groups.avg_secs == null || ins.groups.avg_secs < 86_400, "room sessions are measured within a day");
 
 const rooms = new Set(rows.filter((r) => r.event === "round_start" && r.props.room).map((r) => r.props.room));
 assert.equal(ins.groups.groups, rooms.size, "one group per room code");

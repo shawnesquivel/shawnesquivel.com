@@ -949,6 +949,127 @@ body:has(.boggled) {
   -webkit-user-select: text;
   user-select: text;
 }
+.bg-stats-header h1 {
+  background: linear-gradient(90deg, #fff 0%, #ffe680 45%, #ff9ad5 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 4px 0 rgb(0 0 0 / 0.25));
+}
+.bg-stat-card {
+  --accent: rgb(255 255 255 / 0.35);
+  position: relative;
+  border-radius: 22px;
+  background:
+    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--accent) 16%, transparent) 0%, transparent 55%),
+    linear-gradient(180deg, rgb(30 14 96 / 0.78), rgb(18 7 66 / 0.78));
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, rgb(255 255 255 / 0.1));
+  box-shadow: 0 10px 30px rgb(8 2 40 / 0.35), inset 0 1px 0 rgb(255 255 255 / 0.08);
+  backdrop-filter: blur(8px);
+  animation: bg-stat-in 0.5s ease both;
+}
+.bg-hero {
+  overflow: hidden;
+}
+.bg-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -20% -60% auto;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.12;
+  filter: blur(24px);
+  pointer-events: none;
+}
+.bg-hero-value {
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--accent);
+  text-shadow: 0 0 22px color-mix(in srgb, var(--accent) 45%, transparent), 0 3px 0 rgb(0 0 0 / 0.25);
+  font-variant-numeric: tabular-nums;
+}
+.bg-chapter {
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgb(255 255 255 / 0.12);
+}
+.bg-bar,
+.bg-funnel-step {
+  transform-origin: left center;
+  animation: bg-bar-grow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.bg-funnel-step {
+  transform-origin: center;
+  background: linear-gradient(90deg, rgb(255 210 63 / 0.85), rgb(255 138 0 / 0.85));
+  color: #2a1670;
+}
+.bg-col {
+  transform-origin: bottom center;
+  animation: bg-col-grow 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.bg-rank {
+  animation: bg-stat-in 0.45s ease both;
+}
+.bg-mode-tile {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 18%, transparent), rgb(255 255 255 / 0.03));
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.bg-ring-arc {
+  filter: drop-shadow(0 0 6px currentColor);
+}
+.bg-curve-line {
+  stroke-dasharray: 2000;
+  animation: bg-draw 1.4s ease both;
+  filter: drop-shadow(0 0 6px rgb(61 220 132 / 0.6));
+}
+.bg-invite-burst {
+  background: radial-gradient(circle, rgb(255 210 63 / 0.25), rgb(255 210 63 / 0.05));
+  border: 1px solid rgb(255 210 63 / 0.4);
+  min-width: 7.5rem;
+}
+.bg-world-card {
+  border-color: rgb(95 184 255 / 0.4);
+}
+.bg-world-dot {
+  animation: bg-pulse 2.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.bg-stats details > summary {
+  list-style: none;
+}
+.bg-stats details > summary::before {
+  content: "▸ ";
+}
+.bg-stats details[open] > summary::before {
+  content: "▾ ";
+}
+@keyframes bg-stat-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes bg-bar-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes bg-col-grow {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes bg-draw {
+  from { stroke-dashoffset: 2000; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes bg-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.18); opacity: 0.8; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-stat-card, .bg-bar, .bg-funnel-step, .bg-col, .bg-rank, .bg-curve-line, .bg-world-dot { animation: none; }
+}
 
 /* ---------- crawlable home content ---------- */
 
