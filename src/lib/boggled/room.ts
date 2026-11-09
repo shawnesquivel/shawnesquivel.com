@@ -18,6 +18,8 @@ import {
   type SurvivalResult,
 } from "./modes";
 import {
+  BLAST_WORD_LENGTH,
+  claimDaily,
   currentLevel,
   ITEM_LIMIT,
   loadQuest,
@@ -26,7 +28,10 @@ import {
   recordQuestRound,
   spendLife,
   spendItem,
+  MAX_BLASTS,
+  weaponUnlocked,
   type CoinReward,
+  type DailyReward,
   type Inventory,
   type Item,
   type QuestOutcome,
@@ -79,8 +84,9 @@ export type Round = {
   settings: Settings;
   players: Member[];
   series?: SeriesRef;
-  // Quick Start: the quest level being played; quest = false for a practice round (no lives, own settings)
-  bot?: { level: number; quest: boolean };
+  // Quick Start: the quest level being played; quest = false for a practice round (no lives, own settings).
+  // blast = the player has reached the level that unlocks the Word Blast.
+  bot?: { level: number; quest: boolean; blast?: boolean };
   // Daily Puzzle: the UTC day whose board this is
   daily?: string;
   survival?: boolean;
@@ -94,6 +100,8 @@ export type RoundOutcome = {
   missed: string[];
   allWords: number;
   daily?: DailyResult;
+  // the streak reward paid by today's first Daily Puzzle
+  dailyReward?: DailyReward;
   survival?: SurvivalResult;
   quest?: QuestOutcome;
   // practice rounds pay a few coins too
@@ -155,6 +163,8 @@ export type RoomState = {
   // Quest rounds: shop items owned, and how many of each were used this round
   inventory: Inventory;
   itemsUsed: Record<Item, number>;
+  // Word Blasts earned and not yet thrown this round
+  blasts: number;
 };
 
 export const BOMB_STUN_MS = 8000;
@@ -244,6 +254,7 @@ export class RoomController {
       practice: false,
       inventory: loadQuest().items,
       itemsUsed: NO_ITEMS_USED,
+      blasts: 0,
     };
   }
 
@@ -366,7 +377,7 @@ export class RoomController {
       settings,
       players: this.state.roster,
       series: this.isSolo ? undefined : this.nextSeries(settings),
-      bot: this.isQuick ? { level: level.level, quest } : undefined,
+      bot: this.isQuick ? { level: level.level, quest, blast: weaponUnlocked(loadQuest()) || undefined } : undefined,
       daily,
       survival: this.state.mode === "survival" || undefined,
     };
@@ -434,6 +445,10 @@ export class RoomController {
         }
       }
       this.set({ powers });
+    }
+    if (round.bot?.blast && word.length >= BLAST_WORD_LENGTH && this.state.blasts < MAX_BLASTS) {
+      this.set({ blasts: this.state.blasts + 1 });
+      this.toast(`💥 Word Blast earned! Tap it to blow up ${this.botMember(round).name}'s last word`, "earned");
     }
     if (round.survival) this.set({ round: { ...round, endsAt: round.endsAt + survivalBonusMs(word) } });
     this.bumpCombo(round);
@@ -508,6 +523,29 @@ export class RoomController {
       this.set({ round: { ...round, endsAt: round.endsAt + TIME_ITEM_MS } });
       this.toast(`⏱️ +${TIME_ITEM_MS / 1000} seconds!`, "combo");
     }
+    return true;
+  }
+
+  // Story rounds from the weapon level on: blow up the opponent's most recent word.
+  blast(): boolean {
+    const { round, phase, blasts } = this.state;
+    if (!round?.bot?.blast || phase !== "playing" || blasts <= 0) return false;
+    const bot = this.botMember(round);
+    if (!this.botWords.length) {
+      this.toast(`${bot.emoji} ${bot.name} has no words yet. Save it!`, "info");
+      return false;
+    }
+    const [gone, ...rest] = this.botWords;
+    this.botWords = rest;
+    this.botLate = this.botLate.filter((w) => w !== gone);
+    this.set({
+      blasts: blasts - 1,
+      progress: { ...this.state.progress, [BOT.id]: rest.length },
+      livePoints: { ...this.state.livePoints, [BOT.id]: rest.reduce((sum, w) => sum + wordPoints(w), 0) },
+    });
+    this.logAttack(randomId(8), this.state.me.id, BOT.id, "bomb");
+    this.toast(`💥 You blew up one of ${bot.emoji} ${bot.name}'s words!`, "launch");
+    track("attack", { weapon: "blast", level: round.bot.level });
     return true;
   }
 
@@ -594,6 +632,7 @@ export class RoomController {
       timeBoosts: 0,
       inventory: loadQuest().items,
       itemsUsed: NO_ITEMS_USED,
+      blasts: 0,
       phase: serverNow() < round.startsAt ? "countdown" : "playing",
     });
     if (this.isParticipant(round) && serverNow() < round.endsAt) {
@@ -830,9 +869,6 @@ export class RoomController {
       progress: { ...this.state.progress, [BOT.id]: this.botWords.length },
       livePoints: { ...this.state.livePoints, [BOT.id]: points },
     });
-    const long = found.find((w) => w.length >= BRAG_LENGTH);
-    const bot = this.botMember(round);
-    if (long) this.toast(`${bot.emoji} ${bot.name} found ${long.length === 8 || long.length === 11 ? "an" : "a"} ${long.length}-letter word!`, "brag");
   }
 
   private botMember(round: Round): Member {
@@ -876,7 +912,8 @@ export class RoomController {
     const multiplayer = round.players.length > 1;
     if (!s.halftime && now >= round.startsAt + (round.endsAt - round.startsAt) / 2) {
       this.set({ halftime: true });
-      if (multiplayer) {
+      // Story opponents stay hidden until the results reveal.
+      if (multiplayer && !round.bot) {
         const line = round.players
           .map((p) => `${p.emoji} ${p.id === s.me.id ? "You" : p.name} ${s.livePoints[p.id] ?? 0}`)
           .join("  ·  ");
@@ -955,7 +992,12 @@ export class RoomController {
 
     const me = result.players.find((p) => p.id === this.state.me.id);
     const outcome: RoundOutcome = { roundId: round.id, result, missed, allWords };
-    if (me && round.daily) outcome.daily = recordDaily(round.id, round.daily, me.total);
+    if (me && round.daily) {
+      outcome.daily = recordDaily(round.id, round.daily, me.total);
+      const prev = this.state.outcome?.roundId === round.id ? this.state.outcome.dailyReward : undefined;
+      const reward = prev ?? (outcome.daily.first ? claimDaily(round.daily, outcome.daily.streak) : null);
+      if (reward) outcome.dailyReward = reward;
+    }
     if (me && round.survival) outcome.survival = recordSurvival(round.id, round.endsAt - round.startsAt);
     if (me && round.bot?.quest) {
       const prev = this.state.outcome?.roundId === round.id ? this.state.outcome.quest : undefined;
@@ -985,6 +1027,7 @@ export class RoomController {
         secs: Math.round((Math.min(round.endsAt, serverNow()) - round.startsAt) / 1000),
         survived: outcome.survival ? Math.round(outcome.survival.survivedMs / 1000) : undefined,
         first: outcome.daily?.first,
+        reward_day: outcome.dailyReward?.day,
         day: round.daily,
       });
     }

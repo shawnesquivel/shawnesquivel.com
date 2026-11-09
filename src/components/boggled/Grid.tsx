@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { isAdjacent, pathWord, type Board } from "@/lib/boggled/board";
 import { sound } from "@/lib/boggled/sound";
 
@@ -15,14 +15,47 @@ type Props = {
   classify: (word: string) => "good" | "dup" | null;
   onSubmit: (word: string) => SubmitResult;
   onPathChange?: (word: string) => void;
+  // tile path of a word to demonstrate, traced over and over until the player starts swiping
+  hint?: number[] | null;
 };
 
 // Moves only register inside this fraction of a cell (radius) so diagonal swipes don't clip neighbours.
 const MOVE_HIT_RADIUS = 0.36;
 
 const NONE: ReadonlySet<number> = new Set();
+const HINT_STEP_MS = 480;
 
-export default function Grid({ board, disabled, hideLetters, blocked = NONE, flipped = NONE, classify, onSubmit, onPathChange }: Props) {
+const center = (i: number, size: number) => [((i % size) + 0.5) * (100 / size), (Math.floor(i / size) + 0.5) * (100 / size)];
+
+function HintTrace({ path, size }: { path: number[]; size: number }) {
+  const [k, setK] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setK((n) => (n + 1) % (path.length + 3)), HINT_STEP_MS);
+    return () => clearInterval(id);
+  }, [path.length]);
+  const shown = path.slice(0, Math.min(k, path.length));
+  const pts = shown.map((i) => center(i, size));
+  const finger = pts[pts.length - 1];
+  return (
+    <div className="bg-hint" data-testid="hint">
+      <svg className="bg-trail" viewBox="0 0 100 100" preserveAspectRatio="none">
+        {pts.map(([x, y], i) => (
+          <circle key={i} cx={x} cy={y} r={38 / size} className="bg-hint-dot" />
+        ))}
+        {pts.length > 1 && (
+          <polyline points={pts.map(([x, y]) => `${x},${y}`).join(" ")} fill="none" stroke="#fff" strokeOpacity={0.8} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
+        )}
+      </svg>
+      {finger && (
+        <span className="bg-hint-finger" style={{ left: `${finger[0]}%`, top: `${finger[1]}%` }} aria-hidden>
+          👆
+        </span>
+      )}
+    </div>
+  );
+}
+
+export default function Grid({ board, disabled, hideLetters, blocked = NONE, flipped = NONE, classify, onSubmit, onPathChange, hint }: Props) {
   const [path, setPathState] = useState<number[]>([]);
   const [flash, setFlash] = useState<{ tiles: number[]; kind: string; key: number } | null>(null);
   const pathRef = useRef<number[]>([]);
@@ -132,7 +165,7 @@ export default function Grid({ board, disabled, hideLetters, blocked = NONE, fli
 
   const word = pathWord(board, path);
   const live = path.length ? classify(word) : null;
-  const centers = path.map((i) => [((i % size) + 0.5) * (100 / size), (Math.floor(i / size) + 0.5) * (100 / size)]);
+  const centers = path.map((i) => center(i, size));
   const fontSize = size === 5 ? "clamp(1.4rem, 7.5vw, 2.4rem)" : "clamp(1.8rem, 10vw, 3rem)";
 
   return (
@@ -181,6 +214,7 @@ export default function Grid({ board, disabled, hideLetters, blocked = NONE, fli
           );
         })}
       </div>
+      {hint && !path.length && <HintTrace path={hint} size={size} />}
       {centers.length > 1 && (
         <svg className="bg-trail" viewBox="0 0 100 100" preserveAspectRatio="none">
           <polyline

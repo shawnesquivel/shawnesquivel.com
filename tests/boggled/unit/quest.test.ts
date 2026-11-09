@@ -5,7 +5,13 @@ import {
   adLife,
   adsLeft,
   buy,
+  claimDaily,
   coinsFor,
+  DAILY_REWARDS,
+  dailyRewardFor,
+  markTip,
+  weaponUnlocked,
+  WEAPON_LEVEL,
   currentLevel,
   pointsToNextStar,
   recordPractice,
@@ -171,5 +177,39 @@ describe("coins, shop and ads", () => {
     expect(r.total).toBe(10);
     recordPractice("p1", 3, 60);
     expect(loadQuest().coins).toBe(10);
+  });
+});
+
+describe("Word Blast unlock", () => {
+  it("unlocks once the player reaches the weapon level", () => {
+    expect(weaponUnlocked(loadQuest())).toBe(false);
+    for (let l = 1; l < WEAPON_LEVEL; l++) recordQuestRound(`w${l}`, l, 50, 1);
+    expect(loadQuest().unlocked).toBe(WEAPON_LEVEL);
+    expect(weaponUnlocked(loadQuest())).toBe(true);
+  });
+
+  it("remembers that the unlock card was seen", () => {
+    markTip("blast");
+    markTip("blast");
+    expect(loadQuest().tips).toEqual(["blast"]);
+  });
+});
+
+describe("daily streak rewards", () => {
+  it("grows over a 7-day track that repeats", () => {
+    expect(dailyRewardFor(1)).toMatchObject({ day: 1, coins: DAILY_REWARDS[0].coins });
+    expect(dailyRewardFor(7)).toMatchObject({ day: 7, coins: DAILY_REWARDS[6].coins, item: "bomb" });
+    expect(dailyRewardFor(8).day).toBe(1);
+    const coins = DAILY_REWARDS.map((r) => r.coins);
+    expect([...coins].sort((a, b) => a - b)).toEqual(coins);
+  });
+
+  it("pays coins and items into the quest wallet once per day", () => {
+    const r = claimDaily("2026-11-09", 3)!;
+    expect(r).toMatchObject({ day: 3, coins: 40, item: "time", total: 40 });
+    expect(loadQuest()).toMatchObject({ coins: 40, dailyDay: "2026-11-09" });
+    expect(loadQuest().items.time).toBe(1);
+    expect(claimDaily("2026-11-09", 3)).toBeNull();
+    expect(claimDaily("2026-11-10", 4)!.total).toBe(90);
   });
 });
