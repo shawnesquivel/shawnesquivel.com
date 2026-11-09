@@ -9,6 +9,7 @@ export type Screen =
   | "join_code"
   | "join_name"
   | "intro_quick"
+  | "intro_practice"
   | "intro_daily"
   | "intro_survival"
   | "lobby"
