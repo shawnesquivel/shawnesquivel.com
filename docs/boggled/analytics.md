@@ -28,11 +28,11 @@ Every event row: `at` (server time), `player`, `session`, `event`, `screen` (scr
 | Event | When | Props |
 | --- | --- | --- |
 | `session_start` | Page load | `ref` (referrer host), `host`, `visit` (nth visit on this device), `mobile`, `standalone` (installed PWA), `utm` |
-| `screen` | Screen changes | — (`screen` column): `home`, `join_code`, `join_name`, `intro_quick`, `intro_daily`, `intro_survival`, `lobby`, `game`, `results` |
-| `click` | Buttons we care about | `target`: `quick_start`, `daily`, `survival`, `create_room`, `join_room`, `copy_code`, `share_link`, `qr`, `rename`, `howto`, `mute`, `rematch`, `play_again`, `next_game`, `home`, `settings`, `end_early`, `share_daily` |
+| `screen` | Screen changes | — (`screen` column): `home`, `friends`, `join_code`, `join_name`, `intro_quick`, `intro_daily`, `intro_survival`, `lobby`, `game`, `results` |
+| `click` | Buttons we care about | `target`: `quick_start` (Story), `friends`, `daily`, `daily_collect`, `skip_reveal`, `survival`, `create_room`, `join_room`, `copy_code`, `share_link`, `qr`, `rename`, `howto`, `mute`, `rematch`, `play_again`, `next_game`, `home`, `settings`, `end_early`, `share_daily` |
 | `setting` | Host changes a room setting | `key`, `value` |
 | `round_start` | A round begins on this phone | `mode` (`quick` = quest/`practice`/`daily`/`survival`/`room`), `players`, `size`, `duration`, `min`, `no_chill`, `series`, `game`, `bot_level` (quest level), `boss`, `host` |
-| `round_end` | Results computed | `mode`, `players`, `score`, `words`, `rank`, `won`, `bot` (`win`/`loss`/`tie`), `bot_level`, `stars` + `lives` (quest), `coins` (quest/practice), `ended_early`, `secs` (seconds played), `survived` (survival), `first` (first daily play today), `day` (daily) |
+| `round_end` | Results computed | `mode`, `players`, `score`, `words`, `rank`, `won`, `bot` (`win`/`loss`/`tie`), `bot_level`, `stars` + `lives` (quest), `coins` (quest/practice), `ended_early`, `secs` (seconds played), `survived` (survival), `first` (first daily play today), `reward_day` (streak reward paid, 1–7), `day` (daily) |
 | `howto` | How-to-play closed | `slide` (furthest slide reached), `of` |
 | `attack` / `combo` / `react` | In-game feature use | `weapon` / — / — |
 | `buy` / `item` | Quest shop purchase / item used in a round | `item`, `price` / `item`, `level` |
