@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import { Bars, Card, Chapter, Columns, Curve, Empty, Funnel, Heatmap, Hero, People, Ring, pct, ratio } from "./charts";
+import { Bars, Card, Chapter, Columns, Curve, Empty, Funnel, Heatmap, Hero, PairColumns, People, Ring, pct, ratio } from "./charts";
 import { WorldMap } from "./WorldMap";
 
 export const dynamic = "force-dynamic";
@@ -38,6 +38,15 @@ type Insights = {
   invites: { create_clicks: number; creators: number; share_link: number; copy_code: number; qr: number; joined_by_link: number; joined_by_code: number };
   features: { key: string; players: number; uses: number }[];
   hours: { dow: number; hour: number; rounds: number }[];
+};
+
+type Visits = {
+  visitors: number;
+  visits: number;
+  repeat_days: number;
+  player_days: number;
+  daily: { day: string; visitors: number; visits: number }[];
+  per_visitor: { bucket: string; players: number }[];
 };
 
 type Stats = {
@@ -213,10 +222,11 @@ const NEEDS_MIGRATION =
 export default async function StatsPage({ searchParams }: { searchParams: Promise<{ days?: string }> }) {
   const { days: raw } = await searchParams;
   const days = [7, 30, 90].includes(Number(raw)) ? Number(raw) : 30;
-  const [res, places, insights] = await Promise.all([
+  const [res, places, insights, visits] = await Promise.all([
     rpc<Stats>("boggled_stats", { days }),
     rpc<Places>("boggled_places", { days }),
     rpc<Insights>("boggled_insights", { days, tz: "Asia/Bangkok" }),
+    rpc<Visits>("boggled_visits", { days, tz: "Asia/Bangkok" }),
   ]);
 
   return (
@@ -235,12 +245,12 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
         </nav>
       </header>
 
-      {"error" in res ? <Setup error={res.error} /> : <Dashboard s={res.data} places={ok(places)} ins={ok(insights)} />}
+      {"error" in res ? <Setup error={res.error} /> : <Dashboard s={res.data} places={ok(places)} ins={ok(insights)} visits={ok(visits)} />}
     </main>
   );
 }
 
-function Dashboard({ s, places, ins }: { s: Stats; places: Places | null; ins: Insights | null }) {
+function Dashboard({ s, places, ins, visits }: { s: Stats; places: Places | null; ins: Insights | null; visits: Visits | null }) {
   const hostRooms = roomSize(s.room_settings.players);
   const g = ins?.groups;
   const avgRoom = g?.groups ? g.avg_size : hostRooms ? Math.round(hostRooms.avg * 10) / 10 : null;
@@ -249,7 +259,7 @@ function Dashboard({ s, places, ins }: { s: Stats; places: Places | null; ins: I
   return (
     <>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
-        <Hero label="Players" value={s.players} hint={`${s.sessions} visits · ${mobileShare} on phones`} spark={s.daily.map((d) => d.players)} color="#5fb8ff" />
+        <Hero label="Players" value={s.players} hint={`${visits?.visits ?? s.sessions} visits · ${mobileShare} on phones`} spark={s.daily.map((d) => d.players)} color="#5fb8ff" />
         <Hero
           label="Rounds"
           value={s.rounds_started}
@@ -263,6 +273,7 @@ function Dashboard({ s, places, ins }: { s: Stats; places: Places | null; ins: I
         <Hero label="Countries" value={places ? places.countries.length : "—"} hint={places ? `${places.located} players located` : "needs migration"} color="#b48cff" />
       </div>
 
+      <VisitsChapter v={visits} />
       <Features ins={ins} s={s} />
       <Replay ins={ins} s={s} />
       <Groups ins={ins} s={s} hostRooms={hostRooms} />
@@ -274,6 +285,49 @@ function Dashboard({ s, places, ins }: { s: Stats; places: Places | null; ins: I
         Updated {new Date(s.generated_at).toLocaleString("en-GB", { timeZone: "Asia/Bangkok", dateStyle: "medium", timeStyle: "short" })} Bangkok time. Add
         ?notrack=1 to the game URL once to stop counting your own device.
       </p>
+    </>
+  );
+}
+
+function VisitsChapter({ v }: { v: Visits | null }) {
+  return (
+    <>
+      <Chapter
+        icon="👀"
+        title="Visits"
+        sub="A visit = opening the game, or coming back after 30+ minutes away. Unique visitors count each device once per day (Bangkok time)."
+      />
+      {v ? (
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <Card title="Unique visitors vs visits per day" accent="#5fb8ff">
+            <PairColumns
+              rows={v.daily.map((d) => ({ label: d.day.slice(5), a: d.visitors, b: d.visits }))}
+              colors={["#5fb8ff", "#ff7ac6"]}
+              names={["unique visitors", "visits"]}
+            />
+          </Card>
+          <Card title="How often each visitor came">
+            <div className="mb-3 grid grid-cols-3 gap-2 text-center text-sm">
+              {[
+                ["Visitors", v.visitors],
+                ["Visits", v.visits],
+                ["Per visitor", v.visitors ? (v.visits / v.visitors).toFixed(1) : "—"],
+              ].map(([label, n]) => (
+                <div key={label as string} className="rounded-xl bg-white/8 p-2">
+                  <div className="text-xl font-bold tabular-nums">{n}</div>
+                  <div className="text-xs opacity-65">{label}</div>
+                </div>
+              ))}
+            </div>
+            <Bars rows={v.per_visitor.map((b) => ({ label: `${b.bucket} visit${b.bucket === "1" ? "" : "s"}`, value: b.players, note: pct(b.players, v.visitors) }))} color="#ff7ac6" />
+            <p className="mt-3 text-xs opacity-65">
+              {v.repeat_days} of {v.player_days} visitor-days ({pct(v.repeat_days, v.player_days)}) had 2+ visits the same day.
+            </p>
+          </Card>
+        </div>
+      ) : (
+        <Empty>Run supabase/migrations/20261109090000_boggled_visits.sql in the Supabase SQL editor to unlock this.</Empty>
+      )}
     </>
   );
 }
@@ -354,7 +408,7 @@ function Replay({ ins, s }: { ins: Insights | null; s: Stats }) {
   return (
     <>
       <Chapter icon="🔁" title="Replayability" sub="Do people come back, and do they hit “play again”?" />
-      <div className="grid gap-4 lg:grid-cols-[3fr_2fr]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <Card title="Came back within…" why="Of new players, the share who returned on any later day within N days (UTC)." accent="#3ddc84">
           {ins ? <Curve points={curve} /> : <Empty>{NEEDS_MIGRATION}</Empty>}
         </Card>

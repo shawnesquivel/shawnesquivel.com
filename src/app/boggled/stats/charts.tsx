@@ -293,6 +293,52 @@ export function Columns({
   );
 }
 
+// Two series side by side per label, e.g. unique visitors vs visits per day.
+export function PairColumns({
+  rows,
+  colors,
+  names,
+  height = 140,
+}: {
+  rows: { label: string; a: number; b: number }[];
+  colors: [string, string];
+  names: [string, string];
+  height?: number;
+}) {
+  if (!rows.length) return <Empty>No data yet</Empty>;
+  const max = Math.max(1, ...rows.map((r) => Math.max(r.a, r.b)));
+  const every = Math.ceil(rows.length / 16);
+  return (
+    <div>
+      <div className="mb-2 flex gap-4 text-xs opacity-80">
+        {names.map((n, i) => (
+          <span key={n} className="flex items-center gap-1.5">
+            <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: colors[i] }} />
+            {n}
+          </span>
+        ))}
+      </div>
+      <div className="flex items-end gap-1.5 overflow-x-auto" style={{ height: height + 34 }}>
+        {rows.map((r, i) => (
+          <div key={r.label + i} className="flex min-w-5 flex-1 flex-col items-center gap-1" title={`${r.label}: ${r.a} ${names[0]}, ${r.b} ${names[1]}`}>
+            <span className="text-[10px] tabular-nums opacity-80">{r.b ? `${r.a}/${r.b}` : ""}</span>
+            <span className="flex w-full items-end gap-px">
+              {[r.a, r.b].map((v, k) => (
+                <span
+                  key={k}
+                  className="bg-col flex-1 rounded-t-sm"
+                  style={{ height: `${Math.max(v ? 4 : 1, (v / max) * height)}px`, background: colors[k], animationDelay: `${i * 25}ms` }}
+                />
+              ))}
+            </span>
+            <span className="whitespace-nowrap text-[10px] opacity-60">{i % every === 0 ? r.label : "\u00a0"}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // Line + area for "came back within N days" with labelled points.
 export function Curve({
   points,
