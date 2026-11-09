@@ -1291,6 +1291,33 @@ body:has(.boggled) {
   }
 }
 
+/* ---- Cast to TV ---- */
+.bg-cast {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+.bg-cast-card {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.08);
+}
+.bg-cast-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.bg-cast-card ol {
+  list-style: decimal;
+  padding-left: 20px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  opacity: 0.9;
+}
+
 /* ---- Quest world (scrolling map) ---- */
 .bg-world {
   position: relative;
@@ -1962,80 +1989,49 @@ body:has(.boggled) {
 .tied .bg-verdict {
   color: #fff;
 }
-.bg-race {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 14px;
-}
 .bg-race-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  width: 110px;
   transition:
     opacity 0.4s,
     filter 0.4s;
 }
-.bg-race-track {
-  display: flex;
-  align-items: flex-end;
-  width: 78px;
-  height: min(22dvh, 190px);
-  border-radius: 20px;
+.bg-race-bar {
+  height: 8px;
+  border-radius: 8px;
   background: rgb(0 0 0 / 0.25);
-  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.1);
+  overflow: hidden;
 }
-.bg-race-fill {
-  position: relative;
-  width: 100%;
-  transition: height 0.25s ease-out;
-  border-radius: 20px;
-  box-shadow: inset 0 -6px 0 rgb(0 0 0 / 0.15);
+.bg-race-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.3s ease-out;
 }
-.bg-race-fill.me {
-  background: linear-gradient(#ffe27a, #ffb000);
+.bg-race-bar .me {
+  background: linear-gradient(90deg, #ffe27a, #ffb000);
 }
-.bg-race-fill.them {
-  background: linear-gradient(#ff8fa8, #e0335a);
-}
-.bg-race-score {
-  position: absolute;
-  left: 50%;
-  bottom: 100%;
-  transform: translateX(-50%);
-  padding-bottom: 4px;
-  font-size: 1.9rem;
-  font-variant-numeric: tabular-nums;
+.bg-race-bar .them {
+  background: linear-gradient(90deg, #ff8fa8, #e0335a);
 }
 .bg-race-avatar {
   position: relative;
-  font-size: 2.8rem;
+  font-size: 2.2rem;
   line-height: 1.1;
 }
 .bg-race-col.winner .bg-race-avatar {
+  display: inline-block;
   animation: bg-avatar-bob 0.8s ease-in-out infinite;
 }
 .bg-race-col.loser {
   opacity: 0.65;
   filter: grayscale(0.8);
 }
-.bg-race-col.loser .bg-race-avatar {
-  transform: rotate(-14deg);
-}
 .bg-race-crown {
   position: absolute;
   left: 50%;
-  top: -1.3rem;
-  font-size: 1.6rem;
+  top: -1.1rem;
+  font-size: 1.3rem;
   transform: translateX(-50%) rotate(-12deg);
   animation: bg-avatar-drop 0.6s cubic-bezier(0.3, 1.5, 0.5, 1) both;
-}
-.bg-race-vs {
-  align-self: center;
-  opacity: 0.6;
-  font-size: 1.4rem;
 }
 .bg-quest-actions {
   animation: bg-vsx-fade 0.35s ease-out both;
@@ -2094,40 +2090,6 @@ body:has(.boggled) {
 }
 
 /* ---- Word-by-word reveal ---- */
-.bg-race-score {
-  animation: bg-score-bump 0.25s ease-out;
-}
-@keyframes bg-score-bump {
-  from {
-    scale: 1.35;
-  }
-}
-.bg-reveal-feed {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  min-height: 4.2rem;
-}
-.bg-reveal-pop {
-  padding: 1px 8px;
-  border-radius: 8px;
-  background: rgb(255 255 255 / 0.92);
-  color: #2a1670;
-  font-weight: 800;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  white-space: nowrap;
-  animation: bg-reveal-pop 0.3s cubic-bezier(0.3, 1.6, 0.5, 1);
-}
-.bg-reveal-pop.shared {
-  background: rgb(255 255 255 / 0.45);
-}
-.bg-reveal-pop.old {
-  opacity: 0.45;
-  font-size: 0.75rem;
-  animation: none;
-}
 @keyframes bg-reveal-pop {
   from {
     transform: translateY(10px) scale(0.6);

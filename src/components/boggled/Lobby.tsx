@@ -4,6 +4,7 @@ import { click, publicPath, track } from "@/lib/boggled/analytics";
 import { useState, type ReactNode } from "react";
 import { BOMB_WORD_LENGTH, DANGER_ZONE_MS, isNoChill, type RoomController, type RoomState, type Settings } from "@/lib/boggled/room";
 import { DANGER_BOOST, LONGEST_WORD_BONUS } from "@/lib/boggled/scoring";
+import { CastSteps } from "./CastSteps";
 import { ReactionBar, Scoreboard } from "./Extras";
 import { EmojiPicker, type Identity } from "./Home";
 
@@ -129,7 +130,11 @@ export function SettingsFields({
 }
 
 function ChillToggle({ noChill, onChange, disabled, quick }: { noChill: boolean; onChange: (v: boolean) => void; disabled: boolean; quick: boolean }) {
-  const [explain, setExplain] = useState(false);
+  const perks = [
+    ...(quick ? [] : [`💣 ${BOMB_WORD_LENGTH}+ letters = attack`, "🛡️ combo = shield"]),
+    `📏 longest +${LONGEST_WORD_BONUS}`,
+    `⏱ last ${DANGER_ZONE_MS / 1000}s +${Math.round(DANGER_BOOST * 100)}%`,
+  ];
   return (
     <div>
       <button
@@ -138,37 +143,23 @@ function ChillToggle({ noChill, onChange, disabled, quick }: { noChill: boolean;
         aria-checked={noChill}
         onClick={() => {
           if (!disabled) onChange(!noChill);
-          setExplain(true);
         }}
         data-testid="opt-chill"
       >
         <span className="text-3xl">{noChill ? "🔥" : "🧘"}</span>
         <span className="min-w-0 flex-1">
-          <span className="block font-bold">{noChill ? "No chill mode" : "Chill mode"}</span>
-          <span className="block text-xs opacity-75">
-            {noChill ? (quick ? "Longest-word and danger-zone bonuses" : "Attacks, shields and bonus points") : "Just you, the letters and the clock"}
-          </span>
+          <span className="block font-bold">{noChill ? "No chill" : "Chill"}</span>
+          <span className="block text-xs opacity-75">{noChill ? (quick ? "Bonus points" : "Attacks + bonus points") : "Just words"}</span>
         </span>
         <span className={`bg-toggle ${noChill ? "on" : ""}`} />
       </button>
-      {explain && (
-        <div className="bg-step mt-2 flex flex-col gap-2 text-sm" data-testid="chill-explainer">
-          <div className={`bg-mode-card ${noChill ? "" : "current"}`}>
-            <b>🧘 Chill mode.</b> Classic word hunt. Every word scores its length, nothing gets in your way.
-          </div>
-          <div className={`bg-mode-card ${noChill ? "current" : ""}`}>
-            <b>🔥 No chill mode.</b>{" "}
-            {quick ? null : (
-              <>
-                {BOMB_WORD_LENGTH}+ letter words earn 💣 bombs and 🙃 flips to mess up a rival&apos;s board. A quick combo earns a 🛡️
-                shield.{" "}
-              </>
-            )}
-            Longest word gets +{LONGEST_WORD_BONUS}, and the last {DANGER_ZONE_MS / 1000}s are worth +{Math.round(DANGER_BOOST * 100)}%.
-          </div>
-          <button className="self-end text-xs underline opacity-70" onClick={() => setExplain(false)}>
-            Got it
-          </button>
+      {noChill && (
+        <div className="bg-step mt-2 flex flex-wrap gap-1.5" data-testid="chill-explainer">
+          {perks.map((p) => (
+            <span key={p} className="bg-chip px-2.5 py-1 text-xs">
+              {p}
+            </span>
+          ))}
         </div>
       )}
     </div>
@@ -207,6 +198,7 @@ export default function Lobby({
   const [copied, setCopied] = useState<"" | "code" | "link">("");
   const [editing, setEditing] = useState(false);
   const [qr, setQr] = useState("");
+  const [tv, setTv] = useState(false);
   const isHost = state.hostId === state.me.id;
   const s = state.settings;
   const set = (patch: Partial<Settings>) => {
@@ -281,8 +273,11 @@ export default function Lobby({
           <button className={`bg-btn flex-1 ${alone ? "bg-btn-primary" : "bg-btn-ghost"}`} onClick={share} data-testid="share">
             {copied === "link" ? "✓ Link copied!" : "🔗 Share invite link"}
           </button>
-          <button className="bg-btn bg-btn-ghost w-16 px-0 text-base" onClick={showQr} aria-label="Show QR code" aria-expanded={!!qr} data-testid="qr">
+          <button className="bg-btn bg-btn-ghost w-14 px-0 text-base" onClick={showQr} aria-label="Show QR code" aria-expanded={!!qr} data-testid="qr">
             {qr ? "✕" : "QR"}
+          </button>
+          <button className="bg-btn bg-btn-ghost w-14 px-0 text-xl" onClick={() => { click("tv"); setTv(true); }} aria-label="Play on a TV" data-testid="tv">
+            📺
           </button>
         </div>
         {qr && (
@@ -380,6 +375,21 @@ export default function Lobby({
       </div>
 
       {!alone && <ReactionBar controller={controller} />}
+
+      {tv && (
+        <div className="bg-modal" onClick={() => setTv(false)} role="dialog" aria-modal aria-label="Play on a TV" data-testid="tv-help">
+          <div className="bg-modal-card bg-shop" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-title text-2xl">📺 Play on a TV</div>
+            <p className="text-sm opacity-85">
+              Put this room on the big screen so everyone can watch the scores, while each player swipes on their own phone. Up to 8 players.
+            </p>
+            <CastSteps />
+            <button className="bg-btn bg-btn-ghost" onClick={() => setTv(false)} data-testid="tv-close">
+              Done
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="sticky bottom-3 mt-auto">
         {isHost ? (
