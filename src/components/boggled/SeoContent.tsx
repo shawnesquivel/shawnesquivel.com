@@ -8,7 +8,7 @@ const STEPS = [
 
 const MODES = [
   ["🎉", "Boggle with friends", "Private party rooms for 2–8 players. Best of 3, best of 5 or continuous scoring, 1 or 2 minute rounds, and 4×4 or 5×5 boards."],
-  ["⚡", "Boggle vs the computer", "Quick Start is a 20-level Boggle quest against computer opponents. Beat a boss every 5 levels and take on Lexidrake the Word Dragon 🐉 at level 20."],
+  ["🗺️", "Boggle vs the computer", "Story mode is a 20-level Boggle quest against computer opponents. Beat a boss every 5 levels and take on Lexidrake the Word Dragon 🐉 at level 20."],
   ["📅", "Daily Boggle puzzle", "One Boggle board per day, the same for everyone. Your first try counts toward the daily ranking and your streak."],
   ["⏳", "Survival", "Start with 30 seconds. Every word adds time, and longer words add more. How long can you last?"],
   ["🔥", "No chill mode", "Longest-word bonus, bombs and flips to mess with rivals, shields, and a danger zone that boosts the last 15 seconds."],

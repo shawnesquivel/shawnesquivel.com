@@ -50,8 +50,9 @@ export async function setName(page: Page, name: string) {
   await page.getByTestId("name").fill(name);
 }
 
-// "Create a room" opens the lobby right away; the name is edited there.
+// Play with Friends → "Create a room" opens the lobby right away; the name is edited there.
 export async function createRoom(page: Page, name: string) {
+  await page.getByTestId("menu-friends").click();
   await page.getByTestId("menu-create").click();
   await page.getByTestId("room-code").waitFor();
   await page.getByTestId("edit-me").click();
