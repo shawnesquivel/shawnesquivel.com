@@ -1,7 +1,15 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { botWordTarget } from "@/lib/boggled/bot";
 import {
+  AD_LIVES_PER_DAY,
+  adLife,
+  adsLeft,
+  buy,
+  coinsFor,
   currentLevel,
+  pointsToNextStar,
+  recordPractice,
+  spendItem,
   LEVELS,
   LIFE_REFILL_MS,
   livesLeft,
@@ -46,13 +54,26 @@ describe("quest levels", () => {
 });
 
 describe("stars", () => {
-  it("gives 0 for a loss or tie, then 1–3 by margin", () => {
+  it("gives 0 for a loss or tie; 2 is easy (win by 10%), 3 takes a blowout (75%)", () => {
     expect(starsFor(10, 12)).toBe(0);
     expect(starsFor(10, 10)).toBe(0);
-    expect(starsFor(11, 10)).toBe(1);
-    expect(starsFor(13, 10)).toBe(2);
-    expect(starsFor(16, 10)).toBe(3);
+    expect(starsFor(21, 20)).toBe(1);
+    expect(starsFor(22, 20)).toBe(2);
+    expect(starsFor(34, 20)).toBe(2);
+    expect(starsFor(35, 20)).toBe(3);
     expect(starsFor(3, 0)).toBe(3);
+  });
+
+  it("says how many points the next star needs", () => {
+    expect(pointsToNextStar(18, 20)).toEqual({ stars: 1, points: 3 });
+    expect(pointsToNextStar(21, 20)).toEqual({ stars: 2, points: 1 });
+    expect(pointsToNextStar(22, 20)).toEqual({ stars: 3, points: 13 });
+    expect(pointsToNextStar(35, 20)).toBeNull();
+    for (const [m, t] of [[21, 20], [22, 20], [5, 9]]) {
+      const n = pointsToNextStar(m, t)!;
+      expect(starsFor(m + n.points, t)).toBeGreaterThanOrEqual(n.stars);
+      expect(starsFor(m + n.points - 1, t)).toBeLessThan(n.stars);
+    }
   });
 });
 
@@ -62,9 +83,13 @@ describe("lives and progress", () => {
     expect(livesLeft(loadQuest(), 1000)).toBe(MAX_LIVES - 1);
     const o = recordQuestRound("r1", 1, 20, 10, 1000);
     expect(o).toMatchObject({ won: true, stars: 3, advanced: true, lives: MAX_LIVES });
+    expect(o.coins.total).toBeGreaterThan(0);
+    expect(loadQuest().coins).toBe(o.coins.total);
+    expect(loadQuest().best[1]).toEqual({ me: 20, them: 10 });
     expect(currentLevel(loadQuest())).toBe(2);
     // Results remount: same round again changes nothing.
     expect(recordQuestRound("r1", 1, 20, 10, 1000).advanced).toBe(false);
+    expect(loadQuest().coins).toBe(o.coins.total);
     expect(currentLevel(loadQuest())).toBe(2);
   });
 
@@ -93,7 +118,7 @@ describe("lives and progress", () => {
     spendLife("a", 0);
     recordQuestRound("a", 1, 30, 10, 0);
     spendLife("b", 0);
-    const o = recordQuestRound("b", 1, 11, 10, 0);
+    const o = recordQuestRound("b", 1, 21, 20, 0);
     expect(o).toMatchObject({ stars: 1, bestStars: 3, newBest: false, advanced: false });
     expect(loadQuest().stars[1]).toBe(3);
   });
@@ -103,5 +128,48 @@ describe("lives and progress", () => {
     spendLife("f", 0);
     expect(recordQuestRound("f", 20, 50, 40, 0)).toMatchObject({ bossBeaten: true, questComplete: true, advanced: true });
     expect(currentLevel(loadQuest())).toBe(20);
+  });
+});
+
+describe("coins, shop and ads", () => {
+  it("pays every game, more for wins, stars, first clears and bosses", () => {
+    const loss = coinsFor({ level: 7, score: 30, won: false, stars: 0, firstClear: false });
+    const win = coinsFor({ level: 7, score: 30, won: true, stars: 2, firstClear: false });
+    const three = coinsFor({ level: 7, score: 30, won: true, stars: 3, firstClear: false });
+    const first = coinsFor({ level: 7, score: 30, won: true, stars: 3, firstClear: true });
+    const boss = coinsFor({ level: 10, score: 30, won: true, stars: 3, firstClear: true });
+    expect(loss.total).toBeGreaterThan(0);
+    expect(win.total).toBeGreaterThan(loss.total);
+    expect(three.total).toBeGreaterThan(win.total);
+    expect(first.total).toBeGreaterThan(three.total);
+    expect(boss.parts.some(([l]) => l === "👑")).toBe(true);
+    expect(coinsFor({ level: 7, score: 30, won: false, stars: 0, firstClear: false, practice: true }).total).toBeLessThanOrEqual(10);
+  });
+
+  it("buys items with coins and spends them", () => {
+    store.set("boggled:quest", JSON.stringify({ unlocked: 1, coins: 50 }));
+    expect(buy("bomb")!.items.bomb).toBe(1);
+    expect(loadQuest().coins).toBe(10);
+    expect(buy("bomb")).toBeNull();
+    expect(spendItem("bomb")).toBe(true);
+    expect(spendItem("bomb")).toBe(false);
+  });
+
+  it("refills a life from the shop or an ad, with ads capped per day", () => {
+    for (let i = 0; i < MAX_LIVES; i++) spendLife(`l${i}`, i);
+    store.set("boggled:quest", JSON.stringify({ ...loadQuest(), coins: 60 }));
+    expect(buy("life", 10)).not.toBeNull();
+    expect(livesLeft(loadQuest(), 10)).toBe(1);
+    for (let i = 0; i < AD_LIVES_PER_DAY; i++) expect(adLife(20 + i)).not.toBeNull();
+    expect(adsLeft(loadQuest(), 30)).toBe(0);
+    expect(adLife(30)).toBeNull();
+    expect(livesLeft(loadQuest(), 30)).toBe(1 + AD_LIVES_PER_DAY);
+  });
+
+  it("pays a little for practice, once per round", () => {
+    const r = recordPractice("p1", 3, 60);
+    expect(r.total).toBe(10);
+    recordPractice("p1", 3, 60);
+    expect(loadQuest().coins).toBe(10);
   });
 });

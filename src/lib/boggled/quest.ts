@@ -81,25 +81,25 @@ export const QUEST_STORY = "Lexidrake the Word Dragon stole the alphabet. Travel
 type Def = [name: string, emoji: string, taunt: string, skill: number];
 
 const DEFS: Def[] = [
-  ["Bun Bun", "🐰", "Just learned to spell CARROT. Mostly.", 1.0],
-  ["Shelly", "🐢", "Slow and steady. Mostly slow.", 1.6],
-  ["Pip", "🐤", "Only tweets in three-letter words.", 2.2],
-  ["Sir Nutsworth", "🐿️", "Hoards words like acorns.", 2.8],
-  ["Dr. Hoot", "🦉", "Gym leader of the Grounds. Hoots in iambic pentameter.", 3.6],
-  ["Fern", "🐸", "Ribbits exclusively in vowels.", 3.8],
-  ["Bramble", "🦔", "Very prickly about spelling.", 4.3],
-  ["Rocco", "🦝", "Steals words when you blink.", 4.8],
-  ["Luna", "🐺", "Howls at long words.", 5.3],
-  ["Countess Vix", "🦊", "Rules the Woods. Flips your letters for fun.", 6.0],
-  ["Sandy", "🦎", "Basks in the sun. Spells in the shade.", 6.2],
-  ["Scorch", "🦂", "Stings with suffixes.", 6.7],
-  ["Humphrey", "🐪", "Stores words in his hump for later.", 7.2],
-  ["Mirage", "🐍", "Is that a word? Is it real? Sss.", 7.7],
-  ["The Sphinx", "🦁", "Answer my riddles or lose your vowels.", 8.5],
-  ["Billy", "🐐", "Climbs letter grids for breakfast.", 8.7],
+  ["Bun Bun", "🐰", "Just learned to spell CARROT. Mostly.", 0.6],
+  ["Shelly", "🐢", "Slow and steady. Mostly slow.", 1.0],
+  ["Pip", "🐤", "Only tweets in three-letter words.", 1.4],
+  ["Sir Nutsworth", "🐿️", "Hoards words like acorns.", 1.8],
+  ["Dr. Hoot", "🦉", "Gym leader of the Grounds. Hoots in iambic pentameter.", 2.4],
+  ["Fern", "🐸", "Ribbits exclusively in vowels.", 2.5],
+  ["Bramble", "🦔", "Very prickly about spelling.", 2.9],
+  ["Rocco", "🦝", "Steals words when you blink.", 3.3],
+  ["Luna", "🐺", "Howls at long words.", 3.7],
+  ["Countess Vix", "🦊", "Rules the Woods. Flips your letters for fun.", 4.4],
+  ["Sandy", "🦎", "Basks in the sun. Spells in the shade.", 5.4],
+  ["Scorch", "🦂", "Stings with suffixes.", 6.0],
+  ["Humphrey", "🐪", "Stores words in his hump for later.", 6.6],
+  ["Mirage", "🐍", "Is that a word? Is it real? Sss.", 7.2],
+  ["The Sphinx", "🦁", "Answer my riddles or lose your vowels.", 8.2],
+  ["Billy", "🐐", "Climbs letter grids for breakfast.", 8.6],
   ["Talon", "🦅", "Spots 7-letter words from a mile up.", 9.2],
-  ["Frost", "🐻‍❄️", "Cold, calculating, alphabetical.", 9.7],
-  ["Grimwald", "🧙", "Casts spells. Literally, he spells.", 10.3],
+  ["Frost", "🐻‍❄️", "Cold, calculating, alphabetical.", 9.8],
+  ["Grimwald", "🧙", "Casts spells. Literally, he spells.", 10.4],
   ["Lexidrake", "🐉", "Hoarder of the alphabet. Breathes fire and adverbs.", 11.5],
 ];
 
@@ -161,25 +161,50 @@ export function totalStars(q: QuestSave) {
   return Object.values(q.stars).reduce((a, b) => a + b, 0);
 }
 
-// Stars: any win is 1, a clear win 2, a blowout 3.
+// Stars: any win is 1, winning by 10% is 2 (most wins), the third takes a blowout.
+export const STAR_RATIOS = [1, 1.1, 1.75] as const;
+
 export function starsFor(mine: number, theirs: number): number {
   if (mine <= theirs) return 0;
   const ratio = mine / Math.max(1, theirs);
-  return ratio >= 1.6 ? 3 : ratio >= 1.25 ? 2 : 1;
+  return ratio >= STAR_RATIOS[2] ? 3 : ratio >= STAR_RATIOS[1] ? 2 : 1;
+}
+
+// Points needed for the next star, or null when there's none left to get.
+export function pointsToNextStar(mine: number, theirs: number): { stars: number; points: number } | null {
+  const have = starsFor(mine, theirs);
+  if (have >= 3) return null;
+  const need = have === 0 ? theirs + 1 : Math.ceil(Math.max(1, theirs) * STAR_RATIOS[have] - 1e-9);
+  return { stars: have + 1, points: Math.max(1, need - mine) };
 }
 
 // ---- saved progress ----
 
 type Lost = { at: number; round: string };
-export type QuestSave = { unlocked: number; stars: Record<number, number>; lost: Lost[]; applied: string[] };
+export type Item = "bomb" | "shield" | "time";
+export type Inventory = Record<Item, number>;
+export type QuestSave = {
+  unlocked: number;
+  stars: Record<number, number>;
+  lost: Lost[];
+  applied: string[];
+  coins: number;
+  items: Inventory;
+  // your best score against each level's opponent, and theirs in that round
+  best: Record<number, { me: number; them: number }>;
+  // Date.now() of each rewarded ad watched (capped per 24 h)
+  ads: number[];
+};
 
 const KEY = "boggled:quest";
-const EMPTY: QuestSave = { unlocked: 1, stars: {}, lost: [], applied: [] };
+const EMPTY: QuestSave = { unlocked: 1, stars: {}, lost: [], applied: [], coins: 0, items: { bomb: 0, shield: 0, time: 0 }, best: {}, ads: [] };
 
 export function loadQuest(): QuestSave {
   try {
     const raw = localStorage.getItem(KEY);
-    return raw ? { ...EMPTY, ...JSON.parse(raw) } : { ...EMPTY };
+    if (!raw) return { ...EMPTY };
+    const q = { ...EMPTY, ...JSON.parse(raw) };
+    return { ...q, items: { ...EMPTY.items, ...q.items } };
   } catch {
     return { ...EMPTY };
   }
@@ -220,6 +245,93 @@ export function spendLife(roundId: string, now = Date.now()): boolean {
   return true;
 }
 
+// ---- coins ----
+
+export type CoinReward = { total: number; parts: [label: string, coins: number][] };
+
+// Every game pays something (more for more points), wins pay by level and stars, and first clears pay a bonus.
+// Losing a boss a few times and replaying earlier levels should buy roughly one power-up per win.
+export function coinsFor(o: { level: number; score: number; won: boolean; stars: number; firstClear: boolean; practice?: boolean }): CoinReward {
+  const parts: CoinReward["parts"] = [];
+  const played = Math.min(20, Math.floor(o.score / 3));
+  if (o.practice) {
+    const n = Math.min(10, Math.floor(played / 2));
+    return { total: n, parts: n ? [["🎯", n]] : [] };
+  }
+  if (played) parts.push(["📝", played]);
+  if (o.won) {
+    parts.push(["🏆", 10 + o.level * 2]);
+    const starBonus = [0, 0, 5, 15 + o.level][o.stars];
+    if (starBonus) parts.push([`${"★".repeat(o.stars)}`, starBonus]);
+    if (o.firstClear) parts.push([questLevel(o.level).boss ? "👑" : "🚩", questLevel(o.level).boss ? 50 + o.level * 5 : 10 + o.level]);
+  }
+  return { total: parts.reduce((s, [, n]) => s + n, 0), parts };
+}
+
+export const SHOP: { item: Item | "life"; emoji: string; name: string; blurb: string; price: number }[] = [
+  { item: "bomb", emoji: "💣", name: "Bomb", blurb: "Stun your opponent: they lose the words they'd find in the next 8 s", price: 40 },
+  { item: "shield", emoji: "🛡️", name: "Shield", blurb: "Blocks the next boss bomb or flip automatically", price: 30 },
+  { item: "time", emoji: "⏱️", name: "Extra time", blurb: "+15 seconds on your clock, any time in a round", price: 25 },
+  { item: "life", emoji: "❤️", name: "Life", blurb: "Refill one life right now", price: 60 },
+];
+// How many of each item can be used in one round.
+export const ITEM_LIMIT = 2;
+export const AD_LIVES_PER_DAY = 3;
+
+export function buy(item: Item | "life", now = Date.now()): QuestSave | null {
+  const q = loadQuest();
+  const entry = SHOP.find((s) => s.item === item)!;
+  if (q.coins < entry.price) return null;
+  if (item === "life") {
+    if (!refillOne(q, now)) return null;
+  } else {
+    q.items = { ...q.items, [item]: q.items[item] + 1 };
+  }
+  q.coins -= entry.price;
+  saveQuest(q);
+  return q;
+}
+
+// Uses one item from the inventory; false when there's none.
+export function spendItem(item: Item): boolean {
+  const q = loadQuest();
+  if (q.items[item] <= 0) return false;
+  q.items = { ...q.items, [item]: q.items[item] - 1 };
+  saveQuest(q);
+  return true;
+}
+
+function refillOne(q: QuestSave, now: number) {
+  const lost = activeLost(q, now).sort((a, b) => a.at - b.at);
+  if (!lost.length) return false;
+  q.lost = lost.slice(1);
+  return true;
+}
+
+export function adsLeft(q: QuestSave, now = Date.now()) {
+  return AD_LIVES_PER_DAY - q.ads.filter((t) => now - t < LIFE_REFILL_MS).length;
+}
+
+// A rewarded ad gives back one life (a few times a day).
+export function adLife(now = Date.now()): QuestSave | null {
+  const q = loadQuest();
+  if (adsLeft(q, now) <= 0 || !refillOne(q, now)) return null;
+  q.ads = [...q.ads.filter((t) => now - t < LIFE_REFILL_MS), now];
+  saveQuest(q);
+  return q;
+}
+
+export function recordPractice(roundId: string, level: number, score: number): CoinReward {
+  const q = loadQuest();
+  const reward = coinsFor({ level, score, won: false, stars: 0, firstClear: false, practice: true });
+  if (!q.applied.includes(roundId)) {
+    q.coins += reward.total;
+    q.applied = [...q.applied.slice(-30), roundId];
+    saveQuest(q);
+  }
+  return reward;
+}
+
 export type QuestOutcome = {
   level: number;
   won: boolean;
@@ -232,6 +344,7 @@ export type QuestOutcome = {
   bossBeaten: boolean;
   questComplete: boolean;
   lives: number;
+  coins: CoinReward;
 };
 
 export function recordQuestRound(roundId: string, level: number, mine: number, theirs: number, now = Date.now()): QuestOutcome {
@@ -242,7 +355,11 @@ export function recordQuestRound(roundId: string, level: number, mine: number, t
   const prevBest = q.stars[level] ?? 0;
   const first = !q.applied.includes(roundId);
   const advanced = won && q.unlocked === level;
+  const coins = coinsFor({ level, score: mine, won, stars, firstClear: advanced });
   if (first) {
+    q.coins += coins.total;
+    const best = q.best[level];
+    if (!best || mine > best.me) q.best = { ...q.best, [level]: { me: mine, them: theirs } };
     if (won || tie) q.lost = q.lost.filter((l) => l.round !== roundId);
     if (stars > prevBest) q.stars = { ...q.stars, [level]: stars };
     if (advanced) q.unlocked = level + 1;
@@ -261,6 +378,7 @@ export function recordQuestRound(roundId: string, level: number, mine: number, t
     bossBeaten: won && l.boss,
     questComplete: won && l.final,
     lives: livesLeft(q, now),
+    coins,
   };
 }
 

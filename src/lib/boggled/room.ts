@@ -17,7 +17,20 @@ import {
   type SoloMode,
   type SurvivalResult,
 } from "./modes";
-import { currentLevel, loadQuest, questLevel, recordQuestRound, spendLife, type QuestOutcome } from "./quest";
+import {
+  currentLevel,
+  ITEM_LIMIT,
+  loadQuest,
+  questLevel,
+  recordPractice,
+  recordQuestRound,
+  spendLife,
+  spendItem,
+  type CoinReward,
+  type Inventory,
+  type Item,
+  type QuestOutcome,
+} from "./quest";
 import { randomId } from "./rng";
 import { DANGER_BOOST, scoreRound, wordPoints, type RoundResult } from "./scoring";
 import { seriesStatus, type SeriesRecords, type SeriesRef } from "./series";
@@ -83,6 +96,8 @@ export type RoundOutcome = {
   daily?: DailyResult;
   survival?: SurvivalResult;
   quest?: QuestOutcome;
+  // practice rounds pay a few coins too
+  coins?: CoinReward;
 };
 
 export type TallyEntry = { points: number; wins: number; series: number; name: string; emoji: string };
@@ -137,7 +152,14 @@ export type RoomState = {
   // Quick Start: the selected quest level, and whether the next round is practice
   questLevel: number;
   practice: boolean;
+  // Quest rounds: shop items owned, and how many of each were used this round
+  inventory: Inventory;
+  itemsUsed: Record<Item, number>;
 };
+
+export const BOMB_STUN_MS = 8000;
+export const TIME_ITEM_MS = 15_000;
+const NO_ITEMS_USED: Record<Item, number> = { bomb: 0, shield: 0, time: 0 };
 
 const COUNTDOWN_MS = 3500;
 // Bot rounds play the versus intro during the countdown.
@@ -220,6 +242,8 @@ export class RoomController {
       seriesRecords: {},
       questLevel: level,
       practice: false,
+      inventory: loadQuest().items,
+      itemsUsed: NO_ITEMS_USED,
     };
   }
 
@@ -469,6 +493,24 @@ export class RoomController {
     return target;
   }
 
+  // Quest rounds only: spend a shop item.
+  fireItem(item: "bomb" | "time"): boolean {
+    const { round, phase, itemsUsed } = this.state;
+    if (!round?.bot?.quest || phase !== "playing" || itemsUsed[item] >= ITEM_LIMIT || !spendItem(item)) return false;
+    this.set({ inventory: loadQuest().items, itemsUsed: { ...itemsUsed, [item]: itemsUsed[item] + 1 } });
+    track("item", { item, level: round.bot.level });
+    const bot = this.botMember(round);
+    if (item === "bomb") {
+      const elapsed = serverNow() - round.startsAt;
+      this.botPlan = this.botPlan.filter((p) => p.at < elapsed || p.at > elapsed + BOMB_STUN_MS);
+      this.toast(`💣 ${bot.emoji} ${bot.name} is stunned for ${BOMB_STUN_MS / 1000} s!`, "launch");
+    } else {
+      this.set({ round: { ...round, endsAt: round.endsAt + TIME_ITEM_MS } });
+      this.toast(`⏱️ +${TIME_ITEM_MS / 1000} seconds!`, "combo");
+    }
+    return true;
+  }
+
   react(emoji: string) {
     track("react");
     this.addReaction(emoji, this.state.me.id);
@@ -550,6 +592,8 @@ export class RoomController {
       combo: [],
       comboBurst: 0,
       timeBoosts: 0,
+      inventory: loadQuest().items,
+      itemsUsed: NO_ITEMS_USED,
       phase: serverNow() < round.startsAt ? "countdown" : "playing",
     });
     if (this.isParticipant(round) && serverNow() < round.endsAt) {
@@ -809,6 +853,11 @@ export class RoomController {
       const free = Array.from({ length: n }, (_, i) => i).filter((i) => !s.blocked[i] && !s.flipped[i]);
       const pick = () => free.splice(Math.floor(Math.random() * free.length), 1)[0];
       this.logAttack(randomId(8), BOT.id, s.me.id, weapon);
+      if (round.bot?.quest && s.itemsUsed.shield < ITEM_LIMIT && spendItem("shield")) {
+        this.set({ inventory: loadQuest().items, itemsUsed: { ...s.itemsUsed, shield: s.itemsUsed.shield + 1 } });
+        this.toast(`🛡️ Your shield blocked ${bot.name}'s ${weapon}!`, "shield");
+        continue;
+      }
       if (weapon === "bomb") {
         if (!free.length) continue;
         this.set({ blocked: { ...s.blocked, [pick()]: Date.now() + BOMB_MS } });
@@ -912,6 +961,9 @@ export class RoomController {
       const prev = this.state.outcome?.roundId === round.id ? this.state.outcome.quest : undefined;
       const bot = result.players.find((p) => p.id === BOT.id);
       outcome.quest = prev ?? recordQuestRound(round.id, round.bot.level, me.total, bot?.total ?? 0);
+      outcome.coins = outcome.quest.coins;
+    } else if (me && round.bot) {
+      outcome.coins = recordPractice(round.id, round.bot.level, me.total);
     }
     this.set({ outcome, tally, roundsPlayed, seriesRecords });
 
@@ -927,6 +979,7 @@ export class RoomController {
         bot: bot ? (bot.rank === me.rank ? "tie" : me.rank < bot.rank ? "win" : "loss") : undefined,
         bot_level: round.bot?.level,
         stars: outcome.quest?.stars,
+        coins: outcome.coins?.total,
         lives: outcome.quest?.lives,
         ended_early: this.endedEarly,
         secs: Math.round((Math.min(round.endsAt, serverNow()) - round.startsAt) / 1000),
