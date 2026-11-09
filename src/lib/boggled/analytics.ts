@@ -102,8 +102,8 @@ async function geo(): Promise<Props> {
     const res = await fetch("/boggled/geo", { signal: ctrl.signal, cache: "no-store" });
     clearTimeout(t);
     if (!res.ok) return {};
-    const g = (await res.json()) as { country?: string; region?: string; city?: string };
-    return { country: g.country, region: g.region, city: g.city };
+    const g = (await res.json()) as { country?: string; region?: string; city?: string; lat?: number; lon?: number };
+    return { country: g.country, region: g.region, city: g.city, lat: g.lat, lon: g.lon };
   } catch {
     return {};
   }

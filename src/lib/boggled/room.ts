@@ -649,6 +649,7 @@ export class RoomController {
         bot_level: round.bot?.level,
         boss: level?.boss || undefined,
         host: this.isHost,
+        room: this.state.room ?? undefined,
       });
     }
     this.tick();
