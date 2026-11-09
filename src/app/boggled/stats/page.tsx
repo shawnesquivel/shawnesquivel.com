@@ -9,6 +9,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+type Places = {
+  located: number;
+  countries: { country: string; players: number }[];
+  cities: { city: string; region: string | null; country: string; players: number }[];
+};
+
 type Stats = {
   days: number;
   generated_at: string;
@@ -69,19 +75,25 @@ const SETTING_LABELS: Record<string, string> = {
   players: "Players per round",
 };
 
-async function loadStats(days: number): Promise<{ stats: Stats } | { error: string }> {
+// Server-only secret key: the stats functions are locked to service_role once the private-stats
+// migration runs. Falls back to the public key until then.
+const SECRET_KEY = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+async function rpc<T>(fn: string, days: number): Promise<{ data: T } | { error: string }> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const key = SECRET_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return { error: "Supabase isn't configured for this deployment." };
   try {
-    const res = await fetch(`${url}/rest/v1/rpc/boggled_stats`, {
+    const res = await fetch(`${url}/rest/v1/rpc/${fn}`, {
       method: "POST",
       headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({ days }),
       cache: "no-store",
     });
-    if (!res.ok) return { error: res.status === 404 ? "missing" : `Supabase returned ${res.status}: ${(await res.text()).slice(0, 200)}` };
-    return { stats: await res.json() };
+    if (res.ok) return { data: await res.json() };
+    if (res.status === 404) return { error: "missing" };
+    if ((res.status === 401 || res.status === 403) && !SECRET_KEY) return { error: "secret" };
+    return { error: `Supabase returned ${res.status}: ${(await res.text()).slice(0, 200)}` };
   } catch (e) {
     return { error: String(e) };
   }
@@ -176,7 +188,12 @@ function Setup({ error }: { error: string }) {
   return (
     <div className="bg-panel flex flex-col gap-3 p-4 text-sm">
       <h2 className="bg-title text-xl">Analytics isn&apos;t set up yet</h2>
-      {error === "missing" ? (
+      {error === "secret" ? (
+        <p>
+          The stats are locked to the server&apos;s secret key. Add <code>SUPABASE_SECRET_KEY</code> (Supabase → Project Settings → API Keys → secret key) to
+          the Vercel project&apos;s environment variables and redeploy.
+        </p>
+      ) : error === "missing" ? (
         <>
           <p>The game is ready to send events, but the database table doesn&apos;t exist yet. Run the migration once:</p>
           <ol className="ml-5 list-decimal space-y-1">
@@ -197,7 +214,7 @@ function Setup({ error }: { error: string }) {
 export default async function StatsPage({ searchParams }: { searchParams: Promise<{ days?: string }> }) {
   const { days: raw } = await searchParams;
   const days = [7, 30, 90].includes(Number(raw)) ? Number(raw) : 30;
-  const res = await loadStats(days);
+  const [res, places] = await Promise.all([rpc<Stats>("boggled_stats", days), rpc<Places>("boggled_places", days)]);
 
   return (
     <main className="bg-stats mx-auto flex max-w-5xl flex-col gap-4 p-4 pb-16">
@@ -215,13 +232,23 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
         </nav>
       </header>
 
-      {"error" in res ? <Setup error={res.error} /> : <Dashboard s={res.stats} />}
+      {"error" in res ? <Setup error={res.error} /> : <Dashboard s={res.data} places={"data" in places ? places.data : null} />}
     </main>
   );
 }
 
-function Dashboard({ s }: { s: Stats }) {
+const flag = (cc: string) => (/^[A-Z]{2}$/.test(cc) ? String.fromCodePoint(...[...cc].map((c) => 0x1f1a5 + c.charCodeAt(0))) : "🏳️");
+
+function roomSize(players: Record<string, number> | null | undefined) {
+  const rows = Object.entries(players ?? {});
+  const rounds = rows.reduce((n, [, c]) => n + c, 0);
+  if (!rounds) return null;
+  return { avg: rows.reduce((n, [k, c]) => n + Number(k) * c, 0) / rounds, rounds };
+}
+
+function Dashboard({ s, places }: { s: Stats; places: Places | null }) {
   const opened = s.funnel[0]?.players ?? 0;
+  const rooms = roomSize(s.room_settings.players);
   const sessionsTotal = s.exits.reduce((n, e) => n + e.sessions, 0);
   const totalClicks = s.clicks.reduce((n, c) => n + c.n, 0);
   return (
@@ -235,6 +262,8 @@ function Dashboard({ s }: { s: Stats }) {
         <Kpi label="Play time per player" value={duration(s.avg_play_secs_per_player)} hint="all visits, averaged" />
         <Kpi label="On phones" value={pct(s.devices.mobile, s.devices.mobile + s.devices.desktop)} hint={`${s.devices.installed} from home screen`} />
         <Kpi label="Daily Puzzle players" value={s.daily_puzzle.first_plays} hint={`avg score ${s.daily_puzzle.avg_first_score ?? "—"}`} />
+        <Kpi label="Avg room size" value={rooms ? rooms.avg.toFixed(1) : "—"} hint={rooms ? `players per room round (${rooms.rounds} rounds)` : "no room rounds yet"} />
+        <Kpi label="Countries" value={places ? places.countries.length : "—"} hint={places ? `${places.located} players located` : "run the private-stats migration"} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -312,6 +341,17 @@ function Dashboard({ s }: { s: Stats }) {
               ["📅 First plays (counted)", s.daily_puzzle.first_plays],
             ]}
           />
+        </Section>
+
+        <Section title="Where players are" why="Country and city from the visitor's IP at the edge (the IP itself isn't stored). Each player counts once. Tracked since Nov 9.">
+          {places ? (
+            <div className="grid grid-cols-2 gap-4">
+              <Bars rows={places.countries.map((c) => ({ label: `${flag(c.country)} ${c.country}`, value: c.players }))} />
+              <Bars rows={places.cities.map((c) => ({ label: `${c.city}, ${c.country}`, value: c.players }))} />
+            </div>
+          ) : (
+            <p className="text-sm opacity-60">Run the private-stats migration to see locations.</p>
+          )}
         </Section>
 
         <Section title="Where players come from" why="Referrer of each visit. “direct” = typed, bookmarked or shared in an app.">
