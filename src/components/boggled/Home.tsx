@@ -144,7 +144,7 @@ export default function Home({
   }, [step]);
 
   return (
-    <div className="bg-screen gap-5" data-testid="home">
+    <div className="bg-screen gap-4" data-testid="home">
       <div className="flex items-center justify-between">
         {step !== "menu" ? (
           <button className="bg-btn bg-btn-ghost px-3 py-2 text-base" onClick={back} data-testid="back">
@@ -179,7 +179,7 @@ export default function Home({
             {row.split("").map((l, i) => (
               <span
                 key={i}
-                className={`bg-tile bg-title flex h-12 w-12 text-2xl ${r === 1 ? "bg-logo-hot" : ""}`}
+                className={`bg-tile bg-title flex h-10 w-10 text-xl ${r === 1 ? "bg-logo-hot" : ""}`}
                 style={{ transform: `rotate(${((i + r) % 2 ? 1 : -1) * (3 + ((i + r) % 3))}deg)` }}
               >
                 {l}
@@ -219,21 +219,25 @@ export default function Home({
           <div className="grid grid-cols-2 gap-3">
             <button className={`bg-menu-btn bg-half-btn bg-daily-btn ${daily.played ? "" : "ready"}`} onClick={() => solo("daily")} data-testid="menu-daily">
               <span className="text-3xl">{daily.played ? "📅" : <span className="bg-gift">🎁</span>}</span>
-              <span className="bg-title block text-lg leading-tight">DAILY</span>
-              <span className="block text-xs opacity-80">
-                {daily.played ? `Done ✓${daily.streak > 1 ? ` · 🔥${daily.streak}` : ""}` : `+${daily.reward.coins} 🪙${daily.streak > 0 ? ` · 🔥${daily.streak}` : ""}`}
-              </span>
-              <span className="bg-daily-dots" aria-hidden>
-                {DAILY_REWARDS.map((_, i) => {
-                  const done = i < daily.reward.day - 1;
-                  return <span key={i} className={done ? "done" : i === daily.reward.day - 1 && !daily.played ? "today" : ""} />;
-                })}
+              <span className="min-w-0">
+                <span className="bg-title block text-lg leading-tight">DAILY</span>
+                <span className="block truncate text-xs opacity-80">
+                  {daily.played ? `Done ✓${daily.streak > 1 ? ` · 🔥${daily.streak}` : ""}` : `+${daily.reward.coins} 🪙${daily.streak > 0 ? ` · 🔥${daily.streak}` : ""}`}
+                </span>
+                <span className="bg-daily-dots" aria-hidden>
+                  {DAILY_REWARDS.map((_, i) => {
+                    const done = i < daily.reward.day - 1;
+                    return <span key={i} className={done ? "done" : i === daily.reward.day - 1 && !daily.played ? "today" : ""} />;
+                  })}
+                </span>
               </span>
             </button>
             <button className="bg-menu-btn bg-half-btn" onClick={() => solo("survival")} data-testid="menu-survival">
               <span className="text-3xl">⏳</span>
-              <span className="bg-title block text-lg leading-tight">SURVIVAL</span>
-              <span className="block text-xs opacity-80">Words add time</span>
+              <span className="min-w-0">
+                <span className="bg-title block text-lg leading-tight">SURVIVAL</span>
+                <span className="block text-xs opacity-80">Words add time</span>
+              </span>
             </button>
           </div>
         </div>
