@@ -29,7 +29,7 @@ export const CAST_METHODS: { id: string; icon: string; title: string; steps: str
     steps: [
       "Samsung, LG or Fire TV: open the TV's web browser.",
       "Go to wordbrawl.app and tap Join, then enter the room code.",
-      "Everyone else joins on their phones.",
+      "Everyone else joins on their phones. The TV shows up as a player that just never scores.",
     ],
   },
 ];

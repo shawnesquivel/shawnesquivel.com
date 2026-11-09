@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
         { source: "/test", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled" },
         { source: "/boggled/test", destination: "/boggled" },
         { source: "/stats", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/stats" },
+        { source: "/how-to-play-boggle-party", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/how-to-play-boggle-party" },
         { source: "/robots.txt", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/robots.txt" },
         { source: "/sitemap.xml", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/sitemap.xml" },
       ],

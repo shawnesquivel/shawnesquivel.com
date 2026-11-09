@@ -1318,6 +1318,150 @@ body:has(.boggled) {
   opacity: 0.9;
 }
 
+/* ---- Guide article ---- */
+.bg-guide {
+  max-width: 720px;
+  padding-top: 16px;
+}
+.bg-guide a:not(.bg-btn) {
+  color: var(--gold);
+  text-decoration: underline;
+}
+.bg-guide-nav a:not(.bg-btn) {
+  text-decoration: none;
+  font-weight: 600;
+}
+.bg-guide-tldr,
+.bg-guide-pick,
+.bg-guide-card {
+  background: var(--panel);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 18px;
+  padding: 14px 16px;
+}
+.bg-guide-tldr ul,
+.bg-guide-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+.bg-guide-tldr li::before {
+  content: "👉 ";
+}
+.bg-guide-pick {
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 0 4px rgb(255 214 74 / 0.15);
+}
+.bg-guide-badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #2a1670;
+  margin-bottom: 8px;
+}
+.bg-guide-pick-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px;
+  gap: 14px;
+  align-items: start;
+}
+.bg-guide-shot {
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  border: 3px solid rgb(255 255 255 / 0.2);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.3);
+}
+.bg-guide-cta {
+  width: 100%;
+  margin-top: 14px;
+  text-decoration: none;
+}
+.bg-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+.bg-guide-card p {
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+.bg-guide-table-wrap {
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid rgb(255 255 255 / 0.12);
+}
+.bg-guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+  font-size: 0.9rem;
+}
+.bg-guide-table th,
+.bg-guide-table td {
+  padding: 10px 4px;
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  text-align: center;
+}
+.bg-guide-table thead th {
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+.bg-guide-table tbody th {
+  text-align: left;
+  min-width: 130px;
+  padding-left: 12px;
+}
+.bg-guide-table tbody tr:first-child {
+  background: rgb(255 214 74 / 0.14);
+}
+.bg-guide-table small {
+  display: block;
+  font-weight: 500;
+  opacity: 0.65;
+}
+.bg-guide-note {
+  font-size: 0.8rem;
+  margin-top: 6px;
+}
+.bg-guide-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+@media (min-width: 640px) {
+  .bg-guide-steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.bg-guide-steps li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+.bg-guide-steps b {
+  margin-top: 6px;
+}
+@media (max-width: 639px) {
+  .bg-guide-pick-row.bg-guide-tv {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bg-guide-tv .bg-guide-shot {
+    max-width: 200px;
+    justify-self: center;
+  }
+}
+@media (max-width: 420px) {
+  .bg-guide-pick-row {
+    grid-template-columns: minmax(0, 1fr) 110px;
+  }
+}
+
 /* ---- Quest world (scrolling map) ---- */
 .bg-world {
   position: relative;
