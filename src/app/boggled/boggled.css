@@ -1495,6 +1495,157 @@ body:has(.boggled) {
   text-align: center;
 }
 
+.bg-guide-related {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+}
+.bg-guide-related a:not(.bg-btn) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--panel);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  color: #fff;
+  text-decoration: none;
+}
+.bg-guide-related small {
+  display: block;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+.bg-guide-numbered {
+  list-style: decimal;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0;
+}
+.bg-guide-picks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bg-guide-picks p {
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+.bg-guide-picks h3 {
+  font-size: 1.05rem;
+}
+.bg-guide-top {
+  border: 2px solid var(--gold);
+}
+
+/* Boggle solver / rules demo board */
+.bg-solver {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--panel);
+  border: 2px solid var(--gold);
+}
+.bg-solver-label {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+.bg-solver-input {
+  width: 100%;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgb(0 0 0 / 0.25);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  resize: none;
+}
+.bg-solver-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+.bg-solver-warn {
+  color: #ffb0b0;
+}
+.bg-solver-small {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  min-height: 0;
+  border-radius: 10px;
+}
+.bg-solver-select {
+  background: rgb(255 255 255 / 0.12);
+  color: #fff;
+  border: 0;
+}
+.bg-solver-grid {
+  display: grid;
+  gap: 6px;
+  width: min(100%, 300px);
+  margin: 0 auto;
+}
+.bg-solver-tile {
+  position: relative;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--tile);
+  font-weight: 700;
+  font-size: 1.4rem;
+  box-shadow: 0 4px 0 rgb(0 0 0 / 0.3);
+}
+.bg-solver-tile.on {
+  background: #3ddc84;
+  color: #0d3a22;
+}
+.bg-solver-tile.first {
+  background: var(--gold);
+  color: #2a1670;
+}
+.bg-solver-tile small {
+  position: absolute;
+  top: 3px;
+  right: 6px;
+  font-size: 0.65rem;
+}
+.bg-solver-sum {
+  text-align: center;
+  font-size: 0.9rem;
+}
+.bg-solver-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.bg-solver-word {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.1);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.bg-solver-word.on {
+  background: var(--gold);
+  color: #2a1670;
+}
+.bg-solver-word small {
+  opacity: 0.65;
+}
+
 /* ---- Quest world (scrolling map) ---- */
 .bg-world {
   position: relative;

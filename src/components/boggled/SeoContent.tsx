@@ -1,4 +1,5 @@
-import { FAQ, GUIDE_SLUG, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/boggled/site";
+import { GUIDES } from "@/lib/boggled/guides";
+import { FAQ, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/boggled/site";
 
 const STEPS = [
   ["🎉", "Create a room", "One tap, no sign-up. You get a 4-letter room code."],
@@ -115,13 +116,23 @@ export default function SeoContent() {
             <p>{a}</p>
           </details>
         ))}
-        <p className="mt-3">
-          Netflix Boggle Party not loading?{" "}
-          <a href={`${SITE_URL}/${GUIDE_SLUG}`} className="underline">
-            How to play Boggle Party, and what to do when it won&apos;t load
-          </a>
-          .
-        </p>
+      </section>
+
+      <section aria-labelledby="seo-guides">
+        <h2 id="seo-guides">Boggle guides</h2>
+        <ul className="bg-guide-related">
+          {GUIDES.map((g) => (
+            <li key={g.slug}>
+              <a href={`${SITE_URL}/${g.slug}`}>
+                <span className="text-2xl">{g.emoji}</span>
+                <span>
+                  <b>{g.title}</b>
+                  <small>{g.short}</small>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <footer>

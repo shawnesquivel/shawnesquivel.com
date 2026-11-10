@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { GUIDE_SLUGS } from "./src/lib/boggled/guides";
 
 // Word Brawl's own domains serve the game at the root.
 const GAME_HOST = "(www\\.)?wordbrawl\\.(app|vercel\\.app)";
@@ -11,7 +12,7 @@ const nextConfig: NextConfig = {
         { source: "/test", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled" },
         { source: "/boggled/test", destination: "/boggled" },
         { source: "/stats", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/stats" },
-        { source: "/how-to-play-boggle-party", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/how-to-play-boggle-party" },
+        ...GUIDE_SLUGS.map((slug) => ({ source: `/${slug}`, has: [{ type: "host" as const, value: GAME_HOST }], destination: `/boggled/${slug}` })),
         { source: "/robots.txt", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/robots.txt" },
         { source: "/sitemap.xml", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/sitemap.xml" },
       ],
