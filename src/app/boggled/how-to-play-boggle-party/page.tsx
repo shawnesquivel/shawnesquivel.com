@@ -1,30 +1,23 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { CAST_METHODS } from "@/components/boggled/CastSteps";
-import { GUIDE_SLUG, SITE_NAME, SITE_URL } from "@/lib/boggled/site";
+import { NetflixSetup, WordBrawlSetup } from "./Diagrams";
+import GuideShell, { guideMetadata, PlayCta } from "@/components/boggled/guide/GuideShell";
+import { GUIDE_SLUG, SITE_NAME } from "@/lib/boggled/site";
 
 const TITLE = "How to Play Netflix Boggle Party (and What to Do When It Won't Load)";
 const DESCRIPTION =
-  "How to play Boggle Party on Netflix in 6 steps, why it often won't show up, and the easiest free way to play Boggle online with friends on your phones, with or without a TV.";
-const URL_ = `${SITE_URL}/${GUIDE_SLUG}`;
-const CHECKED = "9 November 2026";
+  "How to play Boggle Party on Netflix in 5 steps, why it often won't show up, and the easiest free way to play Boggle online with friends on your phones, with or without a TV.";
 
-export const metadata: Metadata = {
-  title: { absolute: TITLE },
-  description: DESCRIPTION,
-  alternates: { canonical: `/${GUIDE_SLUG}` },
-  keywords: [
-    "how to play netflix boggle party",
-    "boggle party netflix",
-    "boggle party not showing up",
-    "boggle party alternative",
-    "how to play boggle online with friends",
-    "boggle on tv",
-    "boggle chromecast",
-  ],
-  openGraph: { type: "article", url: `/${GUIDE_SLUG}`, title: TITLE, description: DESCRIPTION, images: ["/boggled/guide/lobby.jpg"] },
-  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
-};
+export const metadata: Metadata = guideMetadata(GUIDE_SLUG, TITLE, DESCRIPTION, [
+  "how to play netflix boggle party",
+  "boggle party netflix",
+  "boggle party not showing up",
+  "boggle party alternative",
+  "how to play boggle online with friends",
+  "boggle on tv",
+  "boggle chromecast",
+]);
 
 const NETFLIX_STEPS = [
   ["📺", "Open Netflix on a TV or at netflix.com on a computer", "Go to Games → Boggle Party. A phone can't host it."],
@@ -98,29 +91,10 @@ const FAQ = [
   },
 ];
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Article",
-      "@id": `${URL_}#article`,
-      headline: TITLE,
-      description: DESCRIPTION,
-      url: URL_,
-      image: `${SITE_URL}/boggled/guide/lobby.jpg`,
-      dateModified: "2026-11-09",
-      author: { "@type": "Organization", name: SITE_NAME, url: `${SITE_URL}/` },
-    },
-    {
-      "@type": "HowTo",
-      name: "How to play Netflix Boggle Party",
-      step: NETFLIX_STEPS.map(([, name, text]) => ({ "@type": "HowToStep", name, text })),
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: FAQ.map(({ q, a }) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
-    },
-  ],
+const HOWTO = {
+  "@type": "HowTo",
+  name: "How to play Netflix Boggle Party",
+  step: NETFLIX_STEPS.map(([, name, text]) => ({ "@type": "HowToStep", name, text })),
 };
 
 function Shot({ name, alt }: { name: string; alt: string }) {
@@ -129,17 +103,28 @@ function Shot({ name, alt }: { name: string; alt: string }) {
 
 export default function GuidePage() {
   return (
-    <article className="bg-seo bg-guide">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
-      <nav className="bg-guide-nav">
-        <a href="./">← {SITE_NAME}</a>
-      </nav>
-
-      <header>
-        <h1 className="bg-title">How to play Netflix Boggle Party</h1>
-        <p>…and what to do when it won&apos;t load, you only have phones, or your friends are somewhere else.</p>
-      </header>
-
+    <GuideShell
+      slug={GUIDE_SLUG}
+      h1="How to play Netflix Boggle Party"
+      faq={FAQ}
+      schema={[HOWTO]}
+      intro={
+        <>
+          <p>…and what to do when it won&apos;t load, you only have phones, or your friends are somewhere else.</p>
+          <figure className="bg-guide-hero">
+            <Image
+              src="/boggled/guide/boggle-party-tv.jpg"
+              alt="Netflix Boggle Party on a TV: a 6×6 letter grid, the word PEAT scoring +2, and two players' score columns"
+              width={827}
+              height={695}
+              priority
+              sizes="(max-width: 720px) 100vw, 680px"
+            />
+            <figcaption>Netflix Boggle Party on our TV. The grid and scores live on the TV; everyone swipes on their phone.</figcaption>
+          </figure>
+        </>
+      }
+    >
       <section className="bg-guide-tldr" aria-label="Quick answer">
         <b>The short version</b>
         <ul>
@@ -147,7 +132,11 @@ export default function GuidePage() {
           <li>Players join by scanning a QR code. No links, no room codes.</li>
           <li>It often doesn&apos;t show up, and there&apos;s no phone-only mode.</li>
           <li>
-            Easiest fix: <a href="./">play {SITE_NAME}</a>. Free, phones only, share a link.
+            Easiest fix:{" "}
+            <a href="./" data-cta="tldr">
+              play {SITE_NAME}
+            </a>
+            . Free, phones only, share a link.
           </li>
         </ul>
       </section>
@@ -163,13 +152,13 @@ export default function GuidePage() {
           </ul>
           <Shot name="lobby" alt="Word Brawl lobby with a room code, share link, QR code and TV button" />
         </div>
-        <a href="./" className="bg-btn bg-btn-primary bg-guide-cta">
-          Create a free room →
-        </a>
+        <WordBrawlSetup />
+        <PlayCta target="pick">Create a free room →</PlayCta>
       </section>
 
       <section aria-labelledby="netflix">
         <h2 id="netflix">How to play Boggle Party on Netflix</h2>
+        <NetflixSetup />
         <ol className="bg-seo-steps">
           {NETFLIX_STEPS.map(([icon, title, body], i) => (
             <li key={title}>
@@ -271,19 +260,6 @@ export default function GuidePage() {
         </div>
       </section>
 
-      <section aria-labelledby="faq">
-        <h2 id="faq">Questions</h2>
-        {FAQ.map(({ q, a }) => (
-          <details key={q}>
-            <summary>{q}</summary>
-            <p>{a}</p>
-          </details>
-        ))}
-      </section>
-
-      <footer>
-        Checked {CHECKED}. {SITE_NAME} is an independent game, not affiliated with Netflix or Hasbro. Boggle is a trademark of Hasbro.
-      </footer>
-    </article>
+    </GuideShell>
   );
 }

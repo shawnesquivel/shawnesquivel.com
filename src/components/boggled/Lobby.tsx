@@ -213,14 +213,14 @@ export default function Lobby({
     setTimeout(() => setCopied(""), 1600);
   };
 
-  const inviteUrl = () => `${location.origin}${publicPath()}?room=${state.room}`;
+  const inviteUrl = (medium = "share") => `${location.origin}${publicPath()}?room=${state.room}&utm_source=invite&utm_medium=${medium}`;
 
   const showQr = async () => {
     if (qr) return setQr("");
     click("qr");
     try {
       const QR = await import("qrcode");
-      setQr(await QR.toString(inviteUrl(), { type: "svg", margin: 1, color: { dark: "#2a1670", light: "#ffffff" } }));
+      setQr(await QR.toString(inviteUrl("qr"), { type: "svg", margin: 1, color: { dark: "#2a1670", light: "#ffffff" } }));
     } catch {}
   };
 

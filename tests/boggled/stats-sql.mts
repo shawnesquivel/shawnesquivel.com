@@ -72,11 +72,46 @@ const one = (await callRpc(vdb, "boggled_visits", { days: 7, tz: "UTC" })) as Vi
 assert.equal(one.visitors, 1);
 assert.equal(one.visits, 3, "30-minute gaps and new tabs start new visits");
 
+type Acq = {
+  sessions: number;
+  channels: { channel: string; sessions: number; played: number }[];
+  sources: { source: string; sessions: number }[];
+  campaigns: { source: string; medium: string | null; campaign: string | null; sessions: number }[];
+  landings: { landing: string; sessions: number; played: number }[];
+  articles: { slug: string; views: number; readers: number; clicked: number; played: number }[];
+};
+const acq = (await callRpc(db, "boggled_acquisition", { days: 30 })) as Acq;
+assert.equal(acq.channels.reduce((n, c) => n + c.sessions, 0), acq.sessions, "channels cover every session");
+assert.ok(acq.channels.some((c) => c.channel === "search") && acq.channels.some((c) => c.channel === "social"), "google is search, reddit/t.co are social");
+
+// Hand-built: a Google visitor reads a guide and plays, an invite-link guest plays, a direct visitor bounces.
+const adb = await seededDb([]);
+const at = (m: number) => new Date(Date.now() - 3_600_000 + m * 60_000).toISOString();
+const ins_ = (player: string, session: string, event: string, props: object, m: number) =>
+  adb.query("insert into boggled_events (player, session, event, screen, props, at) values ($1, $2, $3, null, $4, $5)", [player, session, event, JSON.stringify(props), at(m)]);
+await ins_("p_search01", "s_search01", "session_start", { ref: "www.google.com", landing: "/boggle-rules" }, 0);
+await ins_("p_search01", "s_search01", "article_view", { slug: "boggle-rules" }, 1);
+await ins_("p_search01", "s_search01", "article_read", { slug: "boggle-rules" }, 2);
+await ins_("p_search01", "s_search01", "article_cta", { slug: "boggle-rules", target: "play" }, 3);
+await ins_("p_search01", "s_search01", "round_start", { mode: "room" }, 4);
+await ins_("p_invite01", "s_invite01", "session_start", { ref: "", utm: "invite", utm_medium: "qr", landing: "/" }, 5);
+await ins_("p_invite01", "s_invite01", "round_start", { mode: "room" }, 6);
+await ins_("p_direct01", "s_direct01", "session_start", { ref: "" }, 7);
+const a1 = (await callRpc(adb, "boggled_acquisition", { days: 7 })) as Acq;
+const ch = Object.fromEntries(a1.channels.map((c) => [c.channel, c]));
+assert.equal(ch.search.sessions, 1);
+assert.equal(ch.search.played, 1, "search visit that played counts as played");
+assert.equal(ch.invite.played, 1, "utm_source=invite is its own channel");
+assert.equal(ch.direct.played, 0);
+assert.deepEqual(a1.campaigns[0], { source: "invite", medium: "qr", campaign: null, sessions: 1, played: 1 });
+assert.deepEqual(a1.articles, [{ slug: "boggle-rules", views: 1, readers: 1, clicked: 1, played: 1 }]);
+assert.equal(a1.landings.find((l) => l.landing === "/boggle-rules")!.played, 1, "landing page tracked with outcome");
+
 const grants = await db.query<{ fn: string; anon: boolean; service: boolean }>(`
   select p.proname as fn,
     has_function_privilege('anon', p.oid, 'execute') as anon,
     has_function_privilege('service_role', p.oid, 'execute') as service
-  from pg_proc p where p.proname in ('boggled_stats', 'boggled_places', 'boggled_insights', 'boggled_visits', 'boggled_daily_rank')`);
+  from pg_proc p where p.proname in ('boggled_stats', 'boggled_places', 'boggled_insights', 'boggled_visits', 'boggled_acquisition', 'boggled_daily_rank')`);
 for (const g of grants.rows) {
   if (g.fn === "boggled_daily_rank") assert.ok(g.anon, "daily rank stays public");
   else assert.ok(!g.anon && g.service, `${g.fn} is service_role only`);

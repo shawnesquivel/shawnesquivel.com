@@ -15,7 +15,8 @@ export type Screen =
   | "intro_survival"
   | "lobby"
   | "game"
-  | "results";
+  | "results"
+  | "article";
 
 const URL_ = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -94,6 +95,9 @@ export function initAnalytics() {
         mobile: matchMedia("(pointer: coarse)").matches,
         standalone: matchMedia("(display-mode: standalone)").matches,
         utm: params.get("utm_source") ?? params.get("ref") ?? undefined,
+        utm_medium: params.get("utm_medium") ?? undefined,
+        utm_campaign: params.get("utm_campaign") ?? undefined,
+        landing: location.pathname.replace(/^\/boggled(?=\/|$)/, "").slice(0, 60) || "/",
       };
       pendingStart = props;
       void geo().then((g) => sendStart(g));

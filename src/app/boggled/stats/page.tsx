@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { Bars, Card, Chapter, Columns, Curve, Empty, Funnel, Heatmap, Hero, PairColumns, People, Ring, pct, ratio } from "./charts";
+import { searchConsole, type Gsc } from "@/lib/boggled/gsc";
+import { AcquisitionChapter, SearchChapter, type Acquisition } from "./Acquisition";
 import { WorldMap } from "./WorldMap";
 
 export const dynamic = "force-dynamic";
@@ -222,11 +224,13 @@ const NEEDS_MIGRATION =
 export default async function StatsPage({ searchParams }: { searchParams: Promise<{ days?: string }> }) {
   const { days: raw } = await searchParams;
   const days = [7, 30, 90].includes(Number(raw)) ? Number(raw) : 30;
-  const [res, places, insights, visits] = await Promise.all([
+  const [res, places, insights, visits, acq, gsc] = await Promise.all([
     rpc<Stats>("boggled_stats", { days }),
     rpc<Places>("boggled_places", { days }),
     rpc<Insights>("boggled_insights", { days, tz: "Asia/Bangkok" }),
     rpc<Visits>("boggled_visits", { days, tz: "Asia/Bangkok" }),
+    rpc<Acquisition>("boggled_acquisition", { days }),
+    searchConsole(days),
   ]);
 
   return (
@@ -245,12 +249,26 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
         </nav>
       </header>
 
-      {"error" in res ? <Setup error={res.error} /> : <Dashboard s={res.data} places={ok(places)} ins={ok(insights)} visits={ok(visits)} />}
+      {"error" in res ? <Setup error={res.error} /> : <Dashboard s={res.data} places={ok(places)} ins={ok(insights)} visits={ok(visits)} acq={ok(acq)} gsc={gsc} />}
     </main>
   );
 }
 
-function Dashboard({ s, places, ins, visits }: { s: Stats; places: Places | null; ins: Insights | null; visits: Visits | null }) {
+function Dashboard({
+  s,
+  places,
+  ins,
+  visits,
+  acq,
+  gsc,
+}: {
+  s: Stats;
+  places: Places | null;
+  ins: Insights | null;
+  visits: Visits | null;
+  acq: Acquisition | null;
+  gsc: { data: Gsc } | { error: string };
+}) {
   const hostRooms = roomSize(s.room_settings.players);
   const g = ins?.groups;
   const avgRoom = g?.groups ? g.avg_size : hostRooms ? Math.round(hostRooms.avg * 10) / 10 : null;
@@ -274,6 +292,8 @@ function Dashboard({ s, places, ins, visits }: { s: Stats; places: Places | null
       </div>
 
       <VisitsChapter v={visits} />
+      <AcquisitionChapter a={acq} />
+      <SearchChapter g={"data" in gsc ? gsc.data : null} error={"error" in gsc ? gsc.error : undefined} />
       <Features ins={ins} s={s} />
       <Replay ins={ins} s={s} />
       <Groups ins={ins} s={s} hostRooms={hostRooms} />
