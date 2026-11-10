@@ -29,7 +29,7 @@ assert((await b.locator(".bg-reaction").first().textContent())!.includes("😂")
 assert((await b.getByTestId("opt-chill").getAttribute("aria-checked")) === "false", "rooms start in chill mode");
 await a.getByTestId("opt-chill").click();
 await a.getByTestId("chill-explainer").waitFor();
-assert((await a.getByTestId("opt-chill").textContent())!.includes("No chill mode"), "toggling switches to No chill mode and explains both");
+assert((await a.getByTestId("opt-chill").textContent())!.includes("No chill"), "toggling switches to No chill and lists the perks");
 await b.waitForFunction(() => window.__boggled.getState().settings.danger && window.__boggled.getState().settings.longestBonus);
 assert(true, "No chill turns on danger mode and the longest-word bonus for everyone");
 await a.getByTestId("opt-size").getByText("5×5").click();

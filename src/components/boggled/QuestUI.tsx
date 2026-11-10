@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { BOT, botFor } from "@/lib/boggled/bot";
 import { formatCountdown, livesLeft, loadQuest, MAX_LIVES, nextLifeAt, questLevel, REGIONS, ruleChips, totalStars, type QuestSave } from "@/lib/boggled/quest";
 import type { RoomState, Round } from "@/lib/boggled/room";
@@ -106,4 +106,25 @@ export function VsIntro({ state, round, toStart }: { state: RoomState; round: Ro
       )}
     </div>
   );
+}
+
+// Counts up (or down) to the value, so scores tick like a scoreboard.
+export function AnimatedNumber({ value }: { value: number }) {
+  const [shown, setShown] = useState(value);
+  const from = useRef(value);
+  useEffect(() => {
+    const start = performance.now();
+    const begin = from.current;
+    let raf = 0;
+    const frame = (t: number) => {
+      const k = Math.min(1, (t - start) / 450);
+      const v = Math.round(begin + (value - begin) * (1 - Math.pow(1 - k, 3)));
+      setShown(v);
+      from.current = v;
+      if (k < 1) raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+    return () => cancelAnimationFrame(raf);
+  }, [value]);
+  return <>{shown}</>;
 }

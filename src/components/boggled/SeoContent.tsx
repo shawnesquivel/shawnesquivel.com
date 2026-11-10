@@ -1,4 +1,4 @@
-import { FAQ, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/boggled/site";
+import { FAQ, GUIDE_SLUG, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/boggled/site";
 
 const STEPS = [
   ["🎉", "Create a room", "One tap, no sign-up. You get a 4-letter room code."],
@@ -115,6 +115,13 @@ export default function SeoContent() {
             <p>{a}</p>
           </details>
         ))}
+        <p className="mt-3">
+          Netflix Boggle Party not loading?{" "}
+          <a href={`${SITE_URL}/${GUIDE_SLUG}`} className="underline">
+            How to play Boggle Party, and what to do when it won&apos;t load
+          </a>
+          .
+        </p>
       </section>
 
       <footer>

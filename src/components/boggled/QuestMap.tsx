@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { click, track } from "@/lib/boggled/analytics";
 import {
   adsLeft,
@@ -11,6 +11,7 @@ import {
   loadQuest,
   markTip,
   MAX_LEVEL,
+  MAX_LIVES,
   nextLifeAt,
   QUEST_STORY,
   questLevel,
@@ -19,56 +20,45 @@ import {
   totalStars,
   weaponUnlocked,
   WEAPON_LEVEL,
+  type QuestSave,
 } from "@/lib/boggled/quest";
 import type { RoomController, RoomState } from "@/lib/boggled/room";
 import { sound } from "@/lib/boggled/sound";
-import { Lives, regionStyle, Stars, useNow } from "./QuestUI";
+import { Stars, useNow } from "./QuestUI";
+import { BOUNDARIES, CASTLE, H, NODE_POS, SEGMENTS, W, WorldTerrain } from "./QuestWorld";
 import { AdModal, ItemChips, ShopModal } from "./Shop";
-
-// Node positions on the tilted plane (percent), bottom to top. The 5th is the boss.
-const NODES = [
-  { x: 50, y: 88 },
-  { x: 22, y: 69 },
-  { x: 71, y: 52 },
-  { x: 29, y: 33 },
-  { x: 57, y: 12 },
-];
-const ENTRY = { x: 46, y: 108 };
-const EXIT = { x: 70, y: -8 };
-const DECOR = [
-  { x: 10, y: 86, s: 1.7 },
-  { x: 88, y: 77, s: 1.9 },
-  { x: 87, y: 38, s: 1.6 },
-  { x: 8, y: 50, s: 1.5 },
-  { x: 90, y: 8, s: 1.4 },
-  { x: 12, y: 15, s: 1.6 },
-  { x: 47, y: 62, s: 1.0 },
-  { x: 76, y: 95, s: 1.2 },
-  { x: 36, y: 4, s: 1.1 },
-];
-
-type P = { x: number; y: number };
-
-// Catmull-Rom through the points, as one cubic Bézier per segment.
-function segments(pts: P[]): string[] {
-  const out: string[] = [];
-  for (let i = 0; i < pts.length - 1; i++) {
-    const p0 = pts[Math.max(0, i - 1)];
-    const p1 = pts[i];
-    const p2 = pts[i + 1];
-    const p3 = pts[Math.min(pts.length - 1, i + 2)];
-    const c1 = { x: p1.x + (p2.x - p0.x) / 6, y: p1.y + (p2.y - p0.y) / 6 };
-    const c2 = { x: p2.x - (p3.x - p1.x) / 6, y: p2.y - (p3.y - p1.y) / 6 };
-    out.push(`M${p1.x} ${p1.y} C${c1.x} ${c1.y} ${c2.x} ${c2.y} ${p2.x} ${p2.y}`);
-  }
-  return out;
-}
-const SEGMENTS = segments([ENTRY, ...NODES, EXIT]);
 
 type Anim = { from: number; to: number; stage: "walk" | "badge" | "region" | "complete" } | null;
 
 // Round ids whose map animation already played (survives remounts, not reloads).
 const played = new Set<string>();
+
+const pctX = (x: number) => `${(x / W) * 100}%`;
+const pctY = (y: number) => `${(y / H) * 100}%`;
+
+// Region name banners: the start of each region, just above its border with the previous one.
+const BANNERS = REGIONS.map((r, i) => ({ region: i, y: i === 0 ? H - 70 : BOUNDARIES[i - 1] - 24 }));
+
+// Short enough for the HUD pill: "23h 59m", "4:05".
+function shortCountdown(ms: number) {
+  const m = Math.ceil(ms / 60000);
+  return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : formatCountdown(ms);
+}
+
+function HudLives({ save, now, broke }: { save: QuestSave; now: number; broke: boolean }) {
+  const lives = livesLeft(save, now);
+  const next = nextLifeAt(save, now);
+  return (
+    <div className="bg-hud-pill" data-testid="lives" aria-label={`${lives} of ${MAX_LIVES} lives`}>
+      <span className={`bg-hud-heart ${broke ? "broke" : ""} ${lives ? "" : "empty"}`}>
+        <span>{lives}</span>
+      </span>
+      <span className="bg-hud-pill-text" data-testid={lives < MAX_LIVES ? "lives-timer" : undefined}>
+        {lives >= MAX_LIVES ? "Full" : next ? shortCountdown(next - now) : ""}
+      </span>
+    </div>
+  );
+}
 
 export default function QuestMap({
   state,
@@ -84,6 +74,8 @@ export default function QuestMap({
   const now = useNow();
   const [save, setSave] = useState(loadQuest);
   const [modal, setModal] = useState<"shop" | "ad" | null>(null);
+  const [sheet, setSheet] = useState(false);
+  const scroller = useRef<HTMLDivElement>(null);
   const outcome = state.outcome?.quest;
   const outcomeId = state.outcome?.roundId ?? "";
   const fresh = !!outcome && !played.has(outcomeId);
@@ -98,9 +90,19 @@ export default function QuestMap({
   const [avatar, setAvatar] = useState(() => (anim ? anim.from : Math.min(save.unlocked, MAX_LEVEL)));
   const reached = anim && (anim.stage === "walk" || anim.stage === "badge") && avatar === anim.from ? anim.from : save.unlocked;
   const selected = questLevel(state.questLevel);
-  const [viewRegion, setViewRegion] = useState(() => questLevel(avatar).region);
 
-  useEffect(() => window.scrollTo(0, 0), []);
+  const scrollTo = (level: number, smooth: boolean) => {
+    const el = scroller.current;
+    if (!el) return;
+    const y = (NODE_POS[level - 1].y / H) * el.scrollHeight;
+    el.scrollTo({ top: Math.max(0, y - el.clientHeight * 0.58), behavior: smooth ? "smooth" : "instant" });
+  };
+
+  useLayoutEffect(() => {
+    scrollTo(avatar, false);
+    // Only on arrival; later moves scroll smoothly.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!fresh) return;
@@ -115,8 +117,12 @@ export default function QuestMap({
         setAvatar(anim.to);
         sound.hop();
         controller.selectLevel(anim.to, false);
+        scrollTo(anim.to, true);
       }, 700);
-      const t2 = setTimeout(() => setAnim(null), 1900);
+      const t2 = setTimeout(() => {
+        setAnim(null);
+        setSheet(true);
+      }, 1900);
       return () => {
         clearTimeout(t1);
         clearTimeout(t2);
@@ -124,7 +130,10 @@ export default function QuestMap({
     }
     if (anim.stage === "badge" || anim.stage === "complete") sound.champion();
     if (anim.stage === "region") {
-      const t = setTimeout(() => setAnim(null), 2600);
+      const t = setTimeout(() => {
+        setAnim(null);
+        setSheet(true);
+      }, 2600);
       return () => clearTimeout(t);
     }
   }, [anim, controller]);
@@ -133,19 +142,17 @@ export default function QuestMap({
     if (!anim) return;
     click("quest_onward");
     setAvatar(anim.to);
-    setViewRegion(questLevel(anim.to).region);
     controller.selectLevel(anim.to, false);
+    scrollTo(anim.to, true);
     setAnim({ ...anim, stage: "region" });
     sound.hop();
   };
 
   const lives = livesLeft(save, now);
   const next = nextLifeAt(save, now);
-  const region = REGIONS[viewRegion];
-  const first = viewRegion * 5 + 1;
-  const regionOpen = (r: number) => r * 5 + 1 <= save.unlocked;
   const selectedStars = save.stars[selected.level] ?? 0;
   const best = save.best[selected.level];
+  const current = Math.min(save.unlocked, MAX_LEVEL);
   const play = () => {
     click("quest_play");
     sound.unlock();
@@ -156,157 +163,160 @@ export default function QuestMap({
     click("quest_practice");
     controller.selectLevel(selected.level, true);
   };
+  const open = (level: number) => {
+    sound.pop();
+    controller.selectLevel(level, false);
+    setSheet(true);
+  };
+  const avatarPos = NODE_POS[avatar - 1];
+  const introRegion = REGIONS[questLevel(avatar).region];
 
   return (
-    <div className="bg-screen bg-quest gap-3" style={regionStyle(viewRegion)} data-testid="quest-map">
-      <div className="flex items-center justify-between gap-2">
-        <button className="bg-btn bg-btn-ghost px-3 py-2 text-base" onClick={() => { click("home"); onLeave(); }} data-testid="leave">
-          ←
-        </button>
-        <Lives save={save} now={now} broke={broke} />
-        <span className="bg-chip flex flex-col items-end whitespace-nowrap px-2.5 py-1 text-xs leading-tight">
-          <span className="bg-coins" data-testid="coins">🪙 {save.coins}</span>
-          <span data-testid="total-stars">⭐ {totalStars(save)}</span>
-        </span>
-      </div>
-
-      <div className="bg-quest-track" data-testid="region-track">
-        {REGIONS.map((r, i) => {
-          const open = regionOpen(i);
-          const beaten = save.unlocked > (i + 1) * 5;
-          return (
-            <button
-              key={r.id}
-              className={`bg-quest-region ${i === viewRegion ? "on" : ""} ${open ? "" : "locked"}`}
-              disabled={!open}
-              onClick={() => setViewRegion(i)}
-              aria-label={r.name}
-              data-testid={`region-${i}`}
-            >
-              <span>{open ? r.emoji : "🔒"}</span>
-              {beaten && <span className="bg-quest-badge">{r.badge.emoji}</span>}
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="text-center">
-        <div className="bg-title text-2xl leading-tight" data-testid="region-name">
-          {region.emoji} {region.name}
-        </div>
-        {save.unlocked === 1 ? <div className="text-xs opacity-80">{QUEST_STORY}</div> : <div className="truncate text-xs opacity-80">{region.blurb}</div>}
-      </div>
-
-      <div className="bg-map" key={viewRegion}>
-        <div className="bg-map-plane">
-          <svg className="bg-map-path" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-            {SEGMENTS.map((d, i) => (
-              <path key={`b${i}`} d={d} className="base" vectorEffect="non-scaling-stroke" />
-            ))}
-            {SEGMENTS.map((d, i) => {
-              const level = first + i;
-              const done = level <= reached;
+    <div className="bg-world" data-testid="quest-map">
+      <div className="bg-world-scroll" ref={scroller}>
+        <div className="bg-world-canvas" style={{ aspectRatio: `${W} / ${H}` }}>
+          <WorldTerrain />
+          <svg className="bg-world-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden>
+            {SEGMENTS.map((s, i) => {
+              const level = i + 1;
+              const done = level <= reached || (i === 0 && reached >= 1);
               const drawing = anim?.stage === "walk" && level === anim.to && avatar === anim.to;
-              return (done || drawing) && <path key={`d${i}`} d={d} pathLength={1} className={`done ${drawing ? "draw" : ""}`} vectorEffect="non-scaling-stroke" />;
+              return (done || drawing) && <path key={i} d={s.d} pathLength={1} className={`bg-world-done ${drawing ? "draw" : ""}`} />;
             })}
           </svg>
-          {DECOR.map((d, i) => (
-            <span key={i} className="bg-map-decor" style={{ left: `${d.x}%`, top: `${d.y}%`, fontSize: `${d.s * 1.6}rem` }}>
-              {region.decor[i % region.decor.length]}
-            </span>
-          ))}
-          {NODES.map((p, i) => {
-            const l = LEVELS[first - 1 + i];
-            const open = l.level <= reached;
+
+          {BANNERS.map((b) => {
+            const r = REGIONS[b.region];
+            const unlocked = b.region * 5 + 1 <= save.unlocked;
+            return (
+              <div key={r.id} className={`bg-world-banner ${unlocked ? "" : "locked"}`} style={{ top: pctY(b.y) }} data-testid={`region-${b.region}`}>
+                {unlocked ? r.emoji : "🔒"} {r.name}
+              </div>
+            );
+          })}
+
+          <div className="bg-world-lair" style={{ left: pctX(CASTLE.x + 118), top: pctY(CASTLE.y - 70) }}>
+            🐉
+          </div>
+
+          {LEVELS.map((l) => {
+            const p = NODE_POS[l.level - 1];
+            const isOpen = l.level <= reached;
             const beaten = l.level < reached || (save.stars[l.level] ?? 0) > 0;
             return (
               <button
                 key={l.level}
-                className={`bg-node ${l.boss ? "boss" : ""} ${l.final ? "final" : ""} ${open ? "open" : "locked"} ${beaten ? "beaten" : ""} ${l.level === selected.level ? "selected" : ""}`}
-                style={{ left: `${p.x}%`, top: `${p.y}%` }}
-                disabled={!open}
-                onClick={() => {
-                  sound.pop();
-                  controller.selectLevel(l.level, false);
-                }}
+                className={`bg-wnode ${l.boss ? "boss" : ""} ${l.final ? "final" : ""} ${isOpen ? "open" : "locked"} ${beaten ? "beaten" : ""} ${l.level === current ? "current" : ""}`}
+                style={{ left: pctX(p.x), top: pctY(p.y) }}
+                disabled={!isOpen}
+                onClick={() => open(l.level)}
                 aria-label={`Level ${l.level}${l.boss ? " boss" : ""}`}
                 data-testid={`node-${l.level}`}
               >
-                <span className="bg-node-disc">{open ? l.level : "🔒"}</span>
-                {l.boss && <span className="bg-node-boss">{l.emoji}</span>}
-                {l.boss && !beaten && <span className="bg-node-label">{l.final ? "FINAL" : "BOSS"} · Lv {l.level}</span>}
+                {l.boss && <span className="bg-wnode-boss">{l.emoji}</span>}
+                <span className="bg-wnode-disc">{l.level}</span>
                 {beaten && (
-                  <span className="bg-node-stars">
+                  <span className="bg-wnode-stars">
                     <Stars n={save.stars[l.level] ?? 0} />
                   </span>
                 )}
               </button>
             );
           })}
-          {questLevel(avatar).region === viewRegion && (
-            <span
-              className={`bg-map-avatar ${anim?.stage === "region" ? "drop" : ""}`}
-              style={{ left: `${NODES[(avatar - 1) % 5].x}%`, top: `${NODES[(avatar - 1) % 5].y}%` }}
-              data-testid="map-avatar"
-            >
-              <span className="bg-map-avatar-inner">{state.me.emoji}</span>
-            </span>
-          )}
+
+          <span
+            className={`bg-world-avatar ${anim?.stage === "region" ? "drop" : ""}`}
+            style={{ left: pctX(avatarPos.x), top: pctY(avatarPos.y) }}
+            data-testid="map-avatar"
+          >
+            <span className="bg-world-avatar-inner">{state.me.emoji}</span>
+          </span>
         </div>
       </div>
 
-      <div className={`bg-panel bg-quest-card ${selected.boss ? "boss" : ""}`} data-testid="level-card">
-        <div className="flex items-center gap-3">
-          <span className="bg-quest-opp">{selected.emoji}</span>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="bg-title truncate text-xl" data-testid="level-title">
-                Lv {selected.level} · {selected.name}
-              </span>
-              {selected.boss && <span className="bg-title-badge">{selected.final ? "FINAL BOSS" : "BOSS"}</span>}
-            </div>
-            <div className="truncate text-sm opacity-85">“{selected.taunt}”</div>
-          </div>
-          {selectedStars > 0 && <Stars n={selectedStars} />}
-        </div>
-        <div className="mt-2 flex gap-1.5 overflow-x-auto whitespace-nowrap">
-          {ruleChips(selected).map((c) => (
-            <span key={c} className="bg-chip px-2 py-0.5 text-xs">
-              {c}
-            </span>
-          ))}
-        </div>
-        <div className="mt-2 flex items-center justify-between gap-2 text-sm">
-          <span className="font-semibold" data-testid="best">
-            {best ? `🏆 Best ${best.me} – ${best.them}` : "⚔️ First fight"}
+      <div className="bg-hud">
+        <button className="bg-hud-back" onClick={() => { click("home"); onLeave(); }} aria-label="Home" data-testid="leave">
+          ‹
+        </button>
+        <HudLives save={save} now={now} broke={broke} />
+        <button className="bg-hud-pill" onClick={() => { click("shop"); setModal("shop"); }} aria-label="Coins and shop" data-testid="shop-button">
+          <span className="bg-hud-icon">🪙</span>
+          <span className="bg-hud-pill-text" data-testid="coins">
+            {save.coins}
           </span>
-          <ItemChips save={save} />
-        </div>
-        <div className="mt-3 flex gap-2">
-          <button className="bg-btn bg-btn-ghost px-3 text-base" onClick={() => { click("shop"); setModal("shop"); }} data-testid="shop-button">
-            🛒 Shop
-          </button>
-          {lives > 0 ? (
-            <button className="bg-btn bg-btn-primary flex-1 text-xl" disabled={!dictReady} onClick={play} data-testid="start">
-              {dictReady ? `⚔️ Play Level ${selected.level}` : "Loading words…"}
-            </button>
-          ) : adsLeft(save, now) > 0 ? (
-            <button className="bg-btn bg-btn-primary flex-1 px-2 text-base" onClick={() => { click("ad"); setModal("ad"); }} data-testid="watch-ad">
-              📺 Watch ad · +1 ❤️
-            </button>
-          ) : (
-            <button className="bg-btn bg-btn-primary flex-1 px-2 text-sm" disabled data-testid="out-of-lives">
-              💔 Next life {next ? formatCountdown(next - now) : "…"}
-            </button>
-          )}
-        </div>
-        <div className="mt-2 flex justify-center gap-3 text-xs opacity-85">
-          {lives === 0 && next && <span data-testid="out-of-lives-timer">💔 next free life in {formatCountdown(next - now)}</span>}
-          <button className="font-semibold underline" onClick={practice} data-testid="practice">
-            🎯 Practice (free)
-          </button>
+          <span className="bg-hud-plus">+</span>
+        </button>
+        <div className="bg-hud-pill" aria-label={`Level ${current}, ${totalStars(save)} stars`}>
+          <span className="bg-hud-level">{current}</span>
+          <span className="bg-hud-pill-text" data-testid="total-stars">
+            ★ {totalStars(save)}
+          </span>
         </div>
       </div>
+
+      <div className="bg-world-foot">
+        <button className="bg-btn bg-btn-primary bg-world-play" onClick={() => open(current)} data-testid="map-play">
+          ⚔️ Level {current}
+        </button>
+      </div>
+
+      {sheet && (
+        <div className="bg-sheet-backdrop" onClick={() => setSheet(false)}>
+          <div className={`bg-sheet ${selected.boss ? "boss" : ""}`} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal aria-label={`Level ${selected.level}`} data-testid="level-card">
+            <button className="bg-sheet-close" onClick={() => setSheet(false)} aria-label="Close" data-testid="sheet-close">
+              ✕
+            </button>
+            <div className="bg-sheet-kicker">
+              Level {selected.level} · {REGIONS[selected.region].name}
+              {selected.boss && <span className="bg-title-badge ml-2">{selected.final ? "FINAL BOSS" : "BOSS"}</span>}
+            </div>
+            <div className="bg-sheet-opp">{selected.emoji}</div>
+            <div className="bg-title text-3xl" data-testid="level-title">
+              {selected.name}
+            </div>
+            <div className="bg-sheet-taunt">“{selected.taunt}”</div>
+            {save.unlocked === 1 && <p className="text-center text-xs opacity-75">{QUEST_STORY}</p>}
+
+            <div className="bg-sheet-stars">
+              <Stars n={selectedStars} size="big" />
+            </div>
+            <div className="text-center text-sm font-semibold opacity-90" data-testid="best">
+              {best ? `🏆 Best ${best.me} – ${best.them}` : "First fight"}
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-1.5">
+              {ruleChips(selected).map((c) => (
+                <span key={c} className="bg-chip px-2.5 py-1 text-xs">
+                  {c}
+                </span>
+              ))}
+            </div>
+            <div className="flex justify-center">
+              <ItemChips save={save} />
+            </div>
+
+            {lives > 0 ? (
+              <button className="bg-btn bg-btn-primary w-full text-2xl" disabled={!dictReady} onClick={play} data-testid="start">
+                {dictReady ? "Play" : "Loading words…"}
+              </button>
+            ) : adsLeft(save, now) > 0 ? (
+              <button className="bg-btn bg-btn-primary w-full text-lg" onClick={() => { click("ad"); setModal("ad"); }} data-testid="watch-ad">
+                📺 Watch ad · +1 ❤️
+              </button>
+            ) : (
+              <button className="bg-btn bg-btn-primary w-full text-base" disabled data-testid="out-of-lives">
+                💔 Next life {next ? formatCountdown(next - now) : "…"}
+              </button>
+            )}
+            <div className="flex items-center justify-center gap-4 text-sm">
+              {lives === 0 && next && <span className="opacity-80" data-testid="out-of-lives-timer">next free life in {formatCountdown(next - now)}</span>}
+              <button className="font-semibold underline opacity-85" onClick={practice} data-testid="practice">
+                Practice (no lives)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {modal === "shop" && <ShopModal save={save} onChange={setSave} onClose={() => setModal(null)} />}
       {modal === "ad" && <AdModal onReward={setSave} onClose={() => setModal(null)} />}
@@ -328,10 +338,19 @@ export default function QuestMap({
       )}
 
       {anim?.stage === "region" && (
-        <div className="bg-region-intro" data-testid="region-intro" onClick={() => setAnim(null)}>
-          <div className="bg-region-intro-emoji">{region.emoji}</div>
-          <div className="bg-title text-4xl">{region.name.toUpperCase()}</div>
-          <div className="text-sm opacity-90">{region.blurb}</div>
+        <div
+          className="bg-region-intro"
+          data-testid="region-intro"
+          onClick={() => {
+            setAnim(null);
+            setSheet(true);
+          }}
+        >
+          <div className="bg-region-intro-emoji">{introRegion.emoji}</div>
+          <div className="bg-title text-4xl" data-testid="region-name">
+            {introRegion.name.toUpperCase()}
+          </div>
+          <div className="text-sm opacity-90">{introRegion.blurb}</div>
         </div>
       )}
 

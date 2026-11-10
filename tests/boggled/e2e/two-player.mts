@@ -33,7 +33,6 @@ assert((await state(a)).settings.series === 3 && !(await state(a)).settings.dang
 await a.screenshot({ path: `${SHOTS}/09a-new-room.png` });
 
 await b.goto(`${BASE}/boggled`);
-await b.getByTestId("menu-friends").click();
 await b.getByTestId("menu-join").click();
 await b.getByTestId("code").fill(code.toLowerCase());
 await b.getByTestId("code-next").click();

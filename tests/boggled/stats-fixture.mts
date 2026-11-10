@@ -3,7 +3,7 @@
 import { PGlite } from "@electric-sql/pglite";
 import { readFileSync } from "node:fs";
 
-const MIGRATIONS = ["20261030090000_boggled_analytics.sql", "20261109050000_boggled_private_stats.sql", "20261109060000_boggled_insights.sql"];
+const MIGRATIONS = ["20261030090000_boggled_analytics.sql", "20261109050000_boggled_private_stats.sql", "20261109060000_boggled_insights.sql", "20261109090000_boggled_visits.sql"];
 
 const PLACES = [
   { country: "TH", region: "10", city: "Bangkok", lat: 13.8, lon: 100.5, w: 8 },

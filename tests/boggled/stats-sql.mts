@@ -54,11 +54,29 @@ assert.equal(places.points.reduce((n, p) => n + p.players, 0), players);
 assert.equal(places.countries.reduce((n, c) => n + c.players, 0), players);
 assert.ok(places.countries.every((c, i, xs) => i === 0 || xs[i - 1].players >= c.players), "countries sorted by players");
 
+type Visits = { visitors: number; visits: number; repeat_days: number; player_days: number; daily: { day: string; visitors: number; visits: number }[]; per_visitor: { bucket: string; players: number }[] };
+const visits = (await callRpc(db, "boggled_visits", { days: 30, tz: "Asia/Bangkok" })) as Visits;
+assert.equal(visits.visitors, players, "every player is a visitor");
+assert.ok(visits.visits >= new Set(rows.map((r) => r.session)).size, "at least one visit per tab session");
+assert.ok(visits.daily.every((d) => d.visits >= d.visitors), "visits per day ≥ unique visitors per day");
+assert.equal(visits.per_visitor.reduce((n, b) => n + b.players, 0), players, "visit buckets cover everyone");
+assert.ok(visits.repeat_days <= visits.player_days);
+
+// Same tab, back 3 hours later = a second visit; 10 minutes later = the same visit.
+const vdb = await seededDb([]);
+const t0 = Date.now() - 86_400_000;
+for (const [mins, session] of [[0, "s_tab001"], [10, "s_tab001"], [190, "s_tab001"], [195, "s_tab002"]] as const) {
+  await vdb.query("insert into boggled_events (player, session, event, screen, props, at) values ('p_visit1', $1, 'screen', 'home', '{}', $2)", [session, new Date(t0 + mins * 60_000).toISOString()]);
+}
+const one = (await callRpc(vdb, "boggled_visits", { days: 7, tz: "UTC" })) as Visits;
+assert.equal(one.visitors, 1);
+assert.equal(one.visits, 3, "30-minute gaps and new tabs start new visits");
+
 const grants = await db.query<{ fn: string; anon: boolean; service: boolean }>(`
   select p.proname as fn,
     has_function_privilege('anon', p.oid, 'execute') as anon,
     has_function_privilege('service_role', p.oid, 'execute') as service
-  from pg_proc p where p.proname in ('boggled_stats', 'boggled_places', 'boggled_insights', 'boggled_daily_rank')`);
+  from pg_proc p where p.proname in ('boggled_stats', 'boggled_places', 'boggled_insights', 'boggled_visits', 'boggled_daily_rank')`);
 for (const g of grants.rows) {
   if (g.fn === "boggled_daily_rank") assert.ok(g.anon, "daily rank stays public");
   else assert.ok(!g.anon && g.service, `${g.fn} is service_role only`);

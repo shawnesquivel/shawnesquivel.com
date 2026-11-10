@@ -1,0 +1,10 @@
+#!/bin/sh
+# Opt in with: git config core.hooksPath .githooks
+# Runs the Word Brawl checks when a commit touches the game; adds the browser smoke test if the dev server is up.
+git diff --cached --name-only | grep -qE '(boggled|supabase/migrations)' || exit 0
+npm run -s check:boggled || exit 1
+if curl -s -o /dev/null --max-time 2 "${BOGGLED_URL:-http://localhost:3000}/boggled"; then
+  npm run -s test:boggled:smoke || exit 1
+else
+  echo "pre-commit: dev server not running, skipped the smoke test (npm run test:boggled:smoke)"
+fi
