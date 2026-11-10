@@ -736,7 +736,7 @@ body:has(.boggled) {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.7;
+  opacity: 0.9;
   margin-bottom: -4px;
 }
 .bg-big-btn {
@@ -772,6 +772,16 @@ body:has(.boggled) {
   background: rgb(255 255 255 / 0.55);
   font-size: 1.6rem;
   margin-bottom: 4px;
+}
+.bg-big-btn .bg-title {
+  text-shadow: none;
+}
+.bg-menu-btn .bg-title {
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.2);
+}
+.bg-big-btn .opacity-85,
+.bg-menu-btn .opacity-80 {
+  opacity: 0.95;
 }
 .bg-half-btn {
   flex-direction: row;
