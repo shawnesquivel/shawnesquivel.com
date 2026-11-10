@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "tsx scripts/boggled/migrate.mts && next build",
     "start": "next start",
     "lint": "eslint",
     "sanitize:hackathon-data": "node sanitize-hackathon-data.mjs",
@@ -13,6 +13,7 @@
     "agency:keys:create": "tsx --env-file-if-exists=.env.local scripts/agency-create-api-key.mts",
     "test:boggled": "vitest run --config vitest.boggled.config.ts",
     "test:boggled:e2e": "tsx tests/boggled/e2e/smoke.mts && tsx tests/boggled/e2e/solo.mts && tsx tests/boggled/e2e/two-player.mts && tsx tests/boggled/e2e/power-ups.mts && tsx tests/boggled/e2e/modes.mts && tsx tests/boggled/e2e/quest.mts",
+    "db:migrate": "tsx scripts/boggled/migrate.mts --strict",
     "test:boggled:smoke": "tsx tests/boggled/e2e/smoke.mts",
     "check:boggled": "eslint src/components/boggled src/app/boggled src/lib/boggled tests/boggled && tsc --noEmit && vitest run --config vitest.boggled.config.ts && tsx tests/boggled/stats-sql.mts"
   },
@@ -49,6 +50,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "playwright": "^1.60.0",
+    "postgres": "^3.4.9",
     "tailwindcss": "^4",
     "tsx": "4.23.15",
     "typescript": "^5",
