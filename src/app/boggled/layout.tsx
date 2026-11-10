@@ -48,6 +48,7 @@ export const metadata: Metadata = {
     description: "No signup, no download. Share a link and play real-time Boggle on your phones.",
   },
   category: "games",
+  verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
 };
 
 export const viewport: Viewport = {
