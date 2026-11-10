@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { CAST_METHODS } from "@/components/boggled/CastSteps";
+import { NetflixSetup, WordBrawlSetup } from "./Diagrams";
 import { GUIDE_SLUG, SITE_NAME, SITE_URL } from "@/lib/boggled/site";
 
 const TITLE = "How to Play Netflix Boggle Party (and What to Do When It Won't Load)";
@@ -138,6 +139,17 @@ export default function GuidePage() {
       <header>
         <h1 className="bg-title">How to play Netflix Boggle Party</h1>
         <p>…and what to do when it won&apos;t load, you only have phones, or your friends are somewhere else.</p>
+        <figure className="bg-guide-hero">
+          <Image
+            src="/boggled/guide/boggle-party-tv.jpg"
+            alt="Netflix Boggle Party on a TV: a 6×6 letter grid, the word PEAT scoring +2, and two players' score columns"
+            width={827}
+            height={695}
+            priority
+            sizes="(max-width: 720px) 100vw, 680px"
+          />
+          <figcaption>Netflix Boggle Party on our TV. The grid and scores live on the TV; everyone swipes on their phone.</figcaption>
+        </figure>
       </header>
 
       <section className="bg-guide-tldr" aria-label="Quick answer">
@@ -163,6 +175,7 @@ export default function GuidePage() {
           </ul>
           <Shot name="lobby" alt="Word Brawl lobby with a room code, share link, QR code and TV button" />
         </div>
+        <WordBrawlSetup />
         <a href="./" className="bg-btn bg-btn-primary bg-guide-cta">
           Create a free room →
         </a>
@@ -170,6 +183,7 @@ export default function GuidePage() {
 
       <section aria-labelledby="netflix">
         <h2 id="netflix">How to play Boggle Party on Netflix</h2>
+        <NetflixSetup />
         <ol className="bg-seo-steps">
           {NETFLIX_STEPS.map(([icon, title, body], i) => (
             <li key={title}>

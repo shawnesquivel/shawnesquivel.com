@@ -1472,6 +1472,29 @@ body:has(.boggled) {
   }
 }
 
+.bg-guide-hero,
+.bg-guide-fig {
+  margin-top: 14px;
+}
+.bg-guide-hero img {
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 12px 34px rgb(0 0 0 / 0.35);
+}
+.bg-guide-fig svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.bg-guide-hero figcaption,
+.bg-guide-fig figcaption {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  margin-top: 6px;
+  text-align: center;
+}
+
 /* ---- Quest world (scrolling map) ---- */
 .bg-world {
   position: relative;
