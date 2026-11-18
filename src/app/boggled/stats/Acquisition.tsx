@@ -32,7 +32,7 @@ export function AcquisitionChapter({ a }: { a: Acquisition | null }) {
         sub="First page of each visit, by channel. “Played” = that visit went on to start a round. Tag links with ?utm_source=…&utm_campaign=…"
       />
       {!a ? (
-        <Empty>Run supabase/migrations/20261110090000_boggled_acquisition.sql in the Supabase SQL editor to unlock this.</Empty>
+        <Empty>Waiting on a database migration. Production deploys apply it automatically once SUPABASE_DB_URL is set on Vercel.</Empty>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           <Card title="Channels" accent="#3ddc84">
@@ -148,14 +148,10 @@ export function SearchChapter({ g, error }: { g: Gsc | null; error?: string }) {
       ) : (
         <div className="bg-panel flex flex-col gap-2 p-4 text-sm">
           <b>Connect Google Search Console (one-time)</b>
-          <ol className="ml-5 list-decimal space-y-1">
-            <li>Google Cloud console → create a service account, enable the “Google Search Console API”, and create a JSON key.</li>
-            <li>Search Console → wordbrawl.app → Settings → Users and permissions → add the service account email (Restricted is enough).</li>
-            <li>
-              Vercel env vars: <code>GSC_CLIENT_EMAIL</code>, <code>GSC_PRIVATE_KEY</code> (the key&apos;s private_key) and, if the property isn&apos;t a domain
-              property, <code>GSC_SITE</code> (e.g. https://wordbrawl.app/). Redeploy.
-            </li>
-          </ol>
+          <p>
+            Add a Google Cloud service account key as <code>GSC_SERVICE_ACCOUNT_JSON</code> on Vercel (with the Search Console and Site Verification APIs
+            enabled). This page then verifies wordbrawl.app, adds it to Search Console and submits the sitemap by itself.
+          </p>
         </div>
       )}
     </>

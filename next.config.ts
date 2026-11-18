@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
         { source: "/boggled/test", destination: "/boggled" },
         { source: "/stats", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/stats" },
         ...GUIDE_SLUGS.map((slug) => ({ source: `/${slug}`, has: [{ type: "host" as const, value: GAME_HOST }], destination: `/boggled/${slug}` })),
+        { source: "/:file(google[0-9a-zA-Z]+\\.html)", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/gsc-verify/:file" },
         { source: "/robots.txt", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/robots.txt" },
         { source: "/sitemap.xml", has: [{ type: "host", value: GAME_HOST }], destination: "/boggled/sitemap.xml" },
       ],

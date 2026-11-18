@@ -219,7 +219,7 @@ function Setup({ error }: { error: string }) {
 }
 
 const NEEDS_MIGRATION =
-  "Run supabase/migrations/20261109050000_boggled_private_stats.sql and 20261109060000_boggled_insights.sql in the Supabase SQL editor to unlock this.";
+  "Waiting on a database migration. Production deploys apply it automatically once SUPABASE_DB_URL is set on Vercel.";
 
 export default async function StatsPage({ searchParams }: { searchParams: Promise<{ days?: string }> }) {
   const { days: raw } = await searchParams;
@@ -346,7 +346,7 @@ function VisitsChapter({ v }: { v: Visits | null }) {
           </Card>
         </div>
       ) : (
-        <Empty>Run supabase/migrations/20261109090000_boggled_visits.sql in the Supabase SQL editor to unlock this.</Empty>
+        <Empty>{NEEDS_MIGRATION}</Empty>
       )}
     </>
   );
